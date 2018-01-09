@@ -6,15 +6,7 @@ defmodule RogerUi.Application do
   use Application
 
   def start(_type, _args) do
-    # List all child processes to be supervised
-    children = [
-      # Starts a worker by calling: RogerUi.Worker.start_link(arg)
-      # {RogerUi.Worker, arg},
-    ]
-
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: RogerUi.Supervisor]
-    Supervisor.start_link(children, opts)
+    { :ok, _ } = Plug.Adapters.Cowboy.http(RogerUi.RouterPlug, [])
+    Supervisor.start_link([], strategy: :one_for_one)
   end
 end
