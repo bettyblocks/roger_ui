@@ -6,7 +6,7 @@ defmodule RogerUi.Application do
   use Application
 
   def start(_type, _args) do
-    { :ok, _ } = Plug.Adapters.Cowboy.http(RogerUi.RouterPlug, [])
+    {:ok, _} = Plug.Adapters.Cowboy.http(RogerUi.RouterPlug, [], port: 4040)
     Supervisor.start_link([], strategy: :one_for_one)
   end
 end

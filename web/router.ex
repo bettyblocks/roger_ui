@@ -25,14 +25,19 @@ defmodule RogerUi.RouterPlug do
     plug :match
     plug :dispatch
 
-    get "/api/partitions/all" do
-      partitions = Info.partitions() |> Enum.into(%{})
+    get "/api/partitions" do
+      partitions = Info.running_partitions()
+      |> Enum.into(%{})
       {:ok, json} = Poison.encode(%{partitions: partitions})
 
       conn
       |> put_resp_header("content-type", "application/json")
       |> send_resp(200, json)
       |> halt()
+    end
+
+    get "/api/queues" do
+
     end
   end
 end
