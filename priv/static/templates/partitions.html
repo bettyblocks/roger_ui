@@ -24,7 +24,7 @@
 
   function subpartition_details(details) {
     return function(acum, key) {
-      return acum + "<summary>" + key + "</summary>" +
+      return acum + "<summary>" + key + ":</summary>" +
         "<dl class='dl-horizontal'>" + partition_info(details[key]) + "</dl>";
     }
   }
