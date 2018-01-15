@@ -35,9 +35,5 @@ defmodule RogerUi.RouterPlug do
       |> send_resp(200, json)
       |> halt()
     end
-
-    get "/api/queues" do
-
-    end
   end
 end

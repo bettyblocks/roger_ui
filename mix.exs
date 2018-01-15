@@ -4,7 +4,7 @@ defmodule RogerUi.Mixfile do
   def project do
     [
       app: :roger_ui,
-      version: "0.1.0",
+      version: "0.1.1",
       elixir: "~> 1.5",
       elixirc_paths: ["lib", "web"],
       package: package(),
@@ -18,7 +18,10 @@ defmodule RogerUi.Mixfile do
 
   def package do
     [
+      files: ~w(lib test web) ++
+             ~w(LICENSE mix.exs README.md),
       maintainers: ["Antonio Abella", "Paul Engel"],
+      licenses: ["MIT"],
       links: %{"Github" => "https://github.com/Spadavecchia/roger_ui"},
     ]
   end
