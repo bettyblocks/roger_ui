@@ -7,49 +7,52 @@
 
 <script>
 
-  function create_map(fun, data) {
-    return Object.keys(data).map(fun(data));
+  function create_html(fun, data) {
+    return Object.keys(data).reduce(fun(data), "");
   }
 
   function partition_info(p) {
     return "<dt>Paused:</dt>" +
       "<dd>" + p.paused + "</dd>" +
       "<dt>Message Count:</dt>" +
-      "<dd>" + p.message_count + "</dd>" +
+      "<dd>" + (p.message_count || 0) + "</dd>" +
       "<dt>Max Workers:</dt>" +
-      "<dd>" + p.max_workers + "</dd>" +
+      "<dd>" + (p.max_workers || 0) + "</dd>" +
       "<dt>Consumer count:</dt>" +
-      "<dd>" + p.consumer_count + "</dd>"
+      "<dd>" + (p.consumer_count || 0) + "</dd>"
   }
 
   function subpartition_details(details) {
-    return function(key) {
-      return "<hr><summary>" + key + ":<summary>" +
+    return function(acum, key) {
+      return acum + "<summary>" + key + "</summary>" +
         "<dl class='dl-horizontal'>" + partition_info(details[key]) + "</dl>";
     }
   }
 
   function show_subpartitions(subs) {
-    return function(key) {
-      return "<h4>" +
-        key +
-      ":</h3>" +
-      create_map(subpartition_details, subs[key]);
+    return function(acum, key) {
+      return acum +
+        "<h4 class='alert alert-info'>" +
+          key +
+        ":</h4>" +
+        create_html(subpartition_details, subs[key]);
     }
   }
 
   function show_partitions(partitions) {
-    return function(key) {
-      return "<div class='panel panel-default'>" +
+    return function(acum, key) {
+      return acum +
+        "<div class='panel panel-default'>" +
           "<div class='panel-heading'>" +
             key +
           "</div>" +
           "<div class='panel-body'>" +
-            create_map(show_subpartitions, partitions[key]) +
+            create_html(show_subpartitions, partitions[key]) +
           "</div>" +
         "</div>"
     }
   }
+
 
  $(function() {
   $.ajax({
@@ -60,7 +63,7 @@
       }
     })
     .done(function(data) {
-      var ps = create_map(show_partitions, data.partitions);
+      var ps = create_html(show_partitions, data.partitions);
       $("#partitions-data").html(ps);
     })
     .fail(function(xhr) {
