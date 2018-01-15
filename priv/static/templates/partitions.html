@@ -1,11 +1,56 @@
 <h2>Partitions:</h2>
 <div class="row">
   <div class="col-xs-12">
-    <span id="partition-time"></span>
+    <span id="partitions-data"></span>
   </div>
 </div>
 
 <script>
+
+  function create_map(fun, data) {
+    return Object.keys(data).map(fun(data));
+  }
+
+  function partition_info(p) {
+    return "<dt>Paused:</dt>" +
+      "<dd>" + p.paused + "</dd>" +
+      "<dt>Message Count:</dt>" +
+      "<dd>" + p.message_count + "</dd>" +
+      "<dt>Max Workers:</dt>" +
+      "<dd>" + p.max_workers + "</dd>" +
+      "<dt>Consumer count:</dt>" +
+      "<dd>" + p.consumer_count + "</dd>"
+  }
+
+  function subpartition_details(details) {
+    return function(key) {
+      return "<hr><summary>" + key + ":<summary>" +
+        "<dl class='dl-horizontal'>" + partition_info(details[key]) + "</dl>";
+    }
+  }
+
+  function show_subpartitions(subs) {
+    return function(key) {
+      return "<h4>" +
+        key +
+      ":</h3>" +
+      create_map(subpartition_details, subs[key]);
+    }
+  }
+
+  function show_partitions(partitions) {
+    return function(key) {
+      return "<div class='panel panel-default'>" +
+          "<div class='panel-heading'>" +
+            key +
+          "</div>" +
+          "<div class='panel-body'>" +
+            create_map(show_subpartitions, partitions[key]) +
+          "</div>" +
+        "</div>"
+    }
+  }
+
  $(function() {
   $.ajax({
       url: "/api/partitions",
@@ -15,10 +60,12 @@
       }
     })
     .done(function(data) {
-      $("#partition-time").text(data);
+      var ps = create_map(show_partitions, data.partitions);
+      $("#partitions-data").html(ps);
     })
     .fail(function(xhr) {
-      console.log('error', xhr);
+      $("#partitions-data").text("Error Loading Partitions");
+      console.error('error', xhr);
     });
  });
 </script>
