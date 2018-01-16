@@ -22,6 +22,11 @@ defmodule RogerUi.RouterPlug do
     import Plug.Conn
     use Plug.Router
 
+    plug Plug.Static,
+      at: "/",
+      from: :roger_ui,
+      only: ~w(templates)
+
     plug :match
     plug :dispatch
 
@@ -44,14 +49,6 @@ defmodule RogerUi.RouterPlug do
       conn
       |> put_resp_header("content-type", "application/json")
       |> send_resp(200, json)
-      |> halt()
-    end
-
-    get "/templates/:template" do
-      template_path = Path.join([Application.app_dir(:roger_ui), "priv/static/templates/#{template}"])
-      conn
-      |> put_resp_header("content-type", "text/html")
-      |> send_file(200, template_path)
       |> halt()
     end
 
