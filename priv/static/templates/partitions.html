@@ -1,60 +1,40 @@
 <h2>Partitions:</h2>
 <div class="row">
   <div class="col-xs-12">
-    <span id="partitions-data"></span>
+    <span id="partitions-data">
+      <div class="panel panel-default" v-for="(ps, app_name) in partitions">
+        <div class="panel-heading">Application: {{ app_name }}</div>
+        <div class="panel-body">
+          <div v-for="(partition, partition_name) in ps">
+            <h4 class="alert alert-info">{{ partition_name }}:</h4>
+            <div v-for="(queue, queue_name) in partition">
+              <summary>{{ queue_name }}</summary>
+              <dl class="dl-horizontal">
+                <dt>Paused:</dt>
+                <dd>{{ queue.paused }}</dd>
+                <dt>Message Count:</dt>
+                <dd>{{ queue.message_count }}</dd>
+                <dt>Max Workers:</dt>
+                <dd>{{ queue.max_workers }}</dd>
+                <dt>Consumer Count:</dt>
+                <dd>{{ queue.consumer_count }}</dd>
+              </dl>
+            </div> <!-- Queue -->
+          </div> <!-- Partition Name -->
+        </div> <!-- Panel Body -->
+      </div> <!-- Panel -->
+    </span>
   </div>
 </div>
 
 <script>
-
-  function create_html(fun, data) {
-    return Object.keys(data).reduce(fun(data), "");
-  }
-
-  function partition_info(p) {
-    return "<dt>Paused:</dt>" +
-      "<dd>" + p.paused + "</dd>" +
-      "<dt>Message Count:</dt>" +
-      "<dd>" + (p.message_count || 0) + "</dd>" +
-      "<dt>Max Workers:</dt>" +
-      "<dd>" + (p.max_workers || 0) + "</dd>" +
-      "<dt>Consumer count:</dt>" +
-      "<dd>" + (p.consumer_count || 0) + "</dd>"
-  }
-
-  function subpartition_details(details) {
-    return function(acum, key) {
-      return acum + "<summary>" + key + ":</summary>" +
-        "<dl class='dl-horizontal'>" + partition_info(details[key]) + "</dl>";
-    }
-  }
-
-  function show_subpartitions(subs) {
-    return function(acum, key) {
-      return acum +
-        "<h4 class='alert alert-info'>" +
-          key +
-        ":</h4>" +
-        create_html(subpartition_details, subs[key]);
-    }
-  }
-
-  function show_partitions(partitions) {
-    return function(acum, key) {
-      return acum +
-        "<div class='panel panel-default'>" +
-          "<div class='panel-heading'>" +
-            key +
-          "</div>" +
-          "<div class='panel-body'>" +
-            create_html(show_subpartitions, partitions[key]) +
-          "</div>" +
-        "</div>"
-    }
-  }
-
-
  $(function() {
+  var vm = new Vue({
+    el: "#partitions-data",
+    data: {
+      partitions: {}
+    }
+  });
   $.ajax({
       url: "/api/partitions",
       method: "GET",
@@ -63,11 +43,11 @@
       }
     })
     .done(function(data) {
-      var ps = create_html(show_partitions, data.partitions);
-      $("#partitions-data").html(ps);
+      console.log("Loading Data");
+      vm.partitions = data.partitions;
     })
     .fail(function(xhr) {
-      $("#partitions-data").text("Error Loading Partitions");
+      $("#partitions-data").html("<h1>Error Loading Partitions</h1>");
       console.error('error', xhr);
     });
  });

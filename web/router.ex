@@ -25,7 +25,7 @@ defmodule RogerUi.RouterPlug do
     plug Plug.Static,
       at: "/",
       from: :roger_ui,
-      only: ~w(templates)
+      only: ~w(templates static)
 
     plug :match
     plug :dispatch
