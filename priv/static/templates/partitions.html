@@ -26,29 +26,3 @@
     </span>
   </div>
 </div>
-
-<script>
- $(function() {
-  var vm = new Vue({
-    el: "#partitions-data",
-    data: {
-      partitions: {}
-    }
-  });
-  $.ajax({
-      url: "/api/partitions",
-      method: "GET",
-      data: {
-        partitions: [],
-      }
-    })
-    .done(function(data) {
-      console.log("Loading Data");
-      vm.partitions = data.partitions;
-    })
-    .fail(function(xhr) {
-      $("#partitions-data").html("<h1>Error Loading Partitions</h1>");
-      console.error('error', xhr);
-    });
- });
-</script>

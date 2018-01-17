@@ -8,7 +8,7 @@
 
   </head>
   <body>
-    <div class="container">
+    <div class="container-fluid">
       <nav class="navbar navbar-default">
         <div class="container-fluid">
           <div class="navbar-header">
@@ -23,22 +23,15 @@
           </div> <!-- Header -->
         </div> <!-- Container -->
       </nav> <!-- Nav -->
-      <div class="row">
-        <div class="col-xs-6" id="partitions"></div>
-        <div class="col-xs-6" id="queues"></div>
+      <div class="row" id="app">
+        <div class="col-xs-12 col-md-3" id="partitions"></div>
+        <div class="col-xs-12 col-md-4" id="queues"></div>
+        <div class="col-xs-12 col-md-5" id="jobs"><h1>Jobs:</h1></div>
       </div>
     </div>
     <script src="https://code.jquery.com/jquery.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <script>
-     function loadAll() {
-       $("#partitions").load("/templates/partitions.html");
-       $("#queues").load("/templates/queues.html");
-     }
-     $(function() {
-       loadAll();
-     });
-    </script>
+    <script src="assets/app.js"></script>
   </body>
 </html>

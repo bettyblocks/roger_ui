@@ -1,0 +1,12 @@
+{
+  "ecmaversion": 6,
+  "libs": [
+    "browser"
+  ],
+  "loadEagerly": [
+    "./assets/**/*.js"
+  ],
+  "plugins": {
+    "complete_string": {}
+  }
+}
