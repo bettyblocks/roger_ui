@@ -43,8 +43,12 @@ defmodule RogerUi.RouterPlug do
     end
 
     get "/api/queues/:partition_name/:queue_name" do
-      running_jobs = Info.running_jobs(partition_name);
-      queued_jobs = Info.queued_jobs(partition_name, queued_name);
+      # running_jobs = Info.running_jobs(partition_name);
+      # queued_jobs = Info.queued_jobs(partition_name, queued_name);
+      # |> Enum.into(%{})
+      # {:ok, json} = Poison.encode(%{partitions: partitions})
+
+      partitions = Info.running_partitions()
       |> Enum.into(%{})
       {:ok, json} = Poison.encode(%{partitions: partitions})
 
