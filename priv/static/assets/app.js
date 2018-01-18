@@ -13,6 +13,10 @@ function initialize_app() {
       jobs_info: load_jobs_info
     }
   });
+  load_partitions();
+}
+
+function load_partitions() {
   $.ajax({
     url: "/api/partitions",
     method: "GET"
@@ -53,4 +57,7 @@ function load_templates() {
 
 $(function() {
   load_templates().then(initialize_app);
+  setInterval(function() {
+    load_partitions();
+  }, 2000);
 });
