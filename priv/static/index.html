@@ -25,8 +25,11 @@
       </nav> <!-- Nav -->
       <div class="row" id="app">
         <div class="col-xs-12 col-md-3" id="partitions"></div>
-        <div class="col-xs-12 col-md-4" id="queues"></div>
-        <div class="col-xs-12 col-md-5" id="jobs"><h1>Jobs:</h1></div>
+        <div v-if="queued_jobs" class="col-xs-12 col-md-4" id="queues"></div>
+        <div v-if="running_jobs" class="col-xs-12 col-md-5" id="jobs"></div>
+        <div v-else class="col-xs-12 col-md-9">
+          <h3 class="alert alert-warning">Select a queue on the partition panel to show running and queued jobs</h3>
+        </div>
       </div>
     </div>
     <script src="https://code.jquery.com/jquery.js"></script>

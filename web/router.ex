@@ -25,7 +25,7 @@ defmodule RogerUi.RouterPlug do
     plug Plug.Static,
       at: "/",
       from: :roger_ui,
-      only: ~w(templates static)
+      only: ~w(assets templates)
 
     plug :match
     plug :dispatch
@@ -35,14 +35,16 @@ defmodule RogerUi.RouterPlug do
       |> Enum.into(%{})
       {:ok, json} = Poison.encode(%{partitions: partitions})
 
+      new_json = ~s({"partitions":{"watcher@big-people":{},"demo@big-people":{"roger_demo_partition":{"other":{"paused":false,"message_count":0,"max_workers":2,"consumer_count":1},"default":{"paused":false,"message_count":0,"max_workers":10,"consumer_count":1}}}}})
       conn
       |> put_resp_header("content-type", "application/json")
-      |> send_resp(200, json)
+      |> send_resp(200, new_json)
       |> halt()
     end
 
-    get "/api/queues" do
-      partitions = Info.running_partitions()
+    get "/api/queues/:partition_name/:queue_name" do
+      running_jobs = Info.running_jobs(partition_name);
+      queued_jobs = Info.queued_jobs(partition_name, queued_name);
       |> Enum.into(%{})
       {:ok, json} = Poison.encode(%{partitions: partitions})
 
