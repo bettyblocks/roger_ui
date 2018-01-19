@@ -88,8 +88,8 @@ function load_templates() {
   var dj = $.Deferred();
   var p = $.when(dp, dq, dj);
   $("#partitions").load("../templates/partitions.html", dp.resolve);
-  $("#queues").load("../templates/queues.html", dq.resolve);
-  $("#jobs").load("../templates/jobs.html", dj.resolve);
+  $("#queued").load("../templates/queued.html", dq.resolve);
+  $("#running").load("../templates/running.html", dj.resolve);
   return p;
 }
 

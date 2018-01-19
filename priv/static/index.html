@@ -31,8 +31,8 @@
               <h3 class="alert alert-info">
                 {{ selected_queue.node_name }} > {{ selected_queue.partition_name }} > {{ selected_queue.queue_name }}
               </h3>
-              <div class="col-xs-12 col-md-6" id="queues"></div>
-              <div class="col-xs-12 col-md-6" id="jobs"></div>
+              <div class="col-xs-12 col-md-6" id="queued"></div>
+              <div class="col-xs-12 col-md-6" id="running"></div>
             </div>
             <div v-else class="col-xs-12">
               <h3 class="alert alert-warning">Select a queue on the partition panel to show running and queued jobs</h3>
