@@ -1,18 +1,29 @@
 <h2>Partitions:</h2>
 <div class="row">
   <div class="col-xs-12">
-    <div class="panel panel-default" v-for="(ps, app_name) in partitions">
-      <div class="panel-heading">Application: {{ app_name }}</div>
+    <div class="panel panel-default" v-for="(ps, node_name) in partitions">
+      <div class="panel-heading">Node: {{ node_name }}</div>
       <div class="panel-body">
         <div v-for="(partition, partition_name) in ps">
           <h4 class="alert alert-info">{{ partition_name }}:</h4>
           <div v-for="(queue, queue_name) in partition">
-            <button
-              class="btn-primary btn-small pull-right"
-              @click="jobs_info(partition_name, queue_name)">
-              Show Jobs
-            </button>
             <summary><h4>{{ queue_name }}:</h4></summary>
+            <div class="btn-group btn-group-xs pull-right" role="group">
+              <button class="btn btn-default"
+                @click="select_queue(node_name, partition_name, queue_name)">
+                Show Jobs
+              </button>
+              <button class="btn btn-default"
+                v-if="queue.paused"
+                @click="resume_queue(node_name, partition_name, queue_name)">
+                Resume Queue
+              </button>
+              <button class="btn btn-default"
+                v-else
+                @click="pause_queue(node_name, partition_name, queue_name)">
+                Pause Queue
+              </button>
+            </div>
             <dl class="dl-horizontal">
               <dt>Paused:</dt>
               <dd>{{ queue.paused }}</dd>

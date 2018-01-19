@@ -39,6 +39,30 @@ function select_queue(node_name, partition_name, queue_name) {
   };
 }
 
+function pause_queue(node_name, partition_name, queue_name) {
+  $.ajax({
+    url: "api/jobs/pause/" +
+      partition_name + "/" +
+      queue_name,
+    method: "PUT"
+  })
+    .done(function(data) {
+      vm.partitions[node_name][partition_name][queue_name].paused = true;
+    });
+}
+
+function resume_queue(node_name, partition_name, queue_name) {
+  $.ajax({
+    url: "api/jobs/resume/" +
+      partition_name + "/" +
+      queue_name,
+    method: "PUT"
+  })
+    .done(function(data) {
+      vm.partitions[node_name][partition_name][queue_name].paused = false;
+    });
+}
+
 function load_jobs_info() {
   if (vm.selected_queue) {
     $.ajax({
@@ -48,6 +72,7 @@ function load_jobs_info() {
       method: "GET"
     })
       .done(function(data) {
+        console.log("Job info loaded");
         vm.queued_jobs = data.queued_jobs;
         vm.running_jobs = data.running_jobs;
       })

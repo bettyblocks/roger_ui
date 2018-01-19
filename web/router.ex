@@ -56,6 +56,22 @@ defmodule RogerUi.RouterPlug do
       |> halt()
     end
 
+    put "api/jobs/pause/:partition_name/:queue_name" do
+      Roger.Partition.Global.queue_pause(partition_name, queue_name)
+
+      conn
+      |> send_resp(204, "")
+      |> halt()
+    end
+
+    put "api/jobs/resume/:partition_name/:queue_name" do
+      Roger.Partition.Global.queue_resume(partition_name, queue_name)
+
+      conn
+      |> send_resp(204, "")
+      |> halt()
+    end
+
     match _ do
       index_path = Path.join([Application.app_dir(:roger_ui), "priv/static/index.html"])
       conn
