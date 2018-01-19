@@ -1,5 +1,5 @@
-// TODO: we really need this global variable?
-var vm;
+var vm; // The Vue app instance
+var interval; // The interval id generated when autorefresh is started
 
 function initialize_app() {
   vm = new Vue({
@@ -8,7 +8,8 @@ function initialize_app() {
       partitions: false,
       queued_jobs: false,
       running_jobs: false,
-      selected_queue: false
+      selected_queue: false,
+      autorefresh: false
     },
     methods: {
       jobs_info: load_jobs_info
@@ -19,9 +20,9 @@ function initialize_app() {
 
 function load_partitions() {
   $.ajax({
-    url: "/api/partitions",
-    method: "GET"
-  })
+      url: "/api/partitions",
+      method: "GET"
+    })
     .done(function(data) {
       vm.partitions = data.partitions;
     })
@@ -41,11 +42,11 @@ function select_queue(node_name, partition_name, queue_name) {
 
 function pause_queue(node_name, partition_name, queue_name) {
   $.ajax({
-    url: "api/jobs/pause/" +
-      partition_name + "/" +
-      queue_name,
-    method: "PUT"
-  })
+      url: "api/jobs/pause/" +
+        partition_name + "/" +
+        queue_name,
+      method: "PUT"
+    })
     .done(function(data) {
       vm.partitions[node_name][partition_name][queue_name].paused = true;
     });
@@ -53,11 +54,11 @@ function pause_queue(node_name, partition_name, queue_name) {
 
 function resume_queue(node_name, partition_name, queue_name) {
   $.ajax({
-    url: "api/jobs/resume/" +
-      partition_name + "/" +
-      queue_name,
-    method: "PUT"
-  })
+      url: "api/jobs/resume/" +
+        partition_name + "/" +
+        queue_name,
+      method: "PUT"
+    })
     .done(function(data) {
       vm.partitions[node_name][partition_name][queue_name].paused = false;
     });
@@ -66,11 +67,11 @@ function resume_queue(node_name, partition_name, queue_name) {
 function load_jobs_info() {
   if (vm.selected_queue) {
     $.ajax({
-      url: "/api/jobs/" +
-        vm.selected_queue.partition_name + "/" +
-        vm.selected_queue.queue_name,
-      method: "GET"
-    })
+        url: "/api/jobs/" +
+          vm.selected_queue.partition_name + "/" +
+          vm.selected_queue.queue_name,
+        method: "GET"
+      })
       .done(function(data) {
         console.log("Job info loaded");
         vm.queued_jobs = data.queued_jobs;
@@ -93,6 +94,16 @@ function load_templates() {
   return p;
 }
 
+function toggle_autorefresh() {
+  if (vm.autorefresh) {
+    vm.autorefresh = false;
+    clearInterval(interval);
+  } else {
+    vm.autorefresh = true;
+    interval = setInterval(refresh_info, 2000);
+  }
+}
+
 function refresh_info() {
   load_partitions();
   load_jobs_info();
@@ -100,5 +111,4 @@ function refresh_info() {
 
 $(function() {
   load_templates().then(initialize_app);
-  setInterval(refresh_info, 2000);
 });

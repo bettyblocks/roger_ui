@@ -8,7 +8,7 @@
 
   </head>
   <body>
-    <div class="container-fluid">
+    <div class="container-fluid" id="app">
       <nav class="navbar navbar-default">
         <div class="container-fluid">
           <div class="navbar-header">
@@ -20,10 +20,14 @@
                 <a href="#">Dashboard</a>
               </li>
             </ul> <!-- Menu -->
+            <button class="btn btn-danger navbar-btn pull-right"
+              v-if="autorefresh" @click="toggle_autorefresh()">Stop Autorefresh</button>
+            <button class="btn btn-danger navbar-btn pull-right"
+              v-else @click="toggle_autorefresh()">Start Autorefresh</button>
           </div> <!-- Header -->
         </div> <!-- Container -->
       </nav> <!-- Nav -->
-      <div class="row" id="app">
+      <div class="row">
         <div class="col-xs-12 col-md-3" id="partitions"></div>
         <div class="col-xs-12 col-md-9">
           <div class="row">
