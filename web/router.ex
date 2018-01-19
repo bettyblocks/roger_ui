@@ -35,22 +35,20 @@ defmodule RogerUi.RouterPlug do
       |> Enum.into(%{})
       {:ok, json} = Poison.encode(%{partitions: partitions})
 
-      new_json = ~s({"partitions":{"watcher@big-people":{},"demo@big-people":{"roger_demo_partition":{"other":{"paused":false,"message_count":0,"max_workers":2,"consumer_count":1},"default":{"paused":false,"message_count":0,"max_workers":10,"consumer_count":1}}}}})
       conn
       |> put_resp_header("content-type", "application/json")
-      |> send_resp(200, new_json)
+      |> send_resp(200, json)
       |> halt()
     end
 
-    get "/api/queues/:partition_name/:queue_name" do
-      # running_jobs = Info.running_jobs(partition_name);
-      # queued_jobs = Info.queued_jobs(partition_name, queued_name);
-      # |> Enum.into(%{})
-      # {:ok, json} = Poison.encode(%{partitions: partitions})
-
-      partitions = Info.running_partitions()
+    get "/api/jobs/:partition_name/:queue_name" do
+      queued_jobs = Info.queued_jobs(partition_name, queue_name)
+      running_jobs = partition_name
+      |> Info.running_jobs()
       |> Enum.into(%{})
-      {:ok, json} = Poison.encode(%{partitions: partitions})
+
+      {:ok, json} = Poison.encode(%{queued_jobs: queued_jobs,
+                                    running_jobs: running_jobs})
 
       conn
       |> put_resp_header("content-type", "application/json")
