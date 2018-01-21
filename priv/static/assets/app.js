@@ -27,7 +27,8 @@ function _select_queue(node_name, partition_name, queue_name) {
   this.selected_queue = {
     node_name: node_name,
     partition_name: partition_name,
-    queue_name: queue_name
+    queue_name: queue_name,
+    full_name: node_name + " > " + partition_name + " > " + queue_name
   };
   load_jobs_info();
 };
@@ -71,16 +72,40 @@ function load_nodes() {
     });
 }
 
+function add_times_to_job(roger_now) {
+  return function(job) {
+    job.running_time = job.started_at > 0 ?
+      roger_now - job.started_at : 0;
+    job.queued_time = job.queued_at > 0 ?
+      roger_now - job.queued_at : 0;
+    return job;
+  };
+};
+
+function slower_job_comparer(a, b) {
+  if (a.running_time == 0 && b.running_time == 0) {
+    return b.queued_time - a.queued_time;
+  } else {
+    return b.running_time - a.running_time;
+  }
+}
+
 function load_jobs_info() {
   if (vm.selected_queue) {
-    var url = "api/jobs/" + vm.selected_queue.partition_name + "/" + vm.selected_queue.queue_name;
+    var url = "api/jobs/" + vm.selected_queue.partition_name +
+      "/" + vm.selected_queue.queue_name;
     $.ajax({
         url: url,
         method: "GET"
       })
       .done(function(data) {
-        vm.queued_jobs = data.queued_jobs;
-        vm.running_jobs = data.running_jobs[vm.selected_queue.node_name];
+        vm.queued_jobs = data.queued_jobs
+          .map(add_times_to_job(data.roger_now))
+          .sort(slower_job_comparer);
+        vm.running_jobs = data.running_jobs[vm.selected_queue.node_name]
+          .map(add_times_to_job(data.roger_now))
+          .sort(slower_job_comparer);
+        vm.roger_now = data.roger_now;
       })
       .fail(function(xhr) {
         $("#queues-data").html("<h1>Error Loading Queues</h1>");
@@ -89,20 +114,18 @@ function load_jobs_info() {
 }
 
 function load_templates() {
-  // Async load every template and return a promise which resolve when
-  // all was loaded
+  // Async load every template and return a promise which
+  // is resolved when all html are loaded
   var dp = $.Deferred();
-  // var dq = $.Deferred();
-  // var dj = $.Deferred();
-  // var p = $.when(dp, dq, dj);
-  var p = $.when(dp);
+  var dq = $.Deferred();
+  var dj = $.Deferred();
+  var p = $.when(dp, dq, dj);
   $("#partitions").load("../templates/partitions.html", dp.resolve);
-  // $("#queued").load("../templates/queued.html", dq.resolve);
-  // $("#running").load("../templates/running.html", dj.resolve);
+  $("#queued").load("../templates/queued.html", dq.resolve);
+  $("#running").load("../templates/running.html", dj.resolve);
   return p;
 }
 
 $(function() {
   load_templates().then(initialize_app);
-  // initialize_app();
 });
