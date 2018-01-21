@@ -1,37 +1,22 @@
-<h2>Partitions:</h2>
-<div class="row">
-  <div class="col-xs-12">
-    <div class="panel panel-default" v-for="(ps, node_name) in partitions">
-      <div class="panel-heading">Node: {{ node_name }}</div>
-      <div class="panel-body">
-        <div v-for="(partition, partition_name) in ps">
-          <h4 class="alert alert-info">{{ partition_name }}:</h4>
-          <div v-for="(queue, queue_name) in partition">
-            <summary><h4>{{ queue_name }}:</h4></summary>
-            <div class="btn-group btn-group-xs pull-right" role="group">
-              <button class="btn btn-default"
-                @click="select_queue(node_name, partition_name, queue_name)">
-                Show Jobs
-              </button>
-              <button class="btn btn-default"
-                @click="toggle_queue(node_name, partition_name, queue_name)">
-                <span v-if="queue.paused">Resume Queue</span>
-                <span v-else>Pause Queue</span>
-              </button>
-            </div>
-            <dl class="dl-horizontal">
-              <dt>Paused:</dt>
-              <dd>{{ queue.paused }}</dd>
-              <dt>Message Count:</dt>
-              <dd>{{ queue.message_count }}</dd>
-              <dt>Max Workers:</dt>
-              <dd>{{ queue.max_workers }}</dd>
-              <dt>Consumer Count:</dt>
-              <dd>{{ queue.consumer_count }}</dd>
-            </dl>
-          </div> <!-- Queue -->
-        </div> <!-- Partition Name -->
-      </div> <!-- Panel Body -->
-    </div> <!-- Panel -->
-  </div>
-</div>
+<b-card v-for="(partition, partition_name) in node" v-bind:header="partition_name" no-body>
+  <b-card-body>
+    <b-card v-for="(queue, queue_name) in partition" v-bind:title="queue_name">
+      <b-button-group size="sm">
+        <b-button v-b-tooltip-hover title="Pause/Resume the queue"
+                  @click="toggle_queue(node_name, partition_name, queue_name)">
+          <i v-if="queue.paused" class="material-icons">play_circle_filled</i>
+          <i class="material-icons" v-else>pause_circle_filled</i>
+        </b-button>
+        <b-button variant="link" @click="select_queue(node_name, partition_name, queue_name)">Show Jobs</b-button>
+      </b-button-group>
+      <dl class="row">
+        <dt class="col-sm-9">Message Count:</dt>
+        <dd>{{ queue.message_count }}</dd>
+        <dt class="col-sm-9">Max Workers:</dt>
+        <dd>{{ queue.max_workers }}</dd>
+        <dt class="col-sm-9">Consumer Count:</dt>
+        <dd>{{ queue.consumer_count }}</dd>
+      </dl>
+    </b-card>
+  </b-card-body>
+</b-card>
