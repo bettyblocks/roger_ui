@@ -3,9 +3,6 @@
     Queued Jobs:
   </div> <!-- Panel Heading -->
   <div class="panel-body">
-    <div v-if="queued_jobs = []" class="alert alert-info">
-      There are not queued jobs
-    </div>
     <div v-for="job in queued_jobs">
       {{ job.id }}
     </div>

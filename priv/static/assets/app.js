@@ -22,17 +22,14 @@ function initialize_app() {
   load_partitions();
 }
 
-function _refresh_info() {
-  load_partitions();
-  load_jobs_info();
-}
-
+// =================================================================== Vue Methods
 function _select_queue(node_name, partition_name, queue_name) {
-  this.select_queue = {
+  this.selected_queue = {
     node_name: node_name,
     partition_name: partition_name,
     queue_name: queue_name
   };
+  load_jobs_info();
 };
 
 function _toggle_autorefresh() {
@@ -41,7 +38,7 @@ function _toggle_autorefresh() {
     clearInterval(interval);
   } else {
     this.autorefresh = true;
-    interval = setInterval(_refresh_info, 2000);
+    interval = setInterval(refresh_info, 2000);
   }
 }
 
@@ -49,10 +46,16 @@ function _toggle_queue(node_name, partition_name, queue_name) {
   var paused = vm.partitions[node_name][partition_name][queue_name].paused;
   var action = paused ? "resume" : "pause";
   var url = "api/jobs/" + action + "/" + partition_name + "/" + queue_name;
-  $.ajax({url: url, method: "PUT"})
+  $.ajax({ url: url, method: "PUT" })
     .done(function(_data) {
       this.partitions[node_name][partition_name][queue_name].paused = !paused;
     }.bind(this));
+}
+// =================================================================== End Vue Methods
+
+function refresh_info() {
+  load_partitions();
+  load_jobs_info();
 }
 
 function load_partitions() {
@@ -70,16 +73,14 @@ function load_partitions() {
 
 function load_jobs_info() {
   if (vm.selected_queue) {
+    var url = "api/jobs/" + vm.selected_queue.partition_name + "/" + vm.selected_queue.queue_name;
     $.ajax({
-        url: "/api/jobs/" +
-          vm.selected_partition + "/" +
-          vm.selected_queue,
+        url: url,
         method: "GET"
       })
       .done(function(data) {
-        console.log("Job info loaded");
         vm.queued_jobs = data.queued_jobs;
-        vm.running_jobs = data.running_jobs;
+        vm.running_jobs = data.running_jobs[vm.selected_queue.node_name];
       })
       .fail(function(xhr) {
         $("#queues-data").html("<h1>Error Loading Queues</h1>");
