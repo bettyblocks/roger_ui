@@ -6,16 +6,6 @@
   </b-card-header>
   <b-collapse id="queued_jobs" visible accordion="jobs" role="tabpanel">
     <b-card-body>
-      <b-button-toolbar key-nav my-2 my-sm-0>
-        <b-button-group size="sm">
-          <b-btn @click="toggle_queue" variant="link">
-            {{ selected_queue.paused ? "Resume" : "Pause" }} Queue
-          </b-btn>
-        </b-button-group>
-        <b-button-group size="sm">
-          <b-btn variant="link">Delete all jobs</b-btn>
-        </b-button-group>
-      </b-button-toolbar>
       <b-table small :items="queued_jobs" :fields="job_fields">
         <template slot="show_details" slot-scope="row">
           <b-button variant="link" class="mr-2" @click.stop="row.toggleDetails">

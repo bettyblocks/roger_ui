@@ -2,7 +2,11 @@
   <b-card-body>
     <b-card v-for="(queue, queue_name) in partition" v-bind:title="queue_name" :key="queue_name">
       <b-button-group size="sm">
-        <b-button variant="link" @click="select_queue(node_name, partition_name, queue_name)">Show Jobs</b-button>
+        <b-button variant="link" @click="select_queue(node_name, partition_name, queue_name)">Show</b-button>
+        <b-btn @click="toggle_queue(node_name, partition_name, queue_name)" variant="link">
+          {{ queue.paused ? "Resume" : "Pause" }}
+        </b-btn>
+        <b-btn @click="delete_queue(partition_name, queue_name)" variant="link">Delete queue</b-btn>
       </b-button-group>
       <dl class="row">
         <dt class="col-sm-9">Message Count:</dt>

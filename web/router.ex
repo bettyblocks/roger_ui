@@ -59,7 +59,7 @@ defmodule RogerUi.RouterPlug do
       |> halt()
     end
 
-    put "api/jobs/pause/:partition_name/:queue_name" do
+    put "api/queues/pause/:partition_name/:queue_name" do
       Roger.Partition.Global.queue_pause(partition_name, queue_name)
 
       conn
@@ -67,8 +67,16 @@ defmodule RogerUi.RouterPlug do
       |> halt()
     end
 
-    put "api/jobs/resume/:partition_name/:queue_name" do
+    put "api/queues/resume/:partition_name/:queue_name" do
       Roger.Partition.Global.queue_resume(partition_name, queue_name)
+
+      conn
+      |> send_resp(204, "")
+      |> halt()
+    end
+
+    delete "api/queues/:partition_name/:queue_name" do
+      Roger.Queue.purge(partition_name, queue_name)
 
       conn
       |> send_resp(204, "")

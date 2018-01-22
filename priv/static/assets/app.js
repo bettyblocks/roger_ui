@@ -16,6 +16,7 @@ function initialize_app() {
     },
     methods: {
       select_queue: _select_queue,
+      delete_queue: _delete_queue,
       toggle_autorefresh: _toggle_autorefresh,
       toggle_queue: _toggle_queue
     }
@@ -44,14 +45,22 @@ function _toggle_autorefresh() {
   }
 }
 
-function _toggle_queue() {
-  var paused = this.selected_queue.paused;
+function _toggle_queue(node_name, partition_name, queue_name) {
+  var paused = this.nodes[node_name][partition_name][queue_name].paused;
   var action = paused ? "resume" : "pause";
-  var url = "api/jobs/" + action + "/" + this.selected_queue.partition_name +
-      "/" + this.selected_queue.queue_name;
+  var url = "api/queues/" + action + "/" + partition_name +
+      "/" + queue_name;
   $.ajax({ url: url, method: "PUT" })
     .done(function(_data) {
-      this.selected_queue.paused = !paused;
+      this.nodes[node_name][partition_name][queue_name].paused = !paused;
+    }.bind(this));
+}
+
+function _delete_queue(partition_name, queue_name) {
+  var url = "api/queues/" + partition_name + "/" + queue_name;
+  $.ajax({ url: url, method: "DELETE" })
+    .done(function(_data) {
+      this.queued_jobs=[];
     }.bind(this));
 }
 // =================================================================== End Vue Methods
