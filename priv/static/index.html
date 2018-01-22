@@ -26,7 +26,7 @@
         </b-collapse>
       </b-navbar>
       <b-tabs>
-        <b-tab v-for="(node, node_name) in nodes" v-bind:title="node_name">
+        <b-tab v-for="(node, node_name) in nodes" v-bind:title="node_name" :key="node_name">
           <b-row>
             <b-col id="partitions" cols="12" sm="5" md="3"></b-col>
             <b-col cols="12" md="9">

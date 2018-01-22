@@ -7,9 +7,10 @@ function initialize_app() {
   vm = new Vue({
     el: "#app",
     data: {
+      job_fields: ["show_details", "running_time", "queued_time"],
       nodes: false,
-      queued_jobs: false,
-      running_jobs: false,
+      queued_jobs: [],
+      running_jobs: [],
       selected_queue: false,
       autorefresh: false
     },

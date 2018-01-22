@@ -1,9 +1,8 @@
-<b-card v-for="(partition, partition_name) in node" v-bind:header="partition_name" no-body>
+<b-card v-for="(partition, partition_name) in node" v-bind:header="partition_name" no-body :key="partition_name">
   <b-card-body>
-    <b-card v-for="(queue, queue_name) in partition" v-bind:title="queue_name">
+    <b-card v-for="(queue, queue_name) in partition" v-bind:title="queue_name" :key="queue_name">
       <b-button-group size="sm">
-        <b-button v-b-tooltip-hover title="Pause/Resume the queue"
-                  @click="toggle_queue(node_name, partition_name, queue_name)">
+        <b-button @click="toggle_queue(node_name, partition_name, queue_name)">
           <i v-if="queue.paused" class="material-icons">play_circle_filled</i>
           <i class="material-icons" v-else>pause_circle_filled</i>
         </b-button>
