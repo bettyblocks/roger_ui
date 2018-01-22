@@ -29,7 +29,7 @@ function _select_queue(node_name, partition_name, queue_name) {
     node_name: node_name,
     partition_name: partition_name,
     queue_name: queue_name,
-    full_name: node_name + " > " + partition_name + " > " + queue_name
+    paused: this.nodes[node_name][partition_name][queue_name].paused
   };
   load_jobs_info();
 };
@@ -44,13 +44,14 @@ function _toggle_autorefresh() {
   }
 }
 
-function _toggle_queue(node_name, partition_name, queue_name) {
-  var paused = vm.nodes[node_name][partition_name][queue_name].paused;
+function _toggle_queue() {
+  var paused = this.selected_queue.paused;
   var action = paused ? "resume" : "pause";
-  var url = "api/jobs/" + action + "/" + partition_name + "/" + queue_name;
+  var url = "api/jobs/" + action + "/" + this.selected_queue.partition_name +
+      "/" + this.selected_queue.queue_name;
   $.ajax({ url: url, method: "PUT" })
     .done(function(_data) {
-      this.nodes[node_name][partition_name][queue_name].paused = !paused;
+      this.selected_queue.paused = !paused;
     }.bind(this));
 }
 // =================================================================== End Vue Methods
