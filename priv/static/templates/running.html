@@ -1,7 +1,46 @@
-<div class="panel panel-default">
-  <div class="panel-heading">
-    Runinng Jobs:
-  </div> <!-- Panel Heading -->
-  <div class="panel-body">
-  </div> <!-- Panel Body -->
-</div>
+<b-card no-body="" class="mb-1">
+  <b-card-header header-tag="header" class="p-1" role="tab">
+    <b-btn block href="#" v-b-toggle.running_jobs variant="info">
+      Running Jobs: {{ selected_queue.partition_name }} / {{ selected_queue.queue_name }}
+    </b-btn>
+  </b-card-header>
+  <b-collapse id="running_jobs" accordion="jobs" role="tabpanel">
+    <b-card-body>
+      <b-table small :items="running_jobs" :fields="job_fields">
+        <template slot="show_details" slot-scope="row">
+          <b-button variant="link" class="mr-2" @click.stop="row.toggleDetails">
+            {{ row.detailsShowing ? "Hide" : "Show" }} Details
+          </b-button>
+        </template>
+        <template slot="row-details" slot-scope="row">
+          <b-card>
+            <b-row class="mb-2">
+              <b-col class="text-sm-right" sm="3">
+                <b>Id:</b>
+              </b-col>
+              <b-col>{{ row.item.id }}</b-col>
+            </b-row>
+            <b-row class="mb-2">
+              <b-col class="text-sm-right" sm="3">
+                <b>Retry Counts:</b>
+              </b-col>
+              <b-col>{{ row.item.retry_count }}</b-col>
+            </b-row>
+            <b-row class="mb-2">
+              <b-col class="text-sm-right" sm="3">
+                <b>Module:</b>
+              </b-col>
+              <b-col>{{ row.item.module }}</b-col>
+            </b-row>
+            <b-row class="mb-2">
+              <b-col class="text-sm-right" sm="3">
+                <b>Arguments:</b>
+              </b-col>
+              <b-col>{{ row.item.args}}</b-col>
+            </b-row>
+          </b-card>
+        </template>
+      </b-table>
+    </b-card-body>
+  </b-collapse>
+</b-card>
