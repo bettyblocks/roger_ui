@@ -4,7 +4,7 @@ defmodule RogerUi.Mixfile do
   def project do
     [
       app: :roger_ui,
-      version: "0.1.3",
+      version: "0.1.4",
       elixir: "~> 1.5",
       elixirc_paths: ["lib", "web"],
       package: package(),
@@ -38,7 +38,7 @@ defmodule RogerUi.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:roger, "~> 1.3.0"},
+      {:roger, path: "../roger"},
       {:plug, "~> 1.4"},
       {:cowboy, "~> 1.0"},
       {:ex_doc, ">= 0.0.0", only: :dev},
