@@ -15,6 +15,7 @@ function initialize_app() {
       autorefresh: false
     },
     methods: {
+      delete_job: _delete_job,
       select_queue: _select_queue,
       delete_queue: _delete_queue,
       toggle_autorefresh: _toggle_autorefresh,
@@ -34,6 +35,13 @@ function _select_queue(node_name, partition_name, queue_name) {
   };
   load_jobs_info();
 };
+
+function _delete_job(job_id) {
+  var url = "api/jobs/" + this.selected_queue.partition_name + "/" + job_id;
+  $.ajax({url: url, method: "DELETE"})
+    .done(function(data) {
+    });
+}
 
 function _toggle_autorefresh() {
   if (this.autorefresh) {

@@ -83,6 +83,14 @@ defmodule RogerUi.RouterPlug do
       |> halt()
     end
 
+    delete "api/jobs/:partition_name/:job_id" do
+      Roger.Partition.Global.cancel_job(partition_name, job_id)
+
+      conn
+      |> send_resp(204, "")
+      |> halt()
+    end
+
     match _ do
       index_path = Path.join([Application.app_dir(:roger_ui), "priv/static/index.html"])
       conn
