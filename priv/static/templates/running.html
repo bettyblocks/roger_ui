@@ -36,7 +36,16 @@
               <b-col class="text-sm-right" sm="3">
                 <b>Arguments:</b>
               </b-col>
-              <b-col>{{ row.item.args}}</b-col>
+              <b-col>
+                <b-card>
+                  <b-row class="mb-2" v-for="(val, key) in row.item.args" :key="key">
+                    <b-col class="text-sm-right" sm="3">
+                      <b>{{ key }}: </b>
+                    </b-col>
+                    <b-col>{{ val }}</b-col>
+                  </b-row>
+                </b-card>
+              </b-col>
             </b-row>
           </b-card>
         </template>
