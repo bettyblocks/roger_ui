@@ -9,7 +9,7 @@ defmodule RogerUi.Application do
     run_server? = Application.get_env(:roger_ui, :server, true)
     web_port = Application.get_env(:roger_ui, :web_port, 4040)
     if run_server? do
-      case Plug.Adapters.Cowboy.http(RogerUi.RouterPlug, [], port: web_port) do
+      case Plug.Adapters.Cowboy.http(RogerUi.Web.RouterPlug, [], port: web_port) do
         {:ok, _} ->
           IO.puts("Starting RogerUi server on port #{web_port}")
         {:error, :eaddrinuse} ->
