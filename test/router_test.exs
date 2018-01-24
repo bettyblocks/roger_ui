@@ -32,9 +32,17 @@ defmodule RogerUi.Web.RouterTest do
     |> Enum.each(&(assert Map.has_key?(json, &1)))
   end
 
-  test "put pause queue" do
+  test "pause queue" do
     conn = :put
     |> conn("/api/queues/pause/roger_ui_test_partition/default")
+    |> Router.call([])
+
+    assert conn.status == 204
+  end
+
+  test "resume queue" do
+    conn = :put
+    |> conn("/api/queues/resume/roger_ui_test_partition/default")
     |> Router.call([])
 
     assert conn.status == 204
