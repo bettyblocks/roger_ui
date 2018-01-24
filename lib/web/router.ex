@@ -1,10 +1,10 @@
-defmodule RogerUi.RouterPlug do
+defmodule RogerUi.Web.RouterPlug do
   @moduledoc """
   Plug to expose RogerUi API
   """
 
   require Logger
-  alias RogerUi.RouterPlug.Router
+  alias RogerUi.Web.RouterPlug.Router
 
   alias Roger.Info
 
