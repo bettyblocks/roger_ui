@@ -30,16 +30,23 @@ defmodule RogerUi.Web.RouterPlug do
     plug :match
     plug :dispatch
 
+    defp no_content_response(ncr_conn) do
+      ncr_conn |> send_resp(204, "") |> halt()
+    end
+
+    defp json_response(j_conn, json) do
+      j_conn
+      |> put_resp_header("content-type", "application/json")
+      |> send_resp(200, json)
+      |> halt()
+    end
+
     # {nodes: {:node_name_1 {partition_name_1: {queue_name_1: {...}}}}}}
     get "/api/nodes" do
       nodes = Info.running_partitions()
       |> Enum.into(%{})
       {:ok, json} = Poison.encode(%{nodes: nodes})
-
-      conn
-      |> put_resp_header("content-type", "application/json")
-      |> send_resp(200, json)
-      |> halt()
+      json_response(conn, json)
     end
 
     get "/api/jobs/:partition_name/:queue_name" do
@@ -52,43 +59,27 @@ defmodule RogerUi.Web.RouterPlug do
       {:ok, json} = Poison.encode(%{roger_now: roger_now,
                                     queued_jobs: queued_jobs,
                                     running_jobs: running_jobs})
-
-      conn
-      |> put_resp_header("content-type", "application/json")
-      |> send_resp(200, json)
-      |> halt()
+      json_response(conn, json)
     end
 
     put "api/queues/pause/:partition_name/:queue_name" do
       Roger.Partition.Global.queue_pause(partition_name, queue_name)
-
-      conn
-      |> send_resp(204, "")
-      |> halt()
+      no_content_response(conn)
     end
 
     put "api/queues/resume/:partition_name/:queue_name" do
       Roger.Partition.Global.queue_resume(partition_name, queue_name)
-
-      conn
-      |> send_resp(204, "")
-      |> halt()
+      no_content_response(conn)
     end
 
     delete "api/queues/:partition_name/:queue_name" do
       Roger.Queue.purge(partition_name, queue_name)
-
-      conn
-      |> send_resp(204, "")
-      |> halt()
+      no_content_response(conn)
     end
 
     delete "api/jobs/:partition_name/:job_id" do
       Roger.Partition.Global.cancel_job(partition_name, job_id)
-
-      conn
-      |> send_resp(204, "")
-      |> halt()
+      no_content_response(conn)
     end
 
     match _ do
