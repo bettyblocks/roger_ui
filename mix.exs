@@ -38,7 +38,7 @@ defmodule RogerUi.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:roger, "~> 1.3"},
+      {:roger, "~> 1.3.0"},
       {:plug, "~> 1.4"},
       {:cowboy, "~> 1.0"},
       {:ex_doc, ">= 0.0.0", only: :dev},
