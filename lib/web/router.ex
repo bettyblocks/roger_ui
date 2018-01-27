@@ -62,13 +62,15 @@ defmodule RogerUi.Web.RouterPlug do
       json_response(conn, json)
     end
 
+    # NOTE atoms are not garbage collected, maybe an issue, maybe not:
+    # https://engineering.klarna.com/monitoring-erlang-atoms-c1d6a741328e
     put "api/queues/pause/:partition_name/:queue_name" do
-      Roger.Partition.Global.queue_pause(partition_name, queue_name)
+      Roger.Partition.Global.queue_pause(partition_name, String.to_atom(queue_name))
       no_content_response(conn)
     end
 
     put "api/queues/resume/:partition_name/:queue_name" do
-      Roger.Partition.Global.queue_resume(partition_name, queue_name)
+      Roger.Partition.Global.queue_resume(partition_name, String.to_atom(queue_name))
       no_content_response(conn)
     end
 
