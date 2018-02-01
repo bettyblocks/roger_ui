@@ -15,8 +15,7 @@ defmodule RogerUi.Web.RouterPlug do
   end
 
   defmodule Router do
-    # @roger_info_api Application.get_env(:roger_ui, :roger_info_api, Roger.Info)
-    @roger_info_api RogerUi.Tests.RogerInfoInMemory
+    @roger_info_api Application.get_env(:roger_ui, :roger_info_api, Roger.Info)
 
     @moduledoc """
     Plug Router extension
