@@ -105,7 +105,7 @@ defmodule RogerUi.Web.RouterPlug do
     # {nodes: {:node_name_1 {partition_name_1: {queue_name_1: {...}}}}}}
     get "/api/nodes" do
       nodes =
-        Info.partitions()
+        @roger_info_api.partitions()
         |> Enum.into(%{})
 
       {:ok, json} = Poison.encode(%{nodes: nodes})

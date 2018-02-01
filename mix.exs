@@ -12,7 +12,8 @@ defmodule RogerUi.Mixfile do
       Dashboard and monitoring tools for Roger job processing system
       """,
       start_permanent: Mix.env == :prod,
-      deps: deps()
+      deps: deps(),
+      aliases: aliases()
     ]
   end
 
@@ -26,6 +27,11 @@ defmodule RogerUi.Mixfile do
     ]
   end
 
+  defp aliases do
+    [
+      test: "test --no-start"
+    ]
+  end
 
   # Run "mix help compile.app" to learn about applications.
   def application do
