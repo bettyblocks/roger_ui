@@ -63,4 +63,31 @@ defmodule RogerUi.Web.RouterTest do
 
     assert conn.status == 204
   end
+
+  test "get all queues paginated" do
+    conn = :get
+    |> conn("/api/queues/10/1")
+    |> Router.call([])
+
+    assert conn.status == 200
+    json = Poison.decode!(conn.resp_body)
+    assert Enum.count(json["queues"]) == 10
+    assert json["total"] == 12
+
+    conn = :get
+    |> conn("/api/queues/10/2")
+    |> Router.call([])
+    json = Poison.decode!(conn.resp_body)
+    assert Enum.count(json["queues"]) == 2
+  end
+
+  test "get all queues paginated and filtered" do
+    conn = :get
+    |> conn("/api/queues/10/1/fast")
+    |> Router.call([])
+
+    assert conn.status == 200
+    json = Poison.decode!(conn.resp_body)
+    assert Enum.count(json["queues"]) == 4
+  end
 end

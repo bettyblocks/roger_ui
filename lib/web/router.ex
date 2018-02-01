@@ -15,6 +15,8 @@ defmodule RogerUi.Web.RouterPlug do
   end
 
   defmodule Router do
+    @roger_info_api Application.get_env(:roger_ui, :roger_info_api, Roger.Info)
+
     @moduledoc """
     Plug Router extension
     """
@@ -22,29 +24,90 @@ defmodule RogerUi.Web.RouterPlug do
     import Plug.Conn
     use Plug.Router
 
-    plug Plug.Static,
+    plug(
+      Plug.Static,
       at: "/",
       from: :roger_ui,
-      only: ~w(assets templates)
+      only: ~w(css js)
+    )
 
-    plug :match
-    plug :dispatch
+    plug(:match)
+    plug(:dispatch)
 
     defp no_content_response(ncr_conn) do
-      ncr_conn |> send_resp(204, "") |> halt()
+      ncr_conn
+      |> put_resp_header("access-control-allow-origin", "*")
+      |> send_resp(204, "")
+      |> halt()
     end
 
     defp json_response(j_conn, json) do
       j_conn
+      |> put_resp_header("access-control-allow-origin", "*")
       |> put_resp_header("content-type", "application/json")
       |> send_resp(200, json)
       |> halt()
     end
 
+    defp named_queues(partition, name) do
+      queues = partition[name]
+
+      queues
+      |> Map.keys()
+      |> Enum.map(fn qn ->
+        %{
+          qualified_queue_name: Roger.Queue.make_name(name, qn),
+          queue_name: qn,
+          partition_name: name,
+          paused: if(partition[name][qn].paused, do: "paused", else: "running"),
+          count: partition[name][qn].message_count
+        }
+      end)
+    end
+
+    defp queues_partition(partitions, name) do
+      partition = partitions[name]
+
+      partition
+      |> Map.keys()
+      |> Enum.reduce([], fn k, l -> [named_queues(partition, k) | l] end)
+    end
+
+    defp extract_queues(node) do
+      partitions = elem(node, 1)
+
+      partitions
+      |> Map.keys()
+      |> Enum.reduce([], fn k, l -> [queues_partition(partitions, k) | l] end)
+    end
+
+    def paginated_queues(nodes, page_size, page_number, filter \\ "") do
+      page_size = if page_size > 100, do: 100, else: page_size
+
+      queues =
+        nodes
+        |> Enum.map(fn node -> extract_queues(node) end)
+        |> List.flatten()
+
+      queues =
+        if filter == "" do
+          queues
+        else
+          Enum.filter(queues, fn q -> String.contains?(q.qualified_queue_name, filter) end)
+        end
+
+      %{
+        queues: Enum.slice(queues, page_size * (page_number - 1), page_size),
+        total: Enum.count(queues)
+      }
+    end
+
     # {nodes: {:node_name_1 {partition_name_1: {queue_name_1: {...}}}}}}
     get "/api/nodes" do
-      nodes = Info.running_partitions()
-      |> Enum.into(%{})
+      nodes =
+        Info.partitions()
+        |> Enum.into(%{})
+
       {:ok, json} = Poison.encode(%{nodes: nodes})
       json_response(conn, json)
     end
@@ -52,13 +115,41 @@ defmodule RogerUi.Web.RouterPlug do
     get "/api/jobs/:partition_name/:queue_name" do
       roger_now = Roger.now()
       queued_jobs = Info.queued_jobs(partition_name, queue_name)
-      running_jobs = partition_name
-      |> Info.running_jobs()
-      |> Enum.into(%{})
 
-      {:ok, json} = Poison.encode(%{roger_now: roger_now,
-                                    queued_jobs: queued_jobs,
-                                    running_jobs: running_jobs})
+      running_jobs =
+        partition_name
+        |> Info.running_jobs()
+        |> Enum.into(%{})
+
+      {:ok, json} =
+        Poison.encode(%{
+          roger_now: roger_now,
+          queued_jobs: queued_jobs,
+          running_jobs: running_jobs
+        })
+
+      json_response(conn, json)
+    end
+
+    get "/api/queues/:page_size/:page_number" do
+      queues =
+        @roger_info_api.partitions()
+        |> paginated_queues(page_size |> String.to_integer(), page_number |> String.to_integer())
+
+      {:ok, json} = Poison.encode(queues)
+      json_response(conn, json)
+    end
+
+    get "/api/queues/:page_size/:page_number/:filter" do
+      queues =
+        @roger_info_api.partitions()
+        |> paginated_queues(
+          page_size |> String.to_integer(),
+          page_number |> String.to_integer(),
+          filter
+        )
+
+      {:ok, json} = Poison.encode(queues)
       json_response(conn, json)
     end
 
@@ -86,6 +177,7 @@ defmodule RogerUi.Web.RouterPlug do
 
     match _ do
       index_path = Path.join([Application.app_dir(:roger_ui), "priv/static/index.html"])
+
       conn
       |> put_resp_header("content-type", "text/html")
       |> send_file(200, index_path)
