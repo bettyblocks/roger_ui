@@ -4,9 +4,9 @@ defmodule RogerUi.Mixfile do
   def project do
     [
       app: :roger_ui,
-      version: "0.1.5",
+      version: "0.1.6",
       elixir: "~> 1.5",
-      elixirc_paths: ["lib", "web"],
+      elixirc_paths: ["lib"],
       package: package(),
       description: """
       Dashboard and monitoring tools for Roger job processing system
