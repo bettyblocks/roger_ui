@@ -18,7 +18,7 @@ defmodule RogerUi.Mixfile do
 
   def package do
     [
-      files: ~w(lib test priv) ++
+      files: ~w(lib test priv/static) ++
              ~w(LICENSE mix.exs README.md),
       maintainers: ["Antonio Abella", "Paul Engel"],
       licenses: ["MIT"],
