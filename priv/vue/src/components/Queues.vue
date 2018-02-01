@@ -2,10 +2,11 @@
 <div class="container">
   <b-row>
     <b-col cols="2" class="my-1">
-      <b-pagination @change="change_page" size="sm" :total-rows="total_queues" :per-page="page_size"></b-pagination>
+      <b-pagination @change="change_page"
+        size="sm" :total-rows="total_queues" :per-page="page_size"></b-pagination>
     </b-col>
     <b-col md="10" class="my-1">
-      <b-form-input @input="change_filter" placeholder="Type to Search" autofocus />
+      <b-form-input @input="change_filter" placeholder="Type to Filter" autofocus />
     </b-col>
   </b-row>
   <b-table small :items="queues" :fields="fields"></b-table>
@@ -13,6 +14,7 @@
 </template>
 
 <script>
+import debounce from 'lodash.debounce'
 
 export default {
   name: 'Queues',
@@ -52,11 +54,11 @@ export default {
       this.current_page = page
       this.update_queues()
     },
-    change_filter (filter) {
+    change_filter: debounce(function (filter) {
       this.current_page = 1
       this.filter = filter
       this.update_queues()
-    }
+    }, 400)
   },
   created () {
     this.update_queues()
