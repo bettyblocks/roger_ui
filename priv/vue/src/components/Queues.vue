@@ -41,7 +41,7 @@ export default {
   methods: {
     update_queues () {
       this.$http
-        .get(`/api/queues/${this.page_size}/${this.current_page}/${this.filter}`)
+        .get(`/api/queues/${this.page_size}/${this.current_page}`, { params: { filter: this.filter } })
         .then(response => {
           this.queues = response.data.queues
           this.total_queues = response.data.total

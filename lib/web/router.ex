@@ -132,21 +132,13 @@ defmodule RogerUi.Web.RouterPlug do
     end
 
     get "/api/queues/:page_size/:page_number" do
-      queues =
-        @roger_info_api.partitions()
-        |> paginated_queues(page_size |> String.to_integer(), page_number |> String.to_integer())
-
-      {:ok, json} = Poison.encode(queues)
-      json_response(conn, json)
-    end
-
-    get "/api/queues/:page_size/:page_number/:filter" do
+      conn = fetch_query_params(conn)
       queues =
         @roger_info_api.partitions()
         |> paginated_queues(
           page_size |> String.to_integer(),
           page_number |> String.to_integer(),
-          filter
+          Map.get(conn.query_params, "filter", "")
         )
 
       {:ok, json} = Poison.encode(queues)
