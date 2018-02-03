@@ -127,13 +127,13 @@ export default {
 
     change_page (page) {
       this.current_page = page
-      this.update_queues()
+      this.refresh_queues()
     },
 
     change_filter: debounce(function (filter) {
       this.current_page = 1
       this.filter = filter
-      this.update_queues()
+      this.refresh_queues()
     }, 400),
 
     toggle_selected () {
