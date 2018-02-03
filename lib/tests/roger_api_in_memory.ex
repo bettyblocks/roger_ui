@@ -41,4 +41,6 @@ defmodule RogerUi.Tests.RogerApiInMemory do
       }
     ]
   end
+
+  def purge_queue(_partition_name, _queue_name), do: {:ok, %{message_count: 0}}
 end

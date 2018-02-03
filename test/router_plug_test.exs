@@ -32,14 +32,6 @@ defmodule RogerUi.Web.RouterPlugTest do
   #   |> Enum.each(&(assert Map.has_key?(json, &1)))
   # end
 
-  # test "purge queue" do
-  #   conn = :delete
-  #   |> conn("api/queues/roger_ui_test_partition/default")
-  #   |> Router.call([])
-
-  #   assert conn.status == 204
-  # end
-
   # test "cancel job" do
   #   conn = :delete
   #   |> conn("api/jobs/roger_ui_test_partition/y887llhnhnh")
