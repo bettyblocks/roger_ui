@@ -1,7 +1,9 @@
-defmodule RogerUi.Tests.RogerInfoInMemory do
+defmodule RogerUi.Tests.RogerApiInMemory do
   @moduledoc """
   Mocks calls to Roger.Info API
   """
+
+  @behaviour RogerUi.Roger
 
   def partitions do
     [
