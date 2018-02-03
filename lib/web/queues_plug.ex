@@ -96,12 +96,12 @@ defmodule RogerUi.Web.QueuesPlug do
     # NOTE atoms are not garbage collected, maybe an issue, maybe not:
     # https://engineering.klarna.com/monitoring-erlang-atoms-c1d6a741328e
     put "/pause/:partition_name/:queue_name" do
-      Roger.Partition.Global.queue_pause(partition_name, String.to_atom(queue_name))
+      @roger_api.queue_pause(partition_name, String.to_atom(queue_name))
       no_content_response(conn)
     end
 
     put "/resume/:partition_name/:queue_name" do
-      Roger.Partition.Global.queue_resume(partition_name, String.to_atom(queue_name))
+      @roger_api.queue_resume(partition_name, String.to_atom(queue_name))
       no_content_response(conn)
     end
 

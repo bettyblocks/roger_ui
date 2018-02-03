@@ -9,4 +9,8 @@ defmodule RogerUi.RogerApi do
 
   def purge_queue(partition_name, queue_name), do:
     Roger.Queue.purge(partition_name, queue_name)
+
+  def queue_pause(partition_name, queue_name), do:
+    Roger.Partition.Global.queue_pause(partition_name, queue_name)
+
 end

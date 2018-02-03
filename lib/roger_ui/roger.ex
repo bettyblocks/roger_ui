@@ -21,5 +21,16 @@ defmodule RogerUi.Roger do
   @doc """
   Flushes all messages on the given queue
   """
-  @callback purge_queue(String.t(), atom()) :: {:ok, %{message_count: integer()}}
+  @callback purge_queue(partition_name :: String.t(), queue_name :: atom())
+    :: {:ok, %{message_count: integer()}}
+
+  @doc """
+  Cluster-wide pausing of the given queue in the given partition_id.
+  """
+  @callback queue_pause(partition_name :: String.t(), queue_name :: atom()) :: :ok
+
+  @doc """
+  Cluster-wide resume of the given queue in the given partition_id.
+  """
+  @callback queue_resume(partition_name :: String.t(), queue_name :: atom()) :: :ok
 end
