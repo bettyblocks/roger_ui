@@ -9,28 +9,27 @@ defmodule RogerUi.Roger do
     message_count: integer(),
     paused: boolean()
   }
-  @type queues :: %{atom() => queue()}
-  @type partitions :: %{required(String.t()) => queues()} | %{}
-  @type nodes :: keyword(%{running: partitions(), waiting: partitions()})
 
-  @doc """
-  Retrieve combined partition info on all running and waiting partitions, over the entire cluster.
-  """
+  @type queues :: %{partition_name :: String.t() =>
+    %{queue_name :: atom() => queue()} | %{}}
+
+  @type jobs :: %{partition_name :: atom() => []}
+  @type nodes :: [{node_name :: atom(),
+                   %{running: queues(), waiting: queues()}}]
+
   @callback partitions :: nodes()
 
-  @doc """
-  Flushes all messages on the given queue
-  """
   @callback purge_queue(partition_name :: String.t(), queue_name :: atom())
     :: {:ok, %{message_count: integer()}}
 
-  @doc """
-  Cluster-wide pausing of the given queue in the given partition_id.
-  """
   @callback queue_pause(partition_name :: String.t(), queue_name :: atom()) :: :ok
 
-  @doc """
-  Cluster-wide resume of the given queue in the given partition_id.
-  """
   @callback queue_resume(partition_name :: String.t(), queue_name :: atom()) :: :ok
+
+  @callback cancel_job(partition_name :: String.t(), queue_name :: atom()) :: :ok
+
+  @callback running_jobs(partition_name :: String.t()) :: [{node_name :: String.t(), [%Roger.Job{}]}]
+
+  @callback queued_jobs(partition_name :: String.t(), queue_name :: atom) ::
+    [{node_name :: String.t(), [%Roger.Job{}]}]
 end
