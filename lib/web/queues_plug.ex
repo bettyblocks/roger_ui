@@ -20,66 +20,31 @@ defmodule RogerUi.Web.QueuesPlug do
     @roger_api Application.get_env(:roger_ui, :roger_api, RogerUi.RogerApi)
 
     import Plug.Conn
-    import RogerUi.Web.ResponseHelper
+    alias RogerUi.Web.ResponseHelper, as: RH
+    alias RogerUi.QueuesHelper, as: QH
     use Plug.Router
 
     plug(:match)
     plug(:dispatch)
 
-    defp reduce_queue(partition, f) do
-      partition
-      |> Map.keys()
-      |> Enum.reduce([], fn k, l -> [f.(partition, k) | l] end)
-    end
-
-    defp named_queues(partition, name) do
-      queues = partition[name]
-
-      queues
-      |> Map.keys()
-      |> Enum.map(fn qn ->
-        %{
-          qualified_queue_name: Roger.Queue.make_name(name, qn),
-          queue_name: qn,
-          partition_name: name,
-          paused: if(partition[name][qn].paused, do: "paused", else: "running"),
-          count: partition[name][qn].message_count
-        }
-      end)
-    end
-
-    defp queues_partition(partitions, name) do
-      reduce_queue(partitions[name], &named_queues/2)
-    end
-
-    defp extract_queues(node) do
-      reduce_queue(elem(node, 1), &queues_partition/2)
-    end
-
-    def filtered_queues(nodes, filter) do
-      queues =
-        nodes
-        |> Enum.map(fn node -> extract_queues(node) end)
-        |> List.flatten()
-
-      if filter == "" do
-        queues
+    defp selected_queues(queues, filter) do
+      if queues == [] do
+        nodes = @roger_api.partitions()
+        QH.filtered_queues(nodes, filter)
       else
-        Enum.filter(queues, fn q -> String.contains?(q.qualified_queue_name, filter) end)
+        Poison.decode(queues)
       end
     end
 
-    def paginated_queues(nodes, page_size, page_number, filter \\ "") do
-      page_size = if page_size > 100, do: 100, else: page_size
-      queues =  filtered_queues(nodes, filter)
+    defp toggle_queues(conn, f) do
+      conn = fetch_query_params(conn)
+      queues = Map.get(conn.query_params, "queues", [])
+      filter = Map.get(conn.query_params, "filter", "")
+      queues
+      |> selected_queues(filter)
+      |> Enum.each(fn q -> f.(q.partition_name, QH.atom_name(q.queue_name)) end)
 
-      %{queues: Enum.slice(queues, page_size * (page_number - 1), page_size),
-        total: Enum.count(queues)}
-    end
-
-    def pause_queue(q) do
-      name = if is_atom(q.queue_name), do: q.queue_name, else: String.to_atom(q.queue_name)
-      @roger_api.queue_pause(q.partition_name, name)
+      RH.no_content_response(conn, 207)
     end
 
     get "/:page_size/:page_number" do
@@ -88,61 +53,33 @@ defmodule RogerUi.Web.QueuesPlug do
       page_number = String.to_integer(page_number)
       filter = Map.get(conn.query_params, "filter", "")
       nodes = @roger_api.partitions()
-      queues = paginated_queues(nodes, page_size, page_number, filter)
+      queues = QH.paginated_queues(nodes, page_size, page_number, filter)
 
       {:ok, json} = Poison.encode(queues)
-      json_response(conn, json)
+      RH.json_response(conn, json)
     end
 
-    options "/pause", do: no_content_response(conn, 207)
-    put "/pause" do
-      conn = fetch_query_params(conn)
-      queues = Map.get(conn.query_params, "queues", [])
-      filter = Map.get(conn.query_params, "filter", "")
-      queues =
-        if queues == [] do
-          nodes = @roger_api.partitions()
-          filtered_queues(nodes, filter)
-        else
-          Poison.decode(queues)
-        end
-      Enum.each(queues, &pause_queue/1)
+    options "/pause", do: RH.no_content_response(conn, 207)
+    put "/pause", do: toggle_queues(conn, &@roger_api.queue_pause/2)
 
-      no_content_response(conn, 207)
-    end
-
-    options "/resume", do: no_content_response(conn, 207)
-    put "/resume" do
-      conn = fetch_query_params(conn)
-      queues = Map.get(conn.query_params, "queues", [])
-      filter = Map.get(conn.query_params, "filter", "")
-      queues =
-      if queues == [] do
-        nodes = @roger_api.partitions()
-        filtered_queues(nodes, filter)
-      else
-        Poison.decode(queues)
-      end
-      Enum.each(queues, &pause_queue/1)
-
-      no_content_response(conn, 207)
-    end
+    options "/resume", do: RH.no_content_response(conn, 207)
+    put "/resume", do: toggle_queues(conn, &@roger_api.queue_resume/2)
 
     # NOTE atoms are not garbage collected, maybe an issue, maybe not:
     # https://engineering.klarna.com/monitoring-erlang-atoms-c1d6a741328e
     put "/pause/:partition_name/:queue_name" do
-      @roger_api.queue_pause(partition_name, String.to_atom(queue_name))
-      no_content_response(conn)
+      @roger_api.queue_pause(partition_name, QH.atom_name(queue_name))
+      RH.no_content_response(conn)
     end
 
     put "/resume/:partition_name/:queue_name" do
-      @roger_api.queue_resume(partition_name, String.to_atom(queue_name))
-      no_content_response(conn)
+      @roger_api.queue_resume(partition_name, QH.atom_name(queue_name))
+      RH.no_content_response(conn)
     end
 
     delete "/:partition_name/:queue_name" do
       @roger_api.purge_queue(partition_name, queue_name)
-      no_content_response(conn)
+      RH.no_content_response(conn)
     end
   end
 end
