@@ -29,20 +29,19 @@ defmodule RogerUi.Web.QueuesPlug do
 
     defp selected_queues(queues, filter) do
       if queues == [] do
-        nodes = @roger_api.partitions()
-        QH.filtered_queues(nodes, filter)
+        @roger_api.partitions() |> QH.filtered_queues(filter)
       else
         Poison.decode(queues)
       end
     end
 
-    defp toggle_queues(conn, f) do
+    defp action_over_queues(conn, action) do
       conn = fetch_query_params(conn)
       queues = Map.get(conn.query_params, "queues", [])
       filter = Map.get(conn.query_params, "filter", "")
       queues
       |> selected_queues(filter)
-      |> Enum.each(fn q -> f.(q.partition_name, QH.atom_name(q.queue_name)) end)
+      |> Enum.each(fn q -> action.(q.partition_name, QH.atom_name(q.queue_name)) end)
 
       RH.no_content_response(conn, 207)
     end
@@ -52,34 +51,21 @@ defmodule RogerUi.Web.QueuesPlug do
       page_size = String.to_integer(page_size)
       page_number = String.to_integer(page_number)
       filter = Map.get(conn.query_params, "filter", "")
-      nodes = @roger_api.partitions()
-      queues = QH.paginated_queues(nodes, page_size, page_number, filter)
+      queues =
+        @roger_api.partitions()
+        |> QH.paginated_queues(page_size, page_number, filter)
 
       {:ok, json} = Poison.encode(queues)
       RH.json_response(conn, json)
     end
 
     options "/pause", do: RH.no_content_response(conn, 207)
-    put "/pause", do: toggle_queues(conn, &@roger_api.queue_pause/2)
+    put "/pause", do: action_over_queues(conn, &@roger_api.queue_pause/2)
 
     options "/resume", do: RH.no_content_response(conn, 207)
-    put "/resume", do: toggle_queues(conn, &@roger_api.queue_resume/2)
+    put "/resume", do: action_over_queues(conn, &@roger_api.queue_resume/2)
 
-    # NOTE atoms are not garbage collected, maybe an issue, maybe not:
-    # https://engineering.klarna.com/monitoring-erlang-atoms-c1d6a741328e
-    put "/pause/:partition_name/:queue_name" do
-      @roger_api.queue_pause(partition_name, QH.atom_name(queue_name))
-      RH.no_content_response(conn)
-    end
-
-    put "/resume/:partition_name/:queue_name" do
-      @roger_api.queue_resume(partition_name, QH.atom_name(queue_name))
-      RH.no_content_response(conn)
-    end
-
-    delete "/:partition_name/:queue_name" do
-      @roger_api.purge_queue(partition_name, queue_name)
-      RH.no_content_response(conn)
-    end
+    options "/delete", do: RH.no_content_response(conn, 207)
+    delete "/delete", do: action_over_queues(conn, &@roger_api.purge_queue/2)
   end
 end

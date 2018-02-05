@@ -27,20 +27,12 @@ defmodule RogerUi.Web.QueuesPlugTest do
     assert conn.status == 207
   end
 
-  test "pause queue" do
-    conn = :put
-    |> conn("/pause/roger_ui_test_partition/default")
+  test "delete queues" do
+    conn = :delete
+    |> conn("/delete", create_queues())
     |> Router.call([])
 
-    assert conn.status == 204
-  end
-
-  test "resume queue" do
-    conn = :put
-    |> conn("/resume/roger_ui_test_partition/default")
-    |> Router.call([])
-
-    assert conn.status == 204
+    assert conn.status == 207
   end
 
   test "get all queues paginated" do
@@ -68,13 +60,5 @@ defmodule RogerUi.Web.QueuesPlugTest do
     assert conn.status == 200
     json = Poison.decode!(conn.resp_body)
     assert Enum.count(json["queues"]) == 4
-  end
-
-  test "purge queue" do
-    conn = :delete
-    |> conn("/roger_ui_test_partition/default")
-    |> Router.call([])
-
-    assert conn.status == 204
   end
 end
