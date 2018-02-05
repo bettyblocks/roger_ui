@@ -26,6 +26,12 @@ defmodule RogerUi.Web.QueuesPlug do
     plug(:match)
     plug(:dispatch)
 
+    defp reduce_queue(partition, f) do
+      partition
+      |> Map.keys()
+      |> Enum.reduce([], fn k, l -> [f.(partition, k) | l] end)
+    end
+
     defp named_queues(partition, name) do
       queues = partition[name]
 
@@ -43,19 +49,11 @@ defmodule RogerUi.Web.QueuesPlug do
     end
 
     defp queues_partition(partitions, name) do
-      partition = partitions[name]
-
-      partition
-      |> Map.keys()
-      |> Enum.reduce([], fn k, l -> [named_queues(partition, k) | l] end)
+      reduce_queue(partitions[name], &named_queues/2)
     end
 
     defp extract_queues(node) do
-      partitions = elem(node, 1)
-
-      partitions
-      |> Map.keys()
-      |> Enum.reduce([], fn k, l -> [queues_partition(partitions, k) | l] end)
+      reduce_queue(elem(node, 1), &queues_partition/2)
     end
 
     def filtered_queues(nodes, filter) do
@@ -146,6 +144,5 @@ defmodule RogerUi.Web.QueuesPlug do
       @roger_api.purge_queue(partition_name, queue_name)
       no_content_response(conn)
     end
-
   end
 end
