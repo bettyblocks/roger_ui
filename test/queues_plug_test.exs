@@ -27,9 +27,9 @@ defmodule RogerUi.Web.QueuesPlugTest do
     assert conn.status == 207
   end
 
-  test "delete queues" do
-    conn = :delete
-    |> conn("/delete", create_queues())
+  test "purge queues" do
+    conn = :put
+    |> conn("/purge", create_queues())
     |> Router.call([])
 
     assert conn.status == 207

@@ -65,7 +65,7 @@ defmodule RogerUi.Web.QueuesPlug do
     options "/resume", do: RH.no_content_response(conn, 207)
     put "/resume", do: action_over_queues(conn, &@roger_api.queue_resume/2)
 
-    options "/delete", do: RH.no_content_response(conn, 207)
-    delete "/delete", do: action_over_queues(conn, &@roger_api.purge_queue/2)
+    options "/purge", do: RH.no_content_response(conn, 207)
+    put "/purge", do: action_over_queues(conn, &@roger_api.purge_queue/2)
   end
 end
