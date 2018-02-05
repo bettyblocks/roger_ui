@@ -15,7 +15,7 @@
         <b-button-group size="sm">
           <b-btn :disabled="nothing_selected" @click="run_action('resume')" class="mx-1 mdi mdi-play"></b-btn>
           <b-btn :disabled="nothing_selected" @click="run_action('pause')" class="mdi mdi-pause"></b-btn>
-          <b-btn :disabled="nothing_selected" @click="run_action('delete')" class="mx-1 mdi mdi-cancel"></b-btn>
+          <b-btn :disabled="nothing_selected" @click="run_action('purge')" class="mx-1 mdi mdi-cancel"></b-btn>
         </b-button-group>
       </b-button-toolbar>
     </b-col>
@@ -73,6 +73,7 @@ export default {
   },
   methods: {
     refresh_queues () {
+      this.checked_queues = []
       this.$http
         .get(`/api/queues/${this.page_size}/${this.current_page}`, { params: { filter: this.filter } })
         .then(response => {
@@ -84,45 +85,17 @@ export default {
         })
     },
 
-    pause_queues (params) {
+    action_over_queues (action, params) {
       this.$http
-        .put(`/api/queues/pause`, params)
-        .then(_ => {
-        })
-    },
-
-    resume_queues (params) {
-      this.$http
-        .put(`/api/queues/resume`, params)
-        .then(_ => {
-        })
-    },
-
-    delete_queues (params) {
-      this.$http
-        .delete(`/api/queues/delete`, params)
-        .then(_ => {
-        })
-    },
-
-    get_function (action) {
-      if (action === 'pause') {
-        return this.pause_queues
-      } else if (action === 'delete') {
-        return this.delete_queues
-      } else {
-        return this.resume_queues
-      }
+        .put(`/api/queues/${action}`, params)
+        .then(this.refresh_queues)
     },
 
     run_action (action) {
       if (this.nothing_selected) return
-      let f = this.get_function(action)
-      if (this.all_selected) {
-        f({ params: { filter: this.filter } })
-      } else {
-        f({ params: { queues: this.selected_queues } })
-      }
+      let params = this.all_selected ? { filter: this.filter } : { queues: this.checked_queues }
+      console.log(params)
+      this.action_over_queues(action, { params })
     },
 
     change_page (page) {
