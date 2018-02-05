@@ -4,11 +4,12 @@ defmodule RogerUi.Web.QueuesPlugTest do
   alias RogerUi.Web.QueuesPlug.Router
 
   defp create_queues do
-    Poison.encode!(%{
-      queues: [
-        %{queue_name: "default",
-          qualified_queue_name: "roger_demo_partition-default",
-          partition_name: "roger_demo_partition"}]})
+    %{
+      "queues" => [
+        %{"queue_name" => "default",
+          "qualified_queue_name" => "roger_demo_partition-default",
+          "partition_name" => "roger_demo_partition"}]}
+    %{"queues" => []}
   end
 
   test "pause queues" do

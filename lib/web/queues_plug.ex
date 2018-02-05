@@ -1,71 +1,65 @@
-defmodule RogerUi.Web.QueuesPlug do
-  @moduledoc """
-  Endpoints to process queues api calls
-  """
-
-  require Logger
+defmodule RogerUi.Web.QueuesPlugTest do
+  use ExUnit.Case
+  use Plug.Test
   alias RogerUi.Web.QueuesPlug.Router
 
-  def init(opts), do: opts
-
-  def call(conn, opts) do
-    Router.call(conn, Router.init(opts))
+  defp create_queues do
+    %{
+      "queues" => [
+        %{"queue_name" => "default",
+          "qualified_queue_name" => "roger_demo_partition-default",
+          "partition_name" => "roger_demo_partition"}]}
+    %{"queues" => []}
   end
 
-  defmodule Router do
-    @moduledoc """
-    Plug Router extension for QueuesPlug
-    """
+  test "pause queues" do
+    conn = :put
+    |> conn("/pause", create_queues())
+    |> Router.call([])
 
-    @roger_api Application.get_env(:roger_ui, :roger_api, RogerUi.RogerApi)
+    assert conn.status == 207
+  end
 
-    import Plug.Conn
-    alias RogerUi.Web.ResponseHelper, as: RH
-    alias RogerUi.QueuesHelper, as: QH
-    use Plug.Router
+  test "resume queues" do
+    conn = :put
+    |> conn("/resume", create_queues())
+    |> Router.call([])
 
-    plug(:match)
-    plug(:dispatch)
+    assert conn.status == 207
+  end
 
-    defp selected_queues(queues, filter) do
-      if queues == [] do
-        @roger_api.partitions() |> QH.filtered_queues(filter)
-      else
-        Poison.decode(queues)
-      end
-    end
+  test "purge queues" do
+    conn = :put
+    |> conn("/purge", create_queues())
+    |> Router.call([])
 
-    defp action_over_queues(conn, action) do
-      conn = fetch_query_params(conn)
-      queues = Map.get(conn.query_params, "queues", [])
-      filter = Map.get(conn.query_params, "filter", "")
-      queues
-      |> selected_queues(filter)
-      |> Enum.each(fn q -> action.(q.partition_name, QH.atom_name(q.queue_name)) end)
+    assert conn.status == 207
+  end
 
-      RH.no_content_response(conn, 207)
-    end
+  test "get all queues paginated" do
+    conn = :get
+    |> conn("/10/1")
+    |> Router.call([])
 
-    get "/:page_size/:page_number" do
-      conn = fetch_query_params(conn)
-      page_size = String.to_integer(page_size)
-      page_number = String.to_integer(page_number)
-      filter = Map.get(conn.query_params, "filter", "")
-      queues =
-        @roger_api.partitions()
-        |> QH.paginated_queues(page_size, page_number, filter)
+    assert conn.status == 200
+    json = Poison.decode!(conn.resp_body)
+    assert Enum.count(json["queues"]) == 10
+    assert json["total"] == 12
 
-      {:ok, json} = Poison.encode(queues)
-      RH.json_response(conn, json)
-    end
+    conn = :get
+    |> conn("/10/2")
+    |> Router.call([])
+    json = Poison.decode!(conn.resp_body)
+    assert Enum.count(json["queues"]) == 2
+  end
 
-    options "/pause", do: RH.no_content_response(conn, 207)
-    put "/pause", do: action_over_queues(conn, &@roger_api.queue_pause/2)
+  test "get all queues paginated and filtered" do
+    conn = :get
+    |> conn("/10/1?filter=fast")
+    |> Router.call([])
 
-    options "/resume", do: RH.no_content_response(conn, 207)
-    put "/resume", do: action_over_queues(conn, &@roger_api.queue_resume/2)
-
-    options "/purge", do: RH.no_content_response(conn, 207)
-    put "/purge", do: action_over_queues(conn, &@roger_api.purge_queue/2)
+    assert conn.status == 200
+    json = Poison.decode!(conn.resp_body)
+    assert Enum.count(json["queues"]) == 4
   end
 end
