@@ -3,6 +3,19 @@ defmodule RogerUi.Web.QueuesPlugTest do
   use Plug.Test
   alias RogerUi.Web.QueuesPlug.Router
 
+  test "pause queues" do
+    queues = Poison.encode!(%{
+          queues: [
+            %{queue_name: "default",
+              qualified_queue_name: "roger_demo_partition-default",
+              partition_name: "roger_demo_partition"}]})
+    conn = :options
+    |> conn("/pause", queues)
+    |> Router.call([])
+
+    assert conn.status == 207
+  end
+
   test "pause queue" do
     conn = :put
     |> conn("/pause/roger_ui_test_partition/default")
