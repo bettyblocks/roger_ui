@@ -39,6 +39,18 @@ export default {
   name: 'Jobs',
   data () {
     return {
+      fields: {
+        id: {
+          label: 'ID'
+        },
+        module: {
+          label: 'Module'
+        },
+        retry_count: {
+          label: 'Retry Count',
+          'class': 'text-right'
+        }
+      },
       checked: [],
       jobs: [],
       total_jobs: 0,
@@ -59,7 +71,7 @@ export default {
     refresh () {
       this.checked = []
       this.$http
-        .get(`/api/jobs/${this.page_size}/${this.current_page}`, { params: { filter: this.filter } })
+        .get(`/api/jobs/all/${this.page_size}/${this.current_page}`, { params: { filter: this.filter } })
         .then(response => {
           this.jobs = response.data.jobs
           this.total_jobs = response.data.total
