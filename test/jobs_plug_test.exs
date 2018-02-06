@@ -21,4 +21,32 @@ defmodule RogerUi.Web.JobsPlugTest do
 
     assert conn.status == 204
   end
+
+  test "get all jobs paginated" do
+    conn = :get
+    |> conn("all/5/1")
+    |> Router.call([])
+
+    assert conn.status == 200
+    json = Poison.decode!(conn.resp_body)
+    assert Enum.count(json["jobs"]) == 5
+    assert json["total"] == 10
+
+    conn = :get
+    |> conn("all/5/2")
+    |> Router.call([])
+    json = Poison.decode!(conn.resp_body)
+    assert Enum.count(json["jobs"]) == 5
+  end
+
+  test "get all jobs paginated and filtered" do
+    conn = :get
+    |> conn("all/10/1?filter=create")
+    |> Router.call([])
+
+    assert conn.status == 200
+    json = Poison.decode!(conn.resp_body)
+    assert Enum.count(json["jobs"]) == 10
+  end
+
 end
