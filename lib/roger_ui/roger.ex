@@ -29,6 +29,7 @@ defmodule RogerUi.Roger do
   @callback cancel_job(partition_name :: String.t(), queue_name :: atom()) :: :ok
 
   @callback running_jobs(partition_name :: String.t()) :: [{node_name :: String.t(), [%Roger.Job{}]}]
+  @callback running_jobs() :: [{node_name :: String.t(), [%Roger.Job{}]}]
 
   @callback queued_jobs(partition_name :: String.t(), queue_name :: atom) ::
     [{node_name :: String.t(), [%Roger.Job{}]}]

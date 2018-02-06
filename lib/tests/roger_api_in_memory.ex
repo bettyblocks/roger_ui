@@ -42,10 +42,9 @@ defmodule RogerUi.Tests.RogerApiInMemory do
     ]
   end
 
-  def running_jobs(_partition_name) do
+  def running_jobs(_partition_name \\ "") do
     [
-      "watcher@127.0.0.1": [],
-      "server@127.0.0.1": [
+      "watcher@127.0.0.1": [
         %Roger.Job{
           args: %{"country" => "Venezuela", "email" => "janedoe@gmail.com", "name" => "Jane Doe", "number_of_pets" => 966},
           execution_key: nil, id: "16ovjr39jvijf4kgrlqe2ib2aadojhid", module: RogerDemo.Job.CreateUpdateUser,
@@ -70,7 +69,9 @@ defmodule RogerUi.Tests.RogerApiInMemory do
           args: %{"country" => "Venezuela", "email" => "janedoe@gmail.com", "name" => "Jane Doe", "number_of_pets" => 964},
           execution_key: nil, id: "83u3ourppqnctk67r6f0mh3cmoa34a3i", module: RogerDemo.Job.CreateUpdateUser,
           queue_key: nil, queued_at: 1517697586453, retry_count: 0, started_at: 1517697682983
-        },
+        }
+      ],
+      "server@127.0.0.1": [
         %Roger.Job{
           args: %{"country" => "Venezuela", "email" => "janedoe@gmail.com", "name" => "Jane Doe", "number_of_pets" => 967},
           execution_key: nil, id: "c2mkvrgfonkgf1pdgkdl87okb3hi103r", module: RogerDemo.Job.CreateUpdateUser,
