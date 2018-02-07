@@ -6,7 +6,7 @@ defmodule RogerUi.Web.QueuesHelperTest do
   test "queues paginated from nodes" do
     queues =
       API.partitions()
-      |> QueuesHelper.paginated_queues(10, 1)
-    assert Enum.count(queues) == 10
+      |> QueuesHelper.filtered_queues("not_exists")
+    assert Enum.empty?(queues)
   end
 end

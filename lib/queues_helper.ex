@@ -50,12 +50,6 @@ defmodule RogerUi.QueuesHelper do
     end
   end
 
-  def paginated_queues(nodes, page_size, page_number, filter \\ "") do
-    nodes
-    |> filtered_queues(filter)
-    |> RogerUi.Page.extract(:queues, page_size, page_number)
-  end
-
   def atom_name(name) do
     if is_atom(name), do: name, else: String.to_atom(name)
   end

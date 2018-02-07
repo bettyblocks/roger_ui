@@ -22,6 +22,7 @@ defmodule RogerUi.Web.QueuesPlug do
     import Plug.Conn
     alias RogerUi.Web.ResponseHelper
     alias RogerUi.Web.RequestHelper
+    alias RogerUi.Page
     alias RogerUi.QueuesHelper, as: QH
     use Plug.Router
 
@@ -54,7 +55,8 @@ defmodule RogerUi.Web.QueuesPlug do
       filter = Map.get(conn.params, "filter", "")
       queues =
         @roger_api.partitions()
-        |> QH.paginated_queues(page_size, page_number, filter)
+          |> QH.filtered_queues(filter)
+          |> Page.extract("queues", page_size, page_number)
 
       {:ok, json} = Poison.encode(queues)
       ResponseHelper.json_response(conn, json)
