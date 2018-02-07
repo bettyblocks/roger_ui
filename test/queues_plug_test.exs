@@ -9,21 +9,32 @@ defmodule RogerUi.Web.QueuesPlugTest do
         %{"queue_name" => "default",
           "qualified_queue_name" => "roger_demo_partition-default",
           "partition_name" => "roger_demo_partition"}]}
-    %{"queues" => []}
+    |> Poison.encode!()
+  end
+
+  defp json_conn(uri, body) do
+    :put
+    |> conn(uri, body)
+    |> put_req_header("content-type", "application/json")
   end
 
   test "pause queues" do
-    conn = :put
-    |> conn("/pause", create_queues())
-    |> Router.call([])
+    conn = json_conn("/pause?filter='hello'", create_queues())
+    Router.call(conn, [])
+
+    assert conn.status == 207
+  end
+
+  test "pause all queues" do
+    conn = json_conn("/pause", %{})
+    Router.call(conn, [])
 
     assert conn.status == 207
   end
 
   test "resume queues" do
-    conn = :put
-    |> conn("/resume", create_queues())
-    |> Router.call([])
+    conn = json_conn("/resume", create_queues())
+    Router.call(conn, [])
 
     assert conn.status == 207
   end

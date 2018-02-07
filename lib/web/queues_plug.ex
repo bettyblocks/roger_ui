@@ -29,8 +29,9 @@ defmodule RogerUi.Web.QueuesPlug do
 
     defp parse(conn, opts \\ []) do
       opts = opts
-      |> Keyword.put_new(:parsers, [Plug.Parsers.JSON])
+      |> Keyword.put_new(:parsers, [:json])
       |> Keyword.put_new(:json_decoder, Poison)
+
       Plug.Parsers.call(conn, Plug.Parsers.init(opts))
     end
 
@@ -38,17 +39,17 @@ defmodule RogerUi.Web.QueuesPlug do
       if queues == [] do
         @roger_api.partitions() |> QH.filtered_queues(filter)
       else
-        Poison.decode(queues)
+        queues
       end
     end
 
     defp action_over_queues(conn, action) do
       conn = parse(conn)
-      queues = Map.get(conn.body_params, "queues", [])
-      filter = Map.get(conn.body_params, "filter", "")
+      queues = Map.get(conn.params, "queues", [])
+      filter = Map.get(conn.params, "filter", "")
       queues
       |> selected_queues(filter)
-      |> Enum.each(fn q -> action.(q.partition_name, QH.atom_name(q.queue_name)) end)
+      |> Enum.each(fn q -> action.(q["partition_name"], QH.atom_name(q["queue_name"])) end)
 
       RH.no_content_response(conn, 207)
     end
