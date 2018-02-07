@@ -20,7 +20,7 @@ defmodule RogerUi.Web.QueuesPlug do
     @roger_api Application.get_env(:roger_ui, :roger_api, RogerUi.RogerApi)
 
     import Plug.Conn
-    alias RogerUi.Web.ResponseHelper
+    alias RogerUi.Helpers.Response
     alias RogerUi.Web.RequestHelper
     alias RogerUi.Page
     alias RogerUi.Queues
@@ -41,7 +41,7 @@ defmodule RogerUi.Web.QueuesPlug do
       |> selected_queues(filter)
       |> Enum.each(fn q -> action.(q["partition_name"], Queues.atom_name(q["queue_name"])) end)
 
-      ResponseHelper.no_content_response(conn, 207)
+      Response.no_content(conn, 207)
     end
 
     get "/:page_size/:page_number" do
@@ -54,17 +54,16 @@ defmodule RogerUi.Web.QueuesPlug do
           |> Queues.filter(filter)
           |> Page.extract("queues", page_size, page_number)
 
-      {:ok, json} = Poison.encode(queues)
-      ResponseHelper.json_response(conn, json)
+      Response.json(conn, queues)
     end
 
-    options "/pause", do: ResponseHelper.no_content_response(conn, 207)
+    options "/pause", do: Response.no_content(conn, 207)
     put "/pause", do: action_over_queues(conn, &@roger_api.queue_pause/2)
 
-    options "/resume", do: ResponseHelper.no_content_response(conn, 207)
+    options "/resume", do: Response.no_content(conn, 207)
     put "/resume", do: action_over_queues(conn, &@roger_api.queue_resume/2)
 
-    options "/purge", do: ResponseHelper.no_content_response(conn, 207)
+    options "/purge", do: Response.no_content(conn, 207)
     put "/purge", do: action_over_queues(conn, &@roger_api.purge_queue/2)
   end
 end

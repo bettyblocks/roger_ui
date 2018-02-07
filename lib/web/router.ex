@@ -18,7 +18,7 @@ defmodule RogerUi.Web.RouterPlug do
     """
 
     import Plug.Conn
-    import RogerUi.Web.ResponseHelper
+    alias RogerUi.Helpers.Response
     use Plug.Router
 
     @roger_api Application.get_env(:roger_ui, :roger_api, RogerUi.RogerApi)
@@ -42,8 +42,7 @@ defmodule RogerUi.Web.RouterPlug do
         @roger_api.partitions()
         |> Enum.into(%{})
 
-      {:ok, json} = Poison.encode(%{nodes: nodes})
-      json_response(conn, json)
+      Response.json(conn, %{nodes: nodes})
     end
 
     match _ do

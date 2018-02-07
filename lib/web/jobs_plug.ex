@@ -20,7 +20,7 @@ defmodule RogerUi.Web.JobsPlug do
     @roger_api Application.get_env(:roger_ui, :roger_api, RogerUi.RogerApi)
 
     import Plug.Conn
-    alias RogerUi.Web.ResponseHelper, as: RH
+    alias RogerUi.Helpers.Response
     use Plug.Router
 
     plug(:match)
@@ -60,32 +60,28 @@ defmodule RogerUi.Web.JobsPlug do
         |> List.flatten()
         |> paginated_jobs(page_size, page_number, filter)
 
-      {:ok, json} = Poison.encode(jobs)
-      RH.json_response(conn, json)
+      Response.json(conn, jobs)
     end
 
     get "/:partition_name/:queue_name" do
       roger_now = Roger.now()
       queued_jobs = @roger_api.queued_jobs(partition_name, queue_name)
-
       running_jobs =
         partition_name
         |> @roger_api.running_jobs()
         |> Enum.into(%{})
-
-      {:ok, json} =
-        Poison.encode(%{
+      body = %{
           roger_now: roger_now,
           queued_jobs: queued_jobs,
           running_jobs: running_jobs
-        })
+        }
 
-      RH.json_response(conn, json)
+      Response.json(conn, body)
     end
 
     delete "/:partition_name/:job_id" do
       @roger_api.cancel_job(partition_name, job_id)
-      RH.no_content_response(conn)
+      Response.no_content(conn)
     end
   end
 end
