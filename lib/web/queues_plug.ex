@@ -23,19 +23,15 @@ defmodule RogerUi.Web.QueuesPlug do
     alias RogerUi.Web.ResponseHelper
     alias RogerUi.Web.RequestHelper
     alias RogerUi.Page
-    alias RogerUi.QueuesHelper, as: QH
+    alias RogerUi.Queues
     use Plug.Router
 
     plug(:match)
     plug(:dispatch)
 
-    defp selected_queues(queues, filter) do
-      if queues == [] do
-        @roger_api.partitions() |> QH.filtered_queues(filter)
-      else
-        queues
-      end
-    end
+    defp selected_queues([], filter),
+      do: @roger_api.partitions() |> Queues.filter(filter)
+    defp selected_queues(queues, _), do: queues
 
     defp action_over_queues(conn, action) do
       conn = RequestHelper.fill_params(conn)
@@ -43,7 +39,7 @@ defmodule RogerUi.Web.QueuesPlug do
       filter = Map.get(conn.params, "filter", "")
       queues
       |> selected_queues(filter)
-      |> Enum.each(fn q -> action.(q["partition_name"], QH.atom_name(q["queue_name"])) end)
+      |> Enum.each(fn q -> action.(q["partition_name"], Queues.atom_name(q["queue_name"])) end)
 
       ResponseHelper.no_content_response(conn, 207)
     end
@@ -55,7 +51,7 @@ defmodule RogerUi.Web.QueuesPlug do
       filter = Map.get(conn.params, "filter", "")
       queues =
         @roger_api.partitions()
-          |> QH.filtered_queues(filter)
+          |> Queues.filter(filter)
           |> Page.extract("queues", page_size, page_number)
 
       {:ok, json} = Poison.encode(queues)

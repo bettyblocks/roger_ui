@@ -1,4 +1,4 @@
-defmodule RogerUi.QueuesHelper do
+defmodule RogerUi.Queues do
   @moduledoc """
   Normalize queues from nodes
   """
@@ -33,7 +33,7 @@ defmodule RogerUi.QueuesHelper do
     reduce_queue(elem(node, 1), &queues_partition/2)
   end
 
-  def filtered_queues(nodes, filter) do
+  def filter(nodes, filter) do
     queues =
       nodes
       |> Enum.map(fn node -> extract_queues(node) end)
