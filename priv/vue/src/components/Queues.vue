@@ -95,7 +95,7 @@ export default {
       if (this.nothing_selected) return
       let params = this.all_selected ? { filter: this.filter } : { queues: this.checked_queues }
       console.log(params)
-      this.action_over_queues(action, { params })
+      this.action_over_queues(action, params)
     },
 
     change_page (page) {
