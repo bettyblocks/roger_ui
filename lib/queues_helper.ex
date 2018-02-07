@@ -42,16 +42,32 @@ defmodule RogerUi.QueuesHelper do
     if filter == "" do
       queues
     else
-      Enum.filter(queues, fn q -> String.contains?(q["qualified_queue_name"], filter) end)
+      Enum.filter(queues, fn q ->
+        q["qualified_queue_name"]
+        |> String.upcase()
+        |> String.contains?(filter)
+      end)
     end
   end
 
-  def paginated_queues(nodes, page_size, page_number, filter \\ "") do
+  @doc """
+  Slice list and returns a map with portion of list (page) and count of elements
+  """
+  @spec page_of_list(list :: [], list_name :: atom(),
+    page_size :: integer, page_number :: integer) :: %{}
+  def page_of_list(list, list_name, page_size, page_number) do
     page_size = if page_size > 100, do: 100, else: page_size
-    queues =  filtered_queues(nodes, filter)
 
-    %{queues: Enum.slice(queues, page_size * (page_number - 1), page_size),
-      total: Enum.count(queues)}
+    %{
+      list_name => Enum.slice(list, page_size * (page_number - 1), page_size),
+      total: Enum.count(list)
+    }
+  end
+
+  def paginated_queues(nodes, page_size, page_number, filter \\ "") do
+    nodes
+    |> filtered_queues(filter)
+    |> page_of_list(:queues, page_size, page_number)
   end
 
   def atom_name(name) do
