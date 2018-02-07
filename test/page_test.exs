@@ -2,15 +2,28 @@ defmodule RogerUi.PageTest do
   use ExUnit.Case
   import RogerUi.Page
 
-  test "split list into pages" do
-    page = extract(1..5000, :first_fifty, 50, 1)
+  describe "split list into pages" do
+    test "first page, size bigger than 100" do
+      page = extract(1..5000, "first_ten", 1000, 1)
+      assert page["first_ten"] == Enum.to_list(1..100)
+      assert page["total"] == 5000
+    end
 
-    assert page.first_fifty == Enum.to_list(1..50)
-    assert page.total == 5000
+    test "invalid page returns first page" do
+      page = extract(1..5000, "first_fifty", 50, 0)
+      assert page["first_fifty"] == Enum.to_list(1..50)
+      assert page["total"] == 5000
+    end
 
-    page = extract(1..5000, :first_fifty, 50, 1)
+    test "tenth page" do
+      page = extract(1..5000, "first_fifty", 50, 10)
+      assert page["first_fifty"] == Enum.to_list(451..500)
+    end
 
-    assert page.first_fifty == Enum.to_list(1..50)
-    assert page.total == 5000
+    test "empty enumerable" do
+      page = extract([], "first_fifty", 50, 10)
+      assert page["first_fifty"] == []
+      assert page["total"] == 0
+    end
   end
 end
