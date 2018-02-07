@@ -43,8 +43,7 @@ defmodule RogerUi.Web.JobsPlug do
       page_size = if page_size > 100, do: 100, else: page_size
       jobs = filtered_jobs(jobs, filter)
 
-      %{jobs: Enum.slice(jobs, page_size * (page_number - 1), page_size),
-        total: Enum.count(jobs)}
+      %{jobs: Enum.slice(jobs, page_size * (page_number - 1), page_size), total: Enum.count(jobs)}
     end
 
     get "all/:page_size/:page_number" do
@@ -52,6 +51,7 @@ defmodule RogerUi.Web.JobsPlug do
       page_size = String.to_integer(page_size)
       page_number = String.to_integer(page_number)
       filter = conn.query_params |> Map.get("filter", "") |> String.upcase()
+
       jobs =
         @roger_api.running_jobs()
         |> Keyword.values()
@@ -75,10 +75,10 @@ defmodule RogerUi.Web.JobsPlug do
 
       {:ok, json} =
         Poison.encode(%{
-              roger_now: roger_now,
-              queued_jobs: queued_jobs,
-              running_jobs: running_jobs
-                      })
+          roger_now: roger_now,
+          queued_jobs: queued_jobs,
+          running_jobs: running_jobs
+        })
 
       RH.json_response(conn, json)
     end
