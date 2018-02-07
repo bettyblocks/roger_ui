@@ -20,9 +20,7 @@ defmodule RogerUi.Web.QueuesPlug do
     @roger_api Application.get_env(:roger_ui, :roger_api, RogerUi.RogerApi)
 
     import Plug.Conn
-    alias RogerUi.Helpers.Response
-    alias RogerUi.Web.RequestHelper
-    alias RogerUi.Page
+    alias RogerUi.Helpers.{Page, Response, Request}
     alias RogerUi.Queues
     use Plug.Router
 
@@ -34,7 +32,7 @@ defmodule RogerUi.Web.QueuesPlug do
     defp selected_queues(queues, _), do: queues
 
     defp action_over_queues(conn, action) do
-      conn = RequestHelper.fill_params(conn)
+      conn = Request.fill_params(conn)
       queues = Map.get(conn.params, "queues", [])
       filter = Map.get(conn.params, "filter", "")
       queues
@@ -45,7 +43,7 @@ defmodule RogerUi.Web.QueuesPlug do
     end
 
     get "/:page_size/:page_number" do
-      conn = RequestHelper.fill_params(conn)
+      conn = Request.fill_params(conn)
       page_size = String.to_integer(page_size)
       page_number = String.to_integer(page_number)
       filter = Map.get(conn.params, "filter", "")

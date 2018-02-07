@@ -1,6 +1,6 @@
-defmodule RogerUi.PageTest do
+defmodule RogerUi.Helpers.PageTest do
   use ExUnit.Case
-  import RogerUi.Page
+  import RogerUi.Helpers.Page
 
   describe "split list into pages" do
     test "first page, size bigger than 100" do
