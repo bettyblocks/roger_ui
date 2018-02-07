@@ -16,11 +16,11 @@ defmodule RogerUi.QueuesHelper do
     |> Map.keys()
     |> Enum.map(fn qn ->
       %{
-        qualified_queue_name: Roger.Queue.make_name(name, qn),
-        queue_name: qn,
-        partition_name: name,
-        paused: if(partition[name][qn].paused, do: "paused", else: "running"),
-        count: partition[name][qn].message_count
+        "qualified_queue_name" => Roger.Queue.make_name(name, qn),
+        "queue_name" => qn,
+        "partition_name" => name,
+        "paused" => if(partition[name][qn].paused, do: "paused", else: "running"),
+        "count" => partition[name][qn].message_count
       }
     end)
   end
@@ -42,7 +42,7 @@ defmodule RogerUi.QueuesHelper do
     if filter == "" do
       queues
     else
-      Enum.filter(queues, fn q -> String.contains?(q.qualified_queue_name, filter) end)
+      Enum.filter(queues, fn q -> String.contains?(q["qualified_queue_name"], filter) end)
     end
   end
 
