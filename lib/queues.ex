@@ -44,6 +44,7 @@ defmodule RogerUi.Queues do
 
   defp do_fiter(queues, ""), do: queues
   defp do_fiter(queues, filter) do
+    filter = String.upcase(filter)
     Enum.filter(queues, fn q ->
       q["qualified_queue_name"] |> String.upcase() |> String.contains?(filter)
     end)

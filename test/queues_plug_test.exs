@@ -9,9 +9,13 @@ defmodule RogerUi.Web.QueuesPlugTest do
   defp create_queues do
     %{
       "queues" => [
-        %{"queue_name" => "default",
+        %{
+          "queue_name" => "default",
           "qualified_queue_name" => "roger_demo_partition-default",
-          "partition_name" => "roger_demo_partition"}]}
+          "partition_name" => "roger_demo_partition"
+        }
+      ]
+    }
     |> Poison.encode!()
   end
 
@@ -21,62 +25,76 @@ defmodule RogerUi.Web.QueuesPlugTest do
     |> put_req_header("content-type", "application/json")
   end
 
-  defp action_filtered_mock(action, times) do
+  defp action_queues_mock(action, times) do
     RogerUi.RogerApi.Mock
-    |>  expect(action, times, fn _, _ -> :ok end)
-    |>  expect(:partitions, &RogerUi.Tests.RogerApiInMemory.partitions/0)
+    |> expect(action, times, fn _, _ -> :ok end)
   end
 
-  test "pause all queues" do
-    action_filtered_mock(:queue_pause, 12)
-
-    conn = conn(:put, "/pause")
-    Router.call(conn, [])
+  defp partitions_mock(mock, times \\ 1) do
+    mock
+    |> expect(:partitions, times, &RogerUi.Tests.RogerApiInMemory.partitions/0)
   end
 
-  # test "pause all queues" do
-  #   conn = json_conn("/pause", %{})
-  #   Router.call(conn, [])
-
-  #   assert conn.status == 207
-  # end
-
-  test "resume queues" do
-    conn = json_conn("/resume", create_queues())
-    Router.call(conn, [])
-
-    assert conn.status == 207
+  defp action_filter_mock(action, times) do
+    action |> action_queues_mock(times) |> partitions_mock()
   end
 
-  test "purge queues" do
-    conn = :put
-    |> conn("/purge", create_queues())
-    |> Router.call([])
+  [queue_pause: "pause", queue_resume: "resume", purge_queue: "purge"]
+  |> Enum.each(fn {action, uri} ->
+    describe "#{uri} queues:" do
+      test "all" do
+        action_filter_mock(unquote(action), 12)
+        conn = conn(:put, "/#{unquote(uri)}")
+        Router.call(conn, [])
+      end
 
-    assert conn.status == 207
-  end
+      test "filtered" do
+        action_filter_mock(unquote(action), 3)
+        conn = conn(:put, "/#{unquote(uri)}?filter=partition_1")
+        Router.call(conn, [])
+      end
+
+      test "selected" do
+        action_queues_mock(unquote(action), 1)
+        conn = json_conn("/#{unquote(uri)}", create_queues())
+        Router.call(conn, [])
+      end
+
+      test "selected and filtered, ignore filter" do
+        action_queues_mock(unquote(action), 1)
+        conn = json_conn("/#{unquote(uri)}?whatever", create_queues())
+        Router.call(conn, [])
+      end
+    end
+  end)
 
   test "get all queues paginated" do
-    conn = :get
-    |> conn("/10/1")
-    |> Router.call([])
+    RogerUi.RogerApi.Mock |> partitions_mock(2)
+    conn =
+      :get
+      |> conn("/10/1")
+      |> Router.call([])
 
     assert conn.status == 200
     json = Poison.decode!(conn.resp_body)
     assert Enum.count(json["queues"]) == 10
     assert json["total"] == 12
 
-    conn = :get
-    |> conn("/10/2")
-    |> Router.call([])
+    conn =
+      :get
+      |> conn("/10/2")
+      |> Router.call([])
+
     json = Poison.decode!(conn.resp_body)
     assert Enum.count(json["queues"]) == 2
   end
 
   test "get all queues paginated and filtered" do
-    conn = :get
-    |> conn("/10/1?filter=fast")
-    |> Router.call([])
+    RogerUi.RogerApi.Mock |> partitions_mock()
+    conn =
+      :get
+      |> conn("/10/1?filter=fast")
+      |> Router.call([])
 
     assert conn.status == 200
     json = Poison.decode!(conn.resp_body)
