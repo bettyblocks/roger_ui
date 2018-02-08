@@ -12,6 +12,13 @@ defmodule RogerUi.Mixfile do
       Dashboard and monitoring tools for Roger job processing system
       """,
       start_permanent: Mix.env == :prod,
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        "coveralls": :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ],
       deps: deps(),
       aliases: aliases()
     ]
@@ -53,6 +60,7 @@ defmodule RogerUi.Mixfile do
       {:cowboy, "~> 1.0"},
       {:ex_doc, ">= 0.0.0", only: :dev},
       {:credo, ">= 0.0.0", only: :dev},
+      {:excoveralls, "~> 0.8", only: :test},
       {:mox, "~> 0.3", only: :test}
     ]
   end
