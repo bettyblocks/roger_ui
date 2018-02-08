@@ -42,8 +42,12 @@ defmodule RogerUi.Web.JobsPlug do
     defp paginated_jobs(jobs, page_size, page_number, filter) do
       page_size = if page_size > 100, do: 100, else: page_size
       jobs = filtered_jobs(jobs, filter)
+      page_start_index = page_size * (page_number - 1)
 
-      %{jobs: Enum.slice(jobs, page_size * (page_number - 1), page_size), total: Enum.count(jobs)}
+      %{
+        jobs: Enum.slice(jobs, page_start_index, page_size),
+        total: Enum.count(jobs)
+      }
     end
 
     get "all/:page_size/:page_number" do
