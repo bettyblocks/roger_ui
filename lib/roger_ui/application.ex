@@ -3,13 +3,15 @@ defmodule RogerUi.Application do
   # for more information on OTP Applications
   @moduledoc false
 
+  alias Plug.Adapters.Cowboy
+  alias RogerUi.Web.RouterPlug
   use Application
 
   def start(_type, _args) do
     run_server? = Application.get_env(:roger_ui, :server, true)
     web_port = Application.get_env(:roger_ui, :web_port, 4040)
     if run_server? do
-      case Plug.Adapters.Cowboy.http(RogerUi.Web.RouterPlug, [], port: web_port) do
+      case Cowboy.http(RouterPlug, [], port: web_port) do
         {:ok, _} ->
           IO.puts("Starting RogerUi server on port #{web_port}")
         {:error, :eaddrinuse} ->

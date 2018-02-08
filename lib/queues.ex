@@ -2,6 +2,7 @@ defmodule RogerUi.Queues do
   @moduledoc """
   Normalize queues from nodes
   """
+  alias Roger.Queue
 
   defp reduce_queue(partition, f) do
     partition
@@ -16,7 +17,7 @@ defmodule RogerUi.Queues do
     |> Map.keys()
     |> Enum.map(fn qn ->
       %{
-        "qualified_queue_name" => Roger.Queue.make_name(name, qn),
+        "qualified_queue_name" => Queue.make_name(name, qn),
         "queue_name" => qn,
         "partition_name" => name,
         "paused" => if(partition[name][qn].paused, do: "paused", else: "running"),
