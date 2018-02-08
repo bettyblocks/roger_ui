@@ -3,8 +3,6 @@ defmodule RogerUi.Tests.RogerApiInMemory do
   Mocks calls to Roger.Info API
   """
 
-  @behaviour RogerUi.Roger
-
   def partitions do
     [
       "server@127.0.0.1": %{
