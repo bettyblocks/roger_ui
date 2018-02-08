@@ -6,7 +6,7 @@ config :roger, Roger.AMQPClient,
 
 config :roger_ui,
   server: false,
-  roger_api: RogerUi.Tests.RogerApiInMemory
+  roger_api: RogerUi.RogerApi.Mock
 
 if node() == :"nonode@nohost" do
   config :roger_ui, :server, false

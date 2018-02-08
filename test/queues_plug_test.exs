@@ -2,6 +2,9 @@ defmodule RogerUi.Web.QueuesPlugTest do
   use ExUnit.Case
   use Plug.Test
   alias RogerUi.Web.QueuesPlug.Router
+  import Mox
+
+  setup :verify_on_exit!
 
   defp create_queues do
     %{
@@ -18,19 +21,25 @@ defmodule RogerUi.Web.QueuesPlugTest do
     |> put_req_header("content-type", "application/json")
   end
 
-  test "pause queues" do
-    conn = json_conn("/pause?filter='hello'", create_queues())
-    Router.call(conn, [])
-
-    assert conn.status == 207
+  defp action_filtered_mock(action, times) do
+    RogerUi.RogerApi.Mock
+    |>  expect(action, times, fn _, _ -> :ok end)
+    |>  expect(:partitions, &RogerUi.Tests.RogerApiInMemory.partitions/0)
   end
 
   test "pause all queues" do
-    conn = json_conn("/pause", %{})
-    Router.call(conn, [])
+    action_filtered_mock(:queue_pause, 12)
 
-    assert conn.status == 207
+    conn = conn(:put, "/pause")
+    Router.call(conn, [])
   end
+
+  # test "pause all queues" do
+  #   conn = json_conn("/pause", %{})
+  #   Router.call(conn, [])
+
+  #   assert conn.status == 207
+  # end
 
   test "resume queues" do
     conn = json_conn("/resume", create_queues())
