@@ -20,15 +20,20 @@ defmodule RogerUi.Web.QueuesPlug do
     @roger_api Application.get_env(:roger_ui, :roger_api, RogerUi.RogerApi)
 
     import Plug.Conn
-    alias RogerUi.Helpers.{Page, Response, Request}
+    alias RogerUi.Helpers.{Page, Response, Request, Filter}
     alias RogerUi.Queues
     use Plug.Router
 
     plug(:match)
     plug(:dispatch)
 
-    defp selected_queues([], filter),
-      do: @roger_api.partitions() |> Queues.filter(filter)
+    defp filtered_queues(filter) do
+      @roger_api.partitions()
+      |> Queues.nodes_to_queues()
+      |> Filter.call("qualified_queue_name", filter)
+    end
+
+    defp selected_queues([], filter), do: filtered_queues(filter)
     defp selected_queues(queues, _), do: queues
 
     defp action_over_queues(conn, action) do
@@ -37,7 +42,9 @@ defmodule RogerUi.Web.QueuesPlug do
       filter = Map.get(conn.params, "filter", "")
       queues
       |> selected_queues(filter)
-      |> Enum.each(fn q -> action.(q["partition_name"], Queues.atom_name(q["queue_name"])) end)
+      |> Enum.each(fn q ->
+        action.(q["partition_name"], Queues.atom_name(q["queue_name"]))
+      end)
 
       Response.no_content(conn, 207)
     end
@@ -47,10 +54,9 @@ defmodule RogerUi.Web.QueuesPlug do
       page_size = String.to_integer(page_size)
       page_number = String.to_integer(page_number)
       filter = Map.get(conn.params, "filter", "")
-      queues =
-        @roger_api.partitions()
-          |> Queues.filter(filter)
-          |> Page.extract("queues", page_size, page_number)
+      queues = filter
+        |> filtered_queues()
+        |> Page.extract("queues", page_size, page_number)
 
       Response.json(conn, queues)
     end
