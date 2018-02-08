@@ -4,51 +4,21 @@ defmodule RogerUi.Queues do
   """
   alias Roger.Queue
 
-  defp reduce_queue(partition, f) do
-    partition
-    |> Map.keys()
-    |> Enum.reduce([], fn k, l -> [f.(partition, k) | l] end)
-  end
-
-  defp named_queues(partition, name) do
-    queues = partition[name]
-
-    queues
-    |> Map.keys()
-    |> Enum.map(fn qn ->
-      %{
-        "qualified_queue_name" => Queue.make_name(name, qn),
-        "queue_name" => qn,
-        "partition_name" => name,
-        "paused" => if(partition[name][qn].paused, do: "paused", else: "running"),
-        "count" => partition[name][qn].message_count
-      }
+  defp named_queues(partition_name, queues) do
+    Enum.map(queues, fn {qn, queue} ->
+      queue
+      |> Map.put("qualified_queue_name", Queue.make_name(partition_name, qn))
+      |> Map.put("queue_name", qn)
+      |> Map.put("partition_name", partition_name)
     end)
   end
 
-  defp queues_partition(partitions, name) do
-    reduce_queue(partitions[name], &named_queues/2)
-  end
-
-  defp extract_queues(node) do
-    reduce_queue(elem(node, 1), &queues_partition/2)
-  end
-
-  def filter(nodes, filter) do
-    queues =
-      nodes
-      |> Enum.map(fn node -> extract_queues(node) end)
-      |> List.flatten()
-
-    do_fiter(queues, filter)
-  end
-
-  defp do_fiter(queues, ""), do: queues
-  defp do_fiter(queues, filter) do
-    filter = String.upcase(filter)
-    Enum.filter(queues, fn q ->
-      q["qualified_queue_name"] |> String.upcase() |> String.contains?(filter)
-    end)
+  def nodes_to_queues(nodes) do
+    nodes
+    |> Keyword.values()
+    |> Stream.flat_map(&Map.values/1)
+    |> Enum.reduce(%{}, &(Map.merge(&2, &1)))
+    |> Enum.flat_map(fn {pn, q} -> named_queues(pn, q) end)
   end
 
   def atom_name(name) do
