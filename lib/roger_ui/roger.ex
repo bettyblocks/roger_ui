@@ -22,13 +22,18 @@ defmodule RogerUi.Roger do
   @callback purge_queue(partition_name :: String.t(), queue_name :: atom())
     :: {:ok, %{message_count: integer()}}
 
-  @callback queue_pause(partition_name :: String.t(), queue_name :: atom()) :: :ok
+  @callback queue_pause(partition_name :: String.t(),
+    queue_name :: atom()) :: :ok
 
-  @callback queue_resume(partition_name :: String.t(), queue_name :: atom()) :: :ok
+  @callback queue_resume(partition_name :: String.t(),
+    queue_name :: atom()) :: :ok
 
-  @callback cancel_job(partition_name :: String.t(), queue_name :: atom()) :: :ok
+  @callback cancel_job(partition_name :: String.t(),
+    queue_name :: atom()) :: :ok
 
-  @callback running_jobs(partition_name :: String.t()) :: [{node_name :: String.t(), [%Roger.Job{}]}]
+  @callback running_jobs(partition_name :: String.t()) ::
+    [{node_name :: String.t(), [%Roger.Job{}]}]
+
   @callback running_jobs() :: [{node_name :: String.t(), [%Roger.Job{}]}]
 
   @callback queued_jobs(partition_name :: String.t(), queue_name :: atom) ::
