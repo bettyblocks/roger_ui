@@ -15,7 +15,7 @@ defmodule RogerUi.Application do
         {:ok, _} ->
           IO.puts("Starting RogerUi server on port #{web_port}")
         {:error, :eaddrinuse} ->
-          IO.puts("RogerUi Server already have been started on port #{web_port}")
+          IO.puts("Port #{web_port} already in use")
       end
     end
     Supervisor.start_link([], strategy: :one_for_one)
