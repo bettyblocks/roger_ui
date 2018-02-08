@@ -39,15 +39,14 @@ defmodule RogerUi.Queues do
       |> Enum.map(fn node -> extract_queues(node) end)
       |> List.flatten()
 
-    if filter == "" do
-      queues
-    else
-      Enum.filter(queues, fn q ->
-        q["qualified_queue_name"]
-        |> String.upcase()
-        |> String.contains?(filter)
-      end)
-    end
+    do_fiter(queues, filter)
+  end
+
+  defp do_fiter(queues, ""), do: queues
+  defp do_fiter(queues, filter) do
+    Enum.filter(queues, fn q ->
+      q["qualified_queue_name"] |> String.upcase() |> String.contains?(filter)
+    end)
   end
 
   def atom_name(name) do
