@@ -2,6 +2,7 @@ defmodule RogerUi.Web.QueuesPlugTest do
   use ExUnit.Case
   use Plug.Test
   alias RogerUi.Web.QueuesPlug.Router
+  alias RogerUi.Tests.RogerApiInMemory
   import Mox
 
   setup :verify_on_exit!
@@ -32,7 +33,7 @@ defmodule RogerUi.Web.QueuesPlugTest do
 
   defp partitions_mock(mock, times \\ 1) do
     mock
-    |> expect(:partitions, times, &RogerUi.Tests.RogerApiInMemory.partitions/0)
+    |> expect(:partitions, times, &RogerApiInMemory.partitions/0)
   end
 
   defp action_filter_mock(action, times) do
