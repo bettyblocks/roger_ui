@@ -43,7 +43,7 @@ defmodule RogerUi.Web.QueuesPlug do
       queues
       |> selected_queues(filter)
       |> Enum.each(fn q ->
-        action.(q["partition_name"], Queues.atom_name(q["queue_name"]))
+        action.(q["partition_name"], Queues.normalize_name(q["queue_name"]))
       end)
 
       Response.no_content(conn, 207)

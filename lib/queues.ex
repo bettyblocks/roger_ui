@@ -24,7 +24,7 @@ defmodule RogerUi.Queues do
     |> Stream.flat_map(&partition_to_queues/1)
   end
 
-  def atom_name(name) do
+  def normalize_name(name) do
     if is_atom(name), do: name, else: String.to_atom(name)
   end
 end
