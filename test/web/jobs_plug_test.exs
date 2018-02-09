@@ -2,8 +2,16 @@ defmodule RogerUi.Web.JobsPlugTest do
   use ExUnit.Case
   use Plug.Test
   alias RogerUi.Web.JobsPlug.Router
+  alias RogerUi.Tests.RogerApiInMemory
+  import Mox
+
+  setup :verify_on_exit!
 
   test "get jobs" do
+    RogerUi.RogerApi.Mock
+    |> expect(:queued_jobs, fn _, _ -> %{} end)
+    |> expect(:running_jobs, &RogerApiInMemory.running_jobs/1)
+
     conn = :get
     |> conn("/roger_ui_test_partition/default")
     |> Router.call([])
@@ -15,6 +23,9 @@ defmodule RogerUi.Web.JobsPlugTest do
   end
 
   test "cancel job" do
+    RogerUi.RogerApi.Mock
+    |> expect(:cancel_job, fn _, _ -> :ok end)
+
     conn = :delete
     |> conn("/roger_ui_test_partition/y887llhnhnh")
     |> Router.call([])
@@ -23,6 +34,9 @@ defmodule RogerUi.Web.JobsPlugTest do
   end
 
   test "get all jobs paginated" do
+    RogerUi.RogerApi.Mock
+    |> expect(:running_jobs, 2, &RogerApiInMemory.running_jobs/0)
+
     conn = :get
     |> conn("all/5/1")
     |> Router.call([])
@@ -40,6 +54,9 @@ defmodule RogerUi.Web.JobsPlugTest do
   end
 
   test "get all jobs paginated and filtered" do
+    RogerUi.RogerApi.Mock
+    |> expect(:running_jobs, &RogerApiInMemory.running_jobs/0)
+
     conn = :get
     |> conn("all/10/1?filter=create")
     |> Router.call([])

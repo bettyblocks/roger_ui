@@ -105,10 +105,4 @@ defmodule RogerUi.Tests.RogerApiInMemory do
       nonode@nohost: %{}
     ]
   end
-
-  def purge_queue(_partition_name, _queue_name), do: {:ok, %{message_count: 0}}
-  def queue_pause(_partition_name, _queue_name), do: :ok
-  def queue_resume(_partition_name, _queue_name), do: :ok
-  def cancel_job(_partition_name, _job_name), do: :ok
-  def queued_jobs(_partition_name, _queue_name), do: :ok
 end
