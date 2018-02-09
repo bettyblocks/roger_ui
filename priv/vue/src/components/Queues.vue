@@ -74,7 +74,6 @@ export default {
   },
   methods: {
     is_paused (value) {
-      console.log(value)
       return value ? 'paused' : 'running'
     },
 
