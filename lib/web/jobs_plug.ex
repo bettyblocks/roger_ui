@@ -20,49 +20,24 @@ defmodule RogerUi.Web.JobsPlug do
     @roger_api Application.get_env(:roger_ui, :roger_api, RogerUi.RogerApi)
 
     import Plug.Conn
-    alias RogerUi.Helpers.Response
+    alias RogerUi.Helpers.{Page, Response, Request, Filter}
+    alias RogerUi.Jobs
     use Plug.Router
 
     plug(:match)
     plug(:dispatch)
 
-    defp filtered_jobs(jobs, filter) do
-      if filter == "" do
-        jobs
-      else
-        Enum.filter(jobs, fn j ->
-          j.module
-          |> to_string()
-          |> String.upcase()
-          |> String.contains?(filter)
-        end)
-      end
-    end
-
-    defp paginated_jobs(jobs, page_size, page_number, filter) do
-      page_size = if page_size > 100, do: 100, else: page_size
-      jobs = filtered_jobs(jobs, filter)
-      page_start_index = page_size * (page_number - 1)
-
-      %{
-        jobs: Enum.slice(jobs, page_start_index, page_size),
-        total: Enum.count(jobs)
-      }
-    end
-
     get "all/:page_size/:page_number" do
-      conn = fetch_query_params(conn)
+      conn = Request.fill_params(conn)
       page_size = String.to_integer(page_size)
       page_number = String.to_integer(page_number)
-      filter = conn.query_params |> Map.get("filter", "") |> String.upcase()
+      filter = Map.get(conn.params, "filter", "")
 
       jobs =
         @roger_api.running_jobs()
-        |> Keyword.values()
-        |> List.flatten()
-        |> Enum.reduce([], fn n, accum -> [Map.values(n) | accum] end)
-        |> List.flatten()
-        |> paginated_jobs(page_size, page_number, filter)
+        |> Jobs.normalize()
+        |> Filter.call(:module, filter)
+        |> Page.extract("jobs", page_size, page_number)
 
       Response.json(conn, jobs)
     end

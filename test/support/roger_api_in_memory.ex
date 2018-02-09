@@ -71,7 +71,8 @@ defmodule RogerUi.Tests.RogerApiInMemory do
             execution_key: nil, id: "83u3ourppqnctk67r6f0mh3cmoa34a3i", module: RogerDemo.Job.CreateUpdateUser,
             queue_key: nil, queued_at: 1517697586453, retry_count: 0, started_at: 1517697682983
           }
-        ]},
+        ]
+      },
       "server@127.0.0.1": %{
         "small_partition" => [
           %Roger.Job{
@@ -101,7 +102,7 @@ defmodule RogerUi.Tests.RogerApiInMemory do
           }
         ]
       },
-      nonode@nohost: []
+      nonode@nohost: %{}
     ]
   end
 
