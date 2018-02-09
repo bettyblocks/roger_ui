@@ -45,9 +45,10 @@ export default {
           label: 'Name'
         },
         paused: {
-          label: 'Status'
+          label: 'Status',
+          formatter: 'is_paused'
         },
-        count: {
+        message_count: {
           label: 'Count',
           'class': 'text-right'
         },
@@ -72,6 +73,11 @@ export default {
     }
   },
   methods: {
+    is_paused (value) {
+      console.log(value)
+      return value ? 'paused' : 'running'
+    },
+
     refresh_queues () {
       this.checked_queues = []
       this.$http
