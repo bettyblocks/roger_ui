@@ -6,9 +6,10 @@ defmodule RogerUi.Web.RouterPlugTest do
   import Mox
 
   test "index page" do
-    conn = :get
-    |> conn("/")
-    |> Router.call([])
+    conn =
+      :get
+      |> conn("/")
+      |> Router.call([])
 
     assert conn.status == 200
   end
@@ -17,9 +18,10 @@ defmodule RogerUi.Web.RouterPlugTest do
     RogerUi.RogerApi.Mock
     |> expect(:partitions, &RogerApiInMemory.partitions/0)
 
-    conn = :get
-    |> conn("/api/nodes")
-    |> Router.call([])
+    conn =
+      :get
+      |> conn("/api/nodes")
+      |> Router.call([])
 
     assert conn.status == 200
     json = Poison.decode!(conn.resp_body)

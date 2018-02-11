@@ -6,15 +6,15 @@ defmodule RogerUi.Mixfile do
       app: :roger_ui,
       version: "0.1.6",
       elixir: "~> 1.5",
-      elixirc_paths: elixirc_paths(Mix.env),
+      elixirc_paths: elixirc_paths(Mix.env()),
       package: package(),
       description: """
       Dashboard and monitoring tools for Roger job processing system
       """,
-      start_permanent: Mix.env == :prod,
+      start_permanent: Mix.env() == :prod,
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
-        "coveralls": :test,
+        coveralls: :test,
         "coveralls.detail": :test,
         "coveralls.post": :test,
         "coveralls.html": :test
@@ -26,11 +26,10 @@ defmodule RogerUi.Mixfile do
 
   def package do
     [
-      files: ~w(lib test priv/static) ++
-             ~w(LICENSE mix.exs README.md),
+      files: ~w(lib test priv/static) ++ ~w(LICENSE mix.exs README.md),
       maintainers: ["Antonio Abella", "Paul Engel"],
       licenses: ["MIT"],
-      links: %{"Github" => "https://github.com/Spadavecchia/roger_ui"},
+      links: %{"Github" => "https://github.com/Spadavecchia/roger_ui"}
     ]
   end
 

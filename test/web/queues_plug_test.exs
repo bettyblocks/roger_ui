@@ -71,6 +71,7 @@ defmodule RogerUi.Web.QueuesPlugTest do
 
   test "get all queues paginated" do
     RogerUi.RogerApi.Mock |> partitions_mock(2)
+
     conn =
       :get
       |> conn("/10/1")
@@ -92,6 +93,7 @@ defmodule RogerUi.Web.QueuesPlugTest do
 
   test "get all queues paginated and filtered" do
     RogerUi.RogerApi.Mock |> partitions_mock()
+
     conn =
       :get
       |> conn("/10/1?filter=fast")
