@@ -15,12 +15,12 @@
         <b-button-group size="sm">
           <b-btn :disabled="nothing_selected" @click="run_action('resume')" class="mx-1 mdi mdi-play"></b-btn>
           <b-btn :disabled="nothing_selected" @click="run_action('pause')" class="mdi mdi-pause"></b-btn>
-          <b-btn :disabled="nothing_selected" @click="run_action('purge')" class="mx-1 mdi mdi-cancel"></b-btn>
+          <b-btn :disabled="nothing_selected" @click="run_action('purge')" class="mx-1 mdi mdi-delete-forever"></b-btn>
         </b-button-group>
       </b-button-toolbar>
     </b-col>
   </b-row>
-  <b-table small :items="queues" :fields="fields">
+  <b-table small :items="queues" :fields="fields" show-empty>
     <template slot="HEAD_actions" slot-scope="head">
       {{head.label}} &nbsp;
       <input type="checkbox" @click.stop="toggle_selected" :checked="all_selected">
@@ -28,12 +28,21 @@
     <template slot="actions" slot-scope="item">
       <input type="checkbox" name="checked" :key="item.index" :value="item.item" @click.stop v-model="checked_queues">
     </template>
+    <template slot="show_jobs" slot-scope="row">
+      <b-button size="sm" @click.stop="row.toggleDetails" class="mr-2">
+        {{ row.detailsShowing ? 'Hide' : 'Show'}} Jobs
+      </b-button>
+    </template>
+    <template slot="row-details" slot-scope="row">
+      <jobs-table :jobs="jobs"></jobs-table>
+    </template>
   </b-table>
 </div>
 </template>
 
 <script>
 import debounce from 'lodash.debounce'
+import JobsTable from '@/components/JobsTable'
 
 export default {
   name: 'Queues',
@@ -55,14 +64,22 @@ export default {
         actions: {
           label: 'All',
           'class': 'text-right'
+        },
+        show_jobs: {
+          label: ' ',
+          'class': 'text-center'
         }
       },
+      jobs: [],
       queues: [],
       total_queues: 0,
       current_page: 1,
       page_size: 10,
       filter: ''
     }
+  },
+  components: {
+    'jobs-table': JobsTable
   },
   computed: {
     all_selected () {

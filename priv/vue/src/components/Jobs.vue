@@ -7,50 +7,31 @@
                     :per-page="page_size">
       </b-pagination>
     </b-col>
-    <b-col cols="10">
+    <b-col cols="9">
       <b-form-input @input="change_filter" placeholder="Type to Filter" autofocus />
     </b-col>
-    <!-- <b-col cols="2">
+    <b-col cols="1">
       <b-button-toolbar class="my-1">
         <b-button-group size="sm">
-          <b-btn :disabled="nothing_selected" @click="run_action('resume')" class="mx-1 mdi mdi-play"></b-btn>
-          <b-btn :disabled="nothing_selected" @click="run_action('pause')" class="mdi mdi-pause"></b-btn>
-          <b-btn :disabled="nothing_selected" @click="run_action('purge')" class="mx-1 mdi mdi-cancel"></b-btn>
+          <b-btn :disabled="nothing_selected" @click="run_action('purge')" class="mx-1 mdi mdi-delete-forever"></b-btn>
         </b-button-group>
       </b-button-toolbar>
-    </b-col> -->
+    </b-col>
   </b-row>
-  <b-table small :items="jobs" :fields="fields">
-    <template slot="HEAD_actions" slot-scope="head">
-      {{head.label}} &nbsp;
-      <input type="checkbox" @click.stop="toggle_selected" :checked="all_selected">
-    </template>
-    <template slot="actions" slot-scope="item">
-      <input type="checkbox" name="checked" :key="item.index" :value="item.item" @click.stop v-model="checked">
-    </template>
-  </b-table>
+  <jobs-table @checked-changed="update_checked" :jobs="jobs"></jobs-table>
 </div>
 </template>
 
 <script>
 import debounce from 'lodash.debounce'
+import JobsTable from '@/components/JobsTable'
 
 export default {
   name: 'Jobs',
   data () {
     return {
-      fields: {
-        id: {
-          label: 'ID'
-        },
-        module: {
-          label: 'Module'
-        },
-        retry_count: {
-          label: 'Retry Count',
-          'class': 'text-right'
-        }
-      },
+      all_selected: false,
+      nothing_selected: true,
       checked: [],
       jobs: [],
       total_jobs: 0,
@@ -59,13 +40,8 @@ export default {
       filter: ''
     }
   },
-  computed: {
-    all_selected () {
-      return this.jobs.length === this.checked.length
-    },
-    nothing_selected () {
-      return this.checked.length === 0
-    }
+  components: {
+    'jobs-table': JobsTable
   },
   methods: {
     refresh () {
@@ -79,6 +55,12 @@ export default {
         .catch(error => {
           console.log(error)
         })
+    },
+
+    update_checked (checkedStatus) {
+      this.checked = checkedStatus.checked
+      this.nothing_selected = checkedStatus.nothing_selected
+      this.all_selected = checkedStatus.all_selected
     },
 
     action_over_jobs (action, params) {
@@ -102,15 +84,7 @@ export default {
       this.current_page = 1
       this.filter = filter
       this.refresh()
-    }, 400),
-
-    toggle_selected () {
-      if (this.all_selected) {
-        this.checked = []
-      } else {
-        this.checked = this.jobs.slice()
-      }
-    }
+    }, 400)
   },
   created () {
     this.refresh()
