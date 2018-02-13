@@ -41,6 +41,7 @@ defmodule RogerUi.Tests.RogerApiInMemory do
   end
 
   def running_jobs(_partition_name), do: running_jobs()
+
   def running_jobs do
     [
       "watcher@127.0.0.1": %{

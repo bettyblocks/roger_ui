@@ -45,15 +45,17 @@ defmodule RogerUi.Web.JobsPlug do
     get "/:partition_name/:queue_name" do
       roger_now = Roger.now()
       queued_jobs = @roger_api.queued_jobs(partition_name, queue_name)
+
       running_jobs =
         partition_name
         |> @roger_api.running_jobs()
         |> Enum.into(%{})
+
       body = %{
-          roger_now: roger_now,
-          queued_jobs: queued_jobs,
-          running_jobs: running_jobs
-        }
+        roger_now: roger_now,
+        queued_jobs: queued_jobs,
+        running_jobs: running_jobs
+      }
 
       Response.json(conn, body)
     end

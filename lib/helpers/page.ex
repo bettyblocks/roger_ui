@@ -9,8 +9,12 @@ defmodule RogerUi.Helpers.Page do
   and the total elements of the enumerable.
   Max page_size is 100 and min page_number is 1
   """
-  @spec extract(xs :: Enumerable.t(), name :: String.t(),
-    page_size :: integer, page_number :: integer) :: %{}
+  @spec extract(
+          xs :: Enumerable.t(),
+          name :: String.t(),
+          page_size :: integer,
+          page_number :: integer
+        ) :: %{}
   def extract(xs, name, page_size, page_number) do
     page_size = if page_size > 100, do: 100, else: page_size
     page_number = if page_number <= 0, do: 1, else: page_number

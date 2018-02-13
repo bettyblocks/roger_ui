@@ -12,9 +12,10 @@ defmodule RogerUi.Helpers.Request do
   Additionally load the query_params.
   """
   def fill_params(conn, opts \\ []) do
-    opts = opts
-    |> Keyword.put_new(:parsers, [:json])
-    |> Keyword.put_new(:json_decoder, Poison)
+    opts =
+      opts
+      |> Keyword.put_new(:parsers, [:json])
+      |> Keyword.put_new(:json_decoder, Poison)
 
     Parsers.call(conn, Parsers.init(opts))
   end

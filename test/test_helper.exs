@@ -4,4 +4,3 @@
 Mox.defmock(RogerUi.RogerApi.Mock, for: RogerUi.Roger)
 
 ExUnit.start()
-

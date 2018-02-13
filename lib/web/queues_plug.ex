@@ -40,6 +40,7 @@ defmodule RogerUi.Web.QueuesPlug do
       conn = Request.fill_params(conn)
       queues = Map.get(conn.params, "queues", [])
       filter = Map.get(conn.params, "filter", "")
+
       queues
       |> selected_queues(filter)
       |> Enum.each(fn q ->
@@ -54,20 +55,22 @@ defmodule RogerUi.Web.QueuesPlug do
       page_size = String.to_integer(page_size)
       page_number = String.to_integer(page_number)
       filter = Map.get(conn.params, "filter", "")
-      queues = filter
+
+      queues =
+        filter
         |> filtered_queues()
         |> Page.extract("queues", page_size, page_number)
 
       Response.json(conn, queues)
     end
 
-    options "/pause", do: Response.no_content(conn, 207)
-    put "/pause", do: action_over_queues(conn, &@roger_api.queue_pause/2)
+    options("/pause", do: Response.no_content(conn, 207))
+    put("/pause", do: action_over_queues(conn, &@roger_api.queue_pause/2))
 
-    options "/resume", do: Response.no_content(conn, 207)
-    put "/resume", do: action_over_queues(conn, &@roger_api.queue_resume/2)
+    options("/resume", do: Response.no_content(conn, 207))
+    put("/resume", do: action_over_queues(conn, &@roger_api.queue_resume/2))
 
-    options "/purge", do: Response.no_content(conn, 207)
-    put "/purge", do: action_over_queues(conn, &@roger_api.purge_queue/2)
+    options("/purge", do: Response.no_content(conn, 207))
+    put("/purge", do: action_over_queues(conn, &@roger_api.purge_queue/2))
   end
 end
