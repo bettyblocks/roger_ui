@@ -27,6 +27,15 @@ defmodule RogerUi.Web.JobsPlug do
     plug(:match)
     plug(:dispatch)
 
+    defp filtered_jobs(filter) do
+      @roger_api.running_jobs()
+      |> Jobs.normalize()
+      |> Filter.call(:module, filter)
+    end
+
+    defp selected_jobs([], filter), do: filtered_jobs(filter)
+    defp selected_jobs(jobs, _), do: jobs
+
     get "all/:page_size/:page_number" do
       conn = Request.fill_params(conn)
       page_size = String.to_integer(page_size)
@@ -34,9 +43,8 @@ defmodule RogerUi.Web.JobsPlug do
       filter = Map.get(conn.params, "filter", "")
 
       jobs =
-        @roger_api.running_jobs()
-        |> Jobs.normalize()
-        |> Filter.call(:module, filter)
+        filter
+        |> filtered_jobs()
         |> Page.extract("jobs", page_size, page_number)
 
       Response.json(conn, jobs)
@@ -60,8 +68,17 @@ defmodule RogerUi.Web.JobsPlug do
       Response.json(conn, body)
     end
 
-    delete "/:partition_name/:job_id" do
-      @roger_api.cancel_job(partition_name, job_id)
+    options("/", do: Response.no_content(conn, 207))
+    delete "/" do
+      conn = Request.fill_params(conn)
+      jobs = Map.get(conn.params, "jobs", [])
+      filter = Map.get(conn.params, "filter", "")
+
+      jobs
+      |> selected_jobs(filter)
+      |> Enum.each(fn j ->
+        @roger_api.cancel_job(j["partition_name"], j["job_id"])
+      end)
       Response.no_content(conn)
     end
   end

@@ -13,7 +13,7 @@
     <b-col cols="1">
       <b-button-toolbar class="my-1">
         <b-button-group size="sm">
-          <b-btn :disabled="nothing_selected" @click="run_action('purge')" class="mx-1 mdi mdi-delete-forever"></b-btn>
+          <b-btn :disabled="nothing_selected" @click="cancel" class="mx-1 mdi mdi-delete-forever"></b-btn>
         </b-button-group>
       </b-button-toolbar>
     </b-col>
@@ -40,9 +40,11 @@ export default {
       filter: ''
     }
   },
+
   components: {
     'jobs-table': JobsTable
   },
+
   methods: {
     refresh () {
       this.checked = []
@@ -63,16 +65,12 @@ export default {
       this.all_selected = checkedStatus.all_selected
     },
 
-    action_over_jobs (action, params) {
-      this.$http
-        .put(`/api/jobs/${action}`, params)
-        .then(this.refresh)
-    },
-
-    run_action (action) {
+    cancel () {
       if (this.nothing_selected) return
       let params = this.all_selected ? { filter: this.filter } : { jobs: this.checked }
-      this.action_over_jobs(action, { params })
+      this.$http
+        .delete(`/api/jobs/`, params)
+        .then(this.refresh)
     },
 
     change_page (page) {
@@ -86,6 +84,7 @@ export default {
       this.refresh()
     }, 400)
   },
+
   created () {
     this.refresh()
   }
