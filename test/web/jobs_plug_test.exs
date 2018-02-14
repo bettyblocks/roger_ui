@@ -24,16 +24,41 @@ defmodule RogerUi.Web.JobsPlugTest do
     |> Enum.each(&assert Map.has_key?(json, &1))
   end
 
-  test "cancel job" do
-    RogerUi.RogerApi.Mock
-    |> expect(:cancel_job, fn _, _ -> :ok end)
+  describe "cancel jobs" do
+    test "all" do
+      RogerUi.RogerApi.Mock
+      |> expect(:running_jobs, &RogerApiInMemory.running_jobs/0)
+      |> expect(:cancel_job, 10, fn _, _ -> :ok end)
 
-    conn =
-      :delete
-      |> conn("/roger_ui_test_partition/y887llhnhnh")
-      |> Router.call([])
+      conn =
+        :delete
+        |> conn("/")
+        |> Router.call([])
 
-    assert conn.status == 204
+      assert conn.status == 204
+    end
+
+    test "filtered" do
+      RogerUi.RogerApi.Mock
+      |> expect(:running_jobs, &RogerApiInMemory.running_jobs/0)
+      |> expect(:cancel_job, 10, fn _, _ -> :ok end)
+
+      conn =
+        :delete
+        |> conn("/?filter=CreateUpdate")
+        |> Router.call([])
+
+      assert conn.status == 204
+    end
+
+    test "options for cors" do
+      conn =
+        :options
+        |> conn("/")
+        |> Router.call([])
+
+      assert conn.status == 207
+    end
   end
 
   test "get all jobs paginated" do
