@@ -1,5 +1,5 @@
 defmodule RogerUi.Web.QueuesPlugTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   use Plug.Test
   alias RogerUi.Web.QueuesPlug.Router
   alias RogerUi.Tests.RogerApiInMemory
@@ -54,17 +54,18 @@ defmodule RogerUi.Web.QueuesPlugTest do
     end
   end)
 
+  @tag :slow
   @massive_actions
   |> Enum.each(fn {action, uri} ->
     describe "#{uri} queues:" do
       test "all" do
-        action_filter_mock(unquote(action), 12)
+        action_filter_mock(unquote(action), 3000)
         conn = conn(:put, "/#{unquote(uri)}")
         Router.call(conn, [])
       end
 
       test "filtered" do
-        action_filter_mock(unquote(action), 3)
+        action_filter_mock(unquote(action), 1500)
         conn = conn(:put, "/#{unquote(uri)}?filter=partition_1")
         Router.call(conn, [])
       end
@@ -83,6 +84,7 @@ defmodule RogerUi.Web.QueuesPlugTest do
     end
   end)
 
+  @tag :slow
   test "get all queues paginated" do
     RogerUi.RogerApi.Mock |> partitions_mock(2)
 
@@ -94,7 +96,7 @@ defmodule RogerUi.Web.QueuesPlugTest do
     assert conn.status == 200
     json = Poison.decode!(conn.resp_body)
     assert Enum.count(json["queues"]) == 10
-    assert json["total"] == 12
+    assert json["total"] == 3000
 
     conn =
       :get
@@ -102,9 +104,10 @@ defmodule RogerUi.Web.QueuesPlugTest do
       |> Router.call([])
 
     json = Poison.decode!(conn.resp_body)
-    assert Enum.count(json["queues"]) == 2
+    assert Enum.count(json["queues"]) == 10
   end
 
+  @tag :slow
   test "get all queues paginated and filtered" do
     RogerUi.RogerApi.Mock |> partitions_mock()
 
@@ -115,6 +118,6 @@ defmodule RogerUi.Web.QueuesPlugTest do
 
     assert conn.status == 200
     json = Poison.decode!(conn.resp_body)
-    assert Enum.count(json["queues"]) == 4
+    assert Enum.count(json["queues"]) == 10
   end
 end

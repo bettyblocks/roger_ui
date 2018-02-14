@@ -1,5 +1,5 @@
 defmodule RogerUi.Web.JobsPlugTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   use Plug.Test
   alias RogerUi.Web.JobsPlug.Router
   alias RogerUi.Tests.RogerApiInMemory
@@ -7,6 +7,7 @@ defmodule RogerUi.Web.JobsPlugTest do
 
   setup :verify_on_exit!
 
+  @tag :slow
   test "get jobs" do
     RogerUi.RogerApi.Mock
     |> expect(:queued_jobs, fn _, _ -> %{} end)
@@ -25,10 +26,11 @@ defmodule RogerUi.Web.JobsPlugTest do
   end
 
   describe "cancel jobs" do
+    @tag :slow
     test "all" do
       RogerUi.RogerApi.Mock
       |> expect(:running_jobs, &RogerApiInMemory.running_jobs/0)
-      |> expect(:cancel_job, 10, fn _, _ -> :ok end)
+      |> expect(:cancel_job, 100800, fn _, _ -> :ok end)
 
       conn =
         :delete
@@ -38,10 +40,11 @@ defmodule RogerUi.Web.JobsPlugTest do
       assert conn.status == 204
     end
 
+    @tag :slow
     test "filtered" do
       RogerUi.RogerApi.Mock
       |> expect(:running_jobs, &RogerApiInMemory.running_jobs/0)
-      |> expect(:cancel_job, 10, fn _, _ -> :ok end)
+      |> expect(:cancel_job, 100800, fn _, _ -> :ok end)
 
       conn =
         :delete
@@ -51,6 +54,7 @@ defmodule RogerUi.Web.JobsPlugTest do
       assert conn.status == 204
     end
 
+    @tag :slow
     test "options for cors" do
       conn =
         :options
@@ -61,6 +65,7 @@ defmodule RogerUi.Web.JobsPlugTest do
     end
   end
 
+  @tag :slow
   test "get all jobs paginated" do
     RogerUi.RogerApi.Mock
     |> expect(:running_jobs, 2, &RogerApiInMemory.running_jobs/0)
@@ -73,7 +78,7 @@ defmodule RogerUi.Web.JobsPlugTest do
     assert conn.status == 200
     json = Poison.decode!(conn.resp_body)
     assert Enum.count(json["jobs"]) == 5
-    assert json["total"] == 10
+    assert json["total"] == 100800
 
     conn =
       :get
@@ -84,6 +89,7 @@ defmodule RogerUi.Web.JobsPlugTest do
     assert Enum.count(json["jobs"]) == 5
   end
 
+  @tag :slow
   test "get all jobs paginated and filtered" do
     RogerUi.RogerApi.Mock
     |> expect(:running_jobs, &RogerApiInMemory.running_jobs/0)
