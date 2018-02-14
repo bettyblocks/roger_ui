@@ -7,6 +7,8 @@ defmodule RogerUi.Web.QueuesPlugTest do
 
   setup :verify_on_exit!
 
+  @massive_actions [queue_pause: "pause", queue_resume: "resume", purge_queue: "purge"]
+
   defp create_queues do
     %{
       "queues" => [
@@ -40,7 +42,19 @@ defmodule RogerUi.Web.QueuesPlugTest do
     action |> action_queues_mock(times) |> partitions_mock()
   end
 
-  [queue_pause: "pause", queue_resume: "resume", purge_queue: "purge"]
+  @massive_actions
+  |> Enum.each(fn {_, uri} ->
+    test "options for cors #{uri}" do
+      conn =
+        :options
+        |> conn("/#{unquote(uri)}")
+        |> Router.call([])
+
+      assert conn.status == 207
+    end
+  end)
+
+  @massive_actions
   |> Enum.each(fn {action, uri} ->
     describe "#{uri} queues:" do
       test "all" do
