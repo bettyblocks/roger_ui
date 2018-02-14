@@ -69,6 +69,7 @@ defmodule RogerUi.Web.JobsPlug do
     end
 
     options("/", do: Response.no_content(conn, 207))
+
     delete "/" do
       conn = Request.fill_params(conn)
       jobs = Map.get(conn.params, "jobs", [])
@@ -79,6 +80,7 @@ defmodule RogerUi.Web.JobsPlug do
       |> Enum.each(fn j ->
         @roger_api.cancel_job(j["partition_name"], j["job_id"])
       end)
+
       Response.no_content(conn)
     end
   end
