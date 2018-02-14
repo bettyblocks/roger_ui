@@ -34,7 +34,12 @@
       </b-button>
     </template>
     <template slot="row-details" slot-scope="row">
-      <jobs-table :jobs="jobs"></jobs-table>
+      <b-card title="Jobs">
+        <jobs-table
+          @mounting-jobs-table="load_jobs(row.item.partition_name, row.item.queue_name)"
+          :jobs="jobs">
+        </jobs-table>
+      </b-card>
     </template>
   </b-table>
 </div>
@@ -78,9 +83,11 @@ export default {
       filter: ''
     }
   },
+
   components: {
     'jobs-table': JobsTable
   },
+
   computed: {
     all_selected () {
       return this.queues.length === this.checked_queues.length
@@ -89,9 +96,23 @@ export default {
       return this.checked_queues.length === 0
     }
   },
+
   methods: {
     is_paused (value) {
       return value ? 'paused' : 'running'
+    },
+
+    load_jobs (partitionName, queueName) {
+      console.log(partitionName)
+      console.log(queueName)
+      this.$http
+        .get(`/api/jobs/${partitionName}/${queueName}`)
+        .then(response => {
+          this.jobs = response.data.queued_jobs
+        })
+        .catch(error => {
+          console.log(error)
+        })
     },
 
     refresh_queues () {
@@ -139,6 +160,7 @@ export default {
       }
     }
   },
+
   created () {
     this.refresh_queues()
   }
