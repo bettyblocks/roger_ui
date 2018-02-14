@@ -35,6 +35,27 @@ export default {
       checked: []
     }
   },
+
+  beforeMount () {
+    this.$emit('mounting-jobs-table')
+  },
+
+  computed: {
+    all_selected () {
+      return this.jobs.length !== 0 && this.jobs.length === this.checked.length
+    }
+  },
+
+  methods: {
+    toggle_selected () {
+      if (this.all_selected) {
+        this.checked = []
+      } else {
+        this.checked = this.jobs.slice()
+      }
+    }
+  },
+
   watch: {
     checked (oldVal, newVal) {
       if (oldVal !== newVal) {
@@ -43,20 +64,6 @@ export default {
           all_selected: this.all_selected,
           nothing_selected: this.checked.length === 0
         })
-      }
-    }
-  },
-  computed: {
-    all_selected () {
-      return this.jobs.length !== 0 && this.jobs.length === this.checked.length
-    }
-  },
-  methods: {
-    toggle_selected () {
-      if (this.all_selected) {
-        this.checked = []
-      } else {
-        this.checked = this.jobs.slice()
       }
     }
   }
