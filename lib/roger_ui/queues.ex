@@ -4,7 +4,7 @@ defmodule RogerUi.Queues do
   """
   alias Roger.Queue
 
-  defp named_queues(partition_name, queues) do
+  defp normalize_queues({partition_name, queues}) do
     Stream.map(queues, fn {qn, queue} ->
       queue
       |> Map.put("qualified_queue_name", Queue.make_name(partition_name, qn))
@@ -13,9 +13,7 @@ defmodule RogerUi.Queues do
     end)
   end
 
-  def partition_to_queues(partition) do
-    Stream.flat_map(partition, fn {pn, q} -> named_queues(pn, q) end)
-  end
+  defp partition_to_queues(partition), do: Stream.flat_map(partition, &normalize_queues/1)
 
   def nodes_to_queues(nodes) do
     nodes
