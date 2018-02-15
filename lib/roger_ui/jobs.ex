@@ -3,7 +3,7 @@ defmodule RogerUi.Jobs do
   Generate Jobs list from Roger.Info.running_jobs()
   """
 
-  defp normalized_jobs(partition_name, jobs) do
+  defp normalize_jobs({partition_name, jobs}) do
     Stream.map(jobs, fn j ->
       j
       |> Map.from_struct()
@@ -11,9 +11,7 @@ defmodule RogerUi.Jobs do
     end)
   end
 
-  def partition_to_jobs(partition) do
-    Stream.flat_map(partition, fn {pn, j} -> normalized_jobs(pn, j) end)
-  end
+  defp partition_to_jobs(partition), do: Stream.flat_map(partition, &normalize_jobs/1)
 
   def normalize(jobs) do
     jobs
