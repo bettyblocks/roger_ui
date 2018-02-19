@@ -10,8 +10,8 @@ defmodule RogerUi.Jobs do
   end
 
   defp normalize_jobs({partition_name, jobs}) do
-    Stream.map(jobs, fn j ->
-      j
+    Stream.map(jobs, fn job ->
+      job
       |> Map.from_struct()
       |> Map.put("partition_name", partition_name)
     end)
