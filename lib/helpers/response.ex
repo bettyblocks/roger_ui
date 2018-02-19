@@ -4,13 +4,6 @@ defmodule RogerUi.Helpers.Response do
   """
   import Plug.Conn
 
-  defp set_cors_headers(conn) do
-    conn
-    |> put_resp_header("access-control-allow-methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS")
-    |> put_resp_header("access-control-allow-headers", "origin, content-type, x-auth-token")
-    |> put_resp_header("access-control-allow-origin", "*")
-  end
-
   def no_content(ncr_conn, status_number \\ 204) do
     ncr_conn
     |> set_cors_headers()
@@ -26,5 +19,12 @@ defmodule RogerUi.Helpers.Response do
     |> put_resp_header("content-type", "application/json")
     |> send_resp(200, json)
     |> halt()
+  end
+
+  defp set_cors_headers(conn) do
+    conn
+    |> put_resp_header("access-control-allow-methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS")
+    |> put_resp_header("access-control-allow-headers", "origin, content-type, x-auth-token")
+    |> put_resp_header("access-control-allow-origin", "*")
   end
 end
