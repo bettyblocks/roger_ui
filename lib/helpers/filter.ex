@@ -8,12 +8,12 @@ defmodule RogerUi.Helpers.Filter do
           field :: String.t(),
           filter :: String.t()
         ) :: []
-  def call(xs, _, ""), do: xs
+  def call(enumerable, _, ""), do: enumerable
 
-  def call(xs, field, filter) do
+  def call(enumerable, field, filter) do
     filter = String.upcase(filter)
 
-    Stream.filter(xs, fn e ->
+    Stream.filter(enumerable, fn e ->
       e
       |> Map.get(field)
       |> to_string()
