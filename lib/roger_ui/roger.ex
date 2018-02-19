@@ -3,17 +3,17 @@ defmodule RogerUi.Roger do
   Contract to Roger calls
   """
 
-  @type queue :: %{
+  @typep queue :: %{
           consumer_count: integer(),
           max_workers: integer(),
           message_count: integer(),
           paused: boolean()
         }
 
-  @type queues :: %{(partition_name :: String.t()) => %{(queue_name :: atom()) => queue()} | %{}}
+  @typep queues :: %{(partition_name :: String.t()) => %{(queue_name :: atom()) => queue()} | %{}}
 
-  @type jobs :: %{(partition_name :: atom()) => []}
-  @type nodes :: [{node_name :: atom(), %{running: queues(), waiting: queues()}}]
+  @typep jobs :: %{(partition_name :: atom()) => []}
+  @typep nodes :: [{node_name :: atom(), %{running: queues(), waiting: queues()}}]
 
   @callback partitions :: nodes()
 
