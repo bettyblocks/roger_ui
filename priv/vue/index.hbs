@@ -7,7 +7,12 @@
     <link type="text/css" rel="stylesheet" href="//cdn.materialdesignicons.com/1.9.32/css/materialdesignicons.css"/>
   </head>
   <body>
-    <div id="app"></div>
+  {{#if htmlWebpackPlugin.options.environment}}
+      <h2>Something</h2>
+  {{else}}
+      <base href="/<%= @base %>" />
+  {{/if}}
+  <div id="app"></div>
     <!-- built files will be auto injected -->
   </body>
 </html>
