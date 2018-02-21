@@ -8,7 +8,7 @@ defmodule RogerUi.Application do
   use Application
 
   def start(_type, _args) do
-    run_server? = Application.get_env(:roger_ui, :server, true)
+    run_server? = Application.get_env(:roger_ui, :server, false)
     web_port = Application.get_env(:roger_ui, :web_port, 4040)
 
     if run_server? do
