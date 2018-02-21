@@ -133,11 +133,11 @@ export default {
         .then(this.refresh_queues)
     },
 
-    show_jobs ({partition_name, queue_name}, button) {
+    show_jobs (item, button) {
       this.$http
-        .get(`/api/jobs/${partition_name}/${queue_name}`)
+        .get(`/api/jobs/${item.partition_name}/${item.queue_name}`)
         .then(response => {
-          this.modalInfo.title = partition_name
+          this.modalInfo.title = item.qualified_queue_name
           this.jobs = response.data.queued_jobs
           this.$root.$emit('bv::show::modal', 'modalInfo', button)
         })
