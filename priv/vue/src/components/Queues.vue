@@ -109,9 +109,6 @@ export default {
         .then(response => {
           this.jobs = response.data.queued_jobs
         })
-        .catch(error => {
-          console.log(error)
-        })
     },
 
     refresh_queues () {
@@ -121,9 +118,6 @@ export default {
         .then(response => {
           this.queues = response.data.queues
           this.total_queues = response.data.total
-        })
-        .catch(error => {
-          console.log(error)
         })
     },
 
@@ -141,9 +135,6 @@ export default {
           this.jobs = response.data.queued_jobs
           this.$root.$emit('bv::show::modal', 'modalInfo', button)
         })
-        .catch(error => {
-          console.log(error)
-        })
     },
 
     reset_modal () {
@@ -156,7 +147,6 @@ export default {
         return
       }
       let params = this.all_selected ? { filter: this.filter } : { queues: this.checked_queues }
-      console.log(params)
       this.action_over_queues(action, params)
     },
 

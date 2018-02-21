@@ -18,17 +18,23 @@ const ax = axios.create({
   baseURL: process.env.BASE_URL || window.rogerNamespace
 })
 
+const manageError = error => {
+  store.commit('unsetLoading')
+  store.commit('setError', error)
+  return Promise.reject(error)
+}
+
 // Set loading to true in state when request something
 ax.interceptors.request.use(config => {
   store.commit('setLoading')
   return config
-}, error => Promise.reject(error))
+}, manageError)
 
 // Set loading to false in state when get response
 ax.interceptors.response.use(config => {
   store.commit('unsetLoading')
   return config
-}, error => Promise.reject(error))
+}, manageError)
 
 Vue.prototype.$http = ax
 
