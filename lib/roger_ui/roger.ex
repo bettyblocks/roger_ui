@@ -12,7 +12,7 @@ defmodule RogerUi.Roger do
 
   @typep queues :: %{(partition_name :: String.t()) => %{(queue_name :: atom()) => queue()} | %{}}
 
-  @typep jobs :: %{(partition_name :: atom()) => []}
+  @typep jobs :: %{(partition_name :: atom()) => [%Roger.Job{}]}
   @typep nodes :: [{node_name :: atom(), %{running: queues(), waiting: queues()}}]
 
   @callback partitions :: nodes()
@@ -30,7 +30,7 @@ defmodule RogerUi.Roger do
               {node_name :: String.t(), [%Roger.Job{}]}
             ]
 
-  @callback running_jobs() :: [{node_name :: String.t(), [%Roger.Job{}]}]
+  @callback running_jobs() :: jobs
 
   @callback queued_jobs(partition_name :: String.t(), queue_name :: atom) :: [
               {node_name :: String.t(), [%Roger.Job{}]}
