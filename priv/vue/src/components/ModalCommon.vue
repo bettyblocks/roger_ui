@@ -49,7 +49,7 @@
         </svg>
       </div>
     </b-modal>
-    <b-modal centered hide-footer :visible="showError" id="error-modal">
+    <b-modal centered hide-footer @hide="unsetError" :visible="showError" id="error-modal">
       <p>
         {{ JSON.stringify(error) }}
       </p>
@@ -58,10 +58,15 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'ModalCommons',
+  methods: {
+    ...mapMutations([
+      'unsetError'
+    ])
+  },
   computed: {
     ...mapGetters([
       'isLoading',

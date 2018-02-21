@@ -26,6 +26,10 @@ export const store = new Vuex.Store({
 
     setError: (state, error) => {
       state.error = error
+    },
+
+    unsetError: (state) => {
+      state.error = null
     }
   }
 })
