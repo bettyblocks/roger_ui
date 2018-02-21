@@ -4,13 +4,27 @@ defmodule RogerUi.Web.RouterPlug do
   """
 
   require Logger
+  require EEx
   alias RogerUi.Web.RouterPlug.Router
+  alias Plug.Conn
 
   def init(opts), do: opts
 
   def call(conn, opts) do
-    Router.call(conn, Router.init(opts))
+    ns = opts[:namespace] || ""
+    conn = Conn.assign(conn, :namespace, ns)
+    case ns do
+      "" ->
+        Router.call(conn, Router.init(opts))
+      _ ->
+        namespace(conn, opts, ns)
+    end
   end
+
+  defp namespace(%Conn{path_info: [ns | path]} = conn, opts, ns) do
+    Router.call(%Conn{conn | path_info: path}, Router.init(opts))
+  end
+  defp namespace(conn, _opts, _ns), do: conn
 
   defmodule Router do
     @moduledoc """
@@ -45,12 +59,18 @@ defmodule RogerUi.Web.RouterPlug do
       Response.json(conn, %{nodes: nodes})
     end
 
+    index_path = Path.join([Application.app_dir(:roger_ui), "priv/static/index.html"])
+    EEx.function_from_file(:defp, :render_index, index_path, [:assigns])
+
     match _ do
-      index_path = Path.join([Application.app_dir(:roger_ui), "priv/static/index.html"])
+      base = case conn.assigns[:namespace] do
+        "" -> ""
+        namespace -> "#{namespace}"
+      end
 
       conn
       |> put_resp_header("content-type", "text/html")
-      |> send_file(200, index_path)
+      |> send_resp(200, render_index(base: base))
       |> halt()
     end
   end

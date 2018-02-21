@@ -13,7 +13,7 @@ Vue.use(BootstrapVue)
 
 // Add BASE_URL to dev.env.js
 Vue.prototype.$http = axios.create({
-  baseURL: process.env.BASE_URL || ''
+  baseURL: process.env.BASE_URL || window.rogerNamespace
 })
 
 Vue.config.productionTip = false

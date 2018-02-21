@@ -3,14 +3,15 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>Roger UI</title>
+    <title>{{ htmlWebpackPlugin.options.title }}</title>
     <link type="text/css" rel="stylesheet" href="//cdn.materialdesignicons.com/1.9.32/css/materialdesignicons.css"/>
   </head>
   <body>
-  {{#if htmlWebpackPlugin.options.environment}}
-      <h2>Something</h2>
-  {{else}}
-      <base href="/<%= @base %>" />
+  {{#if htmlWebpackPlugin.options.production}}
+    <base href="/<%= @base %>/" />
+    <script>
+      window.rogerNamespace = "/<%= @base %>/";
+    </script>
   {{/if}}
   <div id="app"></div>
     <!-- built files will be auto injected -->
