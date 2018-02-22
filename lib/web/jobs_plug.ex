@@ -27,61 +27,55 @@ defmodule RogerUi.Web.JobsPlug do
     plug(:match)
     plug(:dispatch)
 
-    defp filtered_jobs(filter) do
-      @roger_api.running_jobs()
-      |> Jobs.normalize()
-      |> Filter.call(:module, filter)
-    end
-
-    defp selected_jobs([], filter), do: filtered_jobs(filter)
-    defp selected_jobs(jobs, _), do: jobs
-
-    get "all/:page_size/:page_number" do
+    get "/:page_size/:page_number" do
       conn = Request.fill_params(conn)
-      page_size = String.to_integer(page_size)
-      page_number = String.to_integer(page_number)
-      filter = Map.get(conn.params, "filter", "")
+      params = normalize_params(conn)
 
       jobs =
-        filter
-        |> filtered_jobs()
-        |> Page.extract("jobs", page_size, page_number)
+        if params.partition_name != "" && params.queue_name != "" do
+          @roger_api.queued_jobs(params.partition_name, params.queue_name)
+        else
+          @roger_api.running_jobs()
+        end
+
+      jobs = filtered_and_paginated_jobs(jobs, params)
 
       Response.json(conn, jobs)
-    end
-
-    get "/:partition_name/:queue_name" do
-      roger_now = Roger.now()
-      queued_jobs = @roger_api.queued_jobs(partition_name, queue_name)
-
-      running_jobs =
-        partition_name
-        |> @roger_api.running_jobs()
-        |> Enum.into(%{})
-
-      body = %{
-        roger_now: roger_now,
-        queued_jobs: queued_jobs,
-        running_jobs: running_jobs
-      }
-
-      Response.json(conn, body)
     end
 
     options("/", do: Response.no_content(conn, 207))
 
     delete "/" do
       conn = Request.fill_params(conn)
-      jobs = Map.get(conn.params, "jobs", [])
-      filter = Map.get(conn.params, "filter", "")
+      params = normalize_params(conn)
 
-      jobs
-      |> selected_jobs(filter)
+      params.jobs
+      |> selected_jobs(params.filter)
       |> Enum.each(fn j ->
         @roger_api.cancel_job(j["partition_name"], j["job_id"])
       end)
 
       Response.no_content(conn)
+    end
+
+    defp filtered_and_paginated_jobs(jobs, params) do
+      jobs
+      |> Filter.call(:module, params.filter)
+      |> Page.extract("jobs", params.page_size, params.page_number)
+    end
+
+    defp selected_jobs([], filter), do: filtered_jobs(filter)
+    defp selected_jobs(jobs, _), do: jobs
+
+    defp normalize_params(conn) do
+      %{
+        filter: Map.get(conn.params, "filter", ""),
+        jobs: Map.get(conn.params, "jobs", []),
+        page_number: String.to_integer(conn.params, "page_number", 0),
+        page_size: String.to_integer(conn.params, "page_size", 0),
+        partition_name: Map.get(conn.params, "partition_name", ""),
+        queue_name: Map.get(conn.params, "queue_name", "")
+      }
     end
   end
 end
