@@ -32,13 +32,9 @@ defmodule RogerUi.Web.JobsPlug do
       params = normalize_params(conn)
 
       jobs =
-        if params.partition_name != "" && params.queue_name != "" do
-          @roger_api.queued_jobs(params.partition_name, params.queue_name)
-        else
-          @roger_api.running_jobs()
-        end
-
-      jobs = filtered_and_paginated_jobs(jobs, params)
+        []
+        |> selected_jobs(params)
+        |> Page.extract("jobs", params.page_size, params.page_number)
 
       Response.json(conn, jobs)
     end
@@ -50,7 +46,7 @@ defmodule RogerUi.Web.JobsPlug do
       params = normalize_params(conn)
 
       params.jobs
-      |> selected_jobs(params.filter)
+      |> selected_jobs(params)
       |> Enum.each(fn j ->
         @roger_api.cancel_job(j["partition_name"], j["job_id"])
       end)
@@ -58,21 +54,25 @@ defmodule RogerUi.Web.JobsPlug do
       Response.no_content(conn)
     end
 
-    defp filtered_and_paginated_jobs(jobs, params) do
-      jobs
-      |> Filter.call(:module, params.filter)
-      |> Page.extract("jobs", params.page_size, params.page_number)
+    defp selected_jobs([], params) do
+      jobs =
+        if params.partition_name != "" && params.queue_name != "" do
+          @roger_api.queued_jobs(params.partition_name, params.queue_name)
+        else
+          @roger_api.running_jobs() |> Jobs.normalize()
+        end
+
+      Filter.call(jobs, :module, params.filter)
     end
 
-    defp selected_jobs([], filter), do: filtered_jobs(filter)
     defp selected_jobs(jobs, _), do: jobs
 
     defp normalize_params(conn) do
       %{
         filter: Map.get(conn.params, "filter", ""),
         jobs: Map.get(conn.params, "jobs", []),
-        page_number: String.to_integer(conn.params, "page_number", 0),
-        page_size: String.to_integer(conn.params, "page_size", 0),
+        page_number: conn.params |> Map.get("page_number", 0) |> String.to_integer(),
+        page_size: conn.params |> Map.get("page_size", 0) |> String.to_integer(),
         partition_name: Map.get(conn.params, "partition_name", ""),
         queue_name: Map.get(conn.params, "queue_name", "")
       }
