@@ -30,7 +30,7 @@ defmodule RogerUi.Web.JobsPlugTest do
     test "all" do
       RogerUi.RogerApi.Mock
       |> expect(:running_jobs, &RogerApiInMemory.running_jobs/0)
-      |> expect(:cancel_job, 100800, fn _, _ -> :ok end)
+      |> expect(:cancel_job, 100_800, fn _, _ -> :ok end)
 
       conn =
         :delete
@@ -44,7 +44,7 @@ defmodule RogerUi.Web.JobsPlugTest do
     test "filtered" do
       RogerUi.RogerApi.Mock
       |> expect(:running_jobs, &RogerApiInMemory.running_jobs/0)
-      |> expect(:cancel_job, 100800, fn _, _ -> :ok end)
+      |> expect(:cancel_job, 100_800, fn _, _ -> :ok end)
 
       conn =
         :delete
@@ -78,7 +78,7 @@ defmodule RogerUi.Web.JobsPlugTest do
     assert conn.status == 200
     json = Poison.decode!(conn.resp_body)
     assert Enum.count(json["jobs"]) == 5
-    assert json["total"] == 100800
+    assert json["total"] == 100_800
 
     conn =
       :get

@@ -13,9 +13,11 @@ defmodule RogerUi.Web.RouterPlug do
   def call(conn, opts) do
     ns = opts[:namespace] || ""
     conn = Conn.assign(conn, :namespace, ns)
+
     case ns do
       "" ->
         Router.call(conn, Router.init(opts))
+
       _ ->
         namespace(conn, opts, ns)
     end
@@ -24,6 +26,7 @@ defmodule RogerUi.Web.RouterPlug do
   defp namespace(%Conn{path_info: [ns | path]} = conn, opts, ns) do
     Router.call(%Conn{conn | path_info: path}, Router.init(opts))
   end
+
   defp namespace(conn, _opts, _ns), do: conn
 
   defmodule Router do
@@ -63,10 +66,11 @@ defmodule RogerUi.Web.RouterPlug do
     EEx.function_from_file(:defp, :render_index, index_path, [:assigns])
 
     match _ do
-      base = case conn.assigns[:namespace] do
-        "" -> ""
-        namespace -> "#{namespace}"
-      end
+      base =
+        case conn.assigns[:namespace] do
+          "" -> ""
+          namespace -> "#{namespace}"
+        end
 
       conn
       |> put_resp_header("content-type", "text/html")

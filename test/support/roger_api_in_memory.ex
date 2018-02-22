@@ -74,6 +74,7 @@ defmodule RogerUi.Tests.RogerApiInMemory do
 
   defp generator(name, times, map) do
     vals = Process.get(name)
+
     if vals do
       vals
     else
@@ -86,6 +87,7 @@ defmodule RogerUi.Tests.RogerApiInMemory do
           |> Keyword.put(:"other_#{i}@127.0.0.1", Map.new(map))
           |> Keyword.put(:"demo_#{i}@127.0.0.1", Map.new(map))
         end)
+
       Process.put(name, new_vals)
       new_vals
     end

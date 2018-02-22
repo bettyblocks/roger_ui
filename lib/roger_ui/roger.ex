@@ -4,11 +4,11 @@ defmodule RogerUi.Roger do
   """
 
   @typep queue :: %{
-          consumer_count: integer(),
-          max_workers: integer(),
-          message_count: integer(),
-          paused: boolean()
-        }
+           consumer_count: integer(),
+           max_workers: integer(),
+           message_count: integer(),
+           paused: boolean()
+         }
 
   @typep queues :: %{(partition_name :: String.t()) => %{(queue_name :: atom()) => queue()} | %{}}
 
