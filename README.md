@@ -6,17 +6,21 @@ RogerUI allow you to see nodes, partitions and queues with various details level
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `roger_ui` to your list of dependencies in `mix.exs`:
+1.- Pull `develop` branch
+2.- `npm install; npm run build` inside `priv/vue`
+2.- Change `config.exs` on `roger_demo` to `config :roger_ui, :server, false` (now is using the server in host application)
+3.- Change `router.ex` on `roger_demo` adding this:
 
-```elixir
-def deps do
-  [
-    {:roger_ui, "~> 0.1.4"}
-  ]
-end
 ```
+  pipeline :roger do
+    plug :accepts, ["html"]
+    plug :put_secure_browser_headers
+    plug RogerUi.Web.RouterPlug, namespace: "roger"
+  end
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/roger_ui](https://hexdocs.pm/roger_ui).
+  scope "/roger", RogerUi.Web.RouterPlug do
+    pipe_through :roger
+    forward "/", Router, namespace: "roger"
+  end
+```
+4.- Navigate to `http://localhost:4000/roger`
