@@ -36,7 +36,7 @@
       </template>
     </b-table>
     <b-modal id="modalInfo" size="lg" @hide="reset_modal" :title="modalInfo.title" ok-only>
-      <jobs-table :jobs="jobs">
+      <jobs-table :queue="modalInfo.queue" :title="modalInfo.title">
       </jobs-table>
     </b-modal>
   </div>
@@ -72,7 +72,6 @@ export default {
           'class': 'text-center'
         }
       },
-      jobs: [],
       queues: [],
       total_queues: 0,
       current_page: 1,
@@ -80,15 +79,13 @@ export default {
       filter: '',
       modalInfo: {
         title: '',
-        content: ''
+        queue: {}
       }
     }
   },
-
   components: {
     'jobs-table': JobsTable
   },
-
   computed: {
     all_selected () {
       return this.queues.length === this.checked_queues.length
@@ -97,21 +94,11 @@ export default {
       return this.checked_queues.length === 0
     }
   },
-
   methods: {
     is_paused (value) {
       return value ? 'paused' : 'running'
     },
-
-    load_jobs (partitionName, queueName) {
-      this.$http
-        .get(`/api/jobs/${partitionName}/${queueName}`)
-        .then(response => {
-          this.jobs = response.data.queued_jobs
-        })
-    },
-
-    refresh_queues () {
+    refresh () {
       this.checked_queues = []
       this.$http
         .get(`/api/queues/${this.page_size}/${this.current_page}`, { params: { filter: this.filter } })
@@ -120,28 +107,20 @@ export default {
           this.total_queues = response.data.total
         })
     },
-
     action_over_queues (action, params) {
       this.$http
         .put(`/api/queues/${action}`, params)
-        .then(this.refresh_queues)
+        .then(this.refresh)
     },
-
     show_jobs (item, button) {
-      this.$http
-        .get(`/api/jobs/${item.partition_name}/${item.queue_name}`)
-        .then(response => {
-          this.modalInfo.title = item.qualified_queue_name
-          this.jobs = response.data.queued_jobs
-          this.$root.$emit('bv::show::modal', 'modalInfo', button)
-        })
+      this.modalInfo.title = item.qualified_queue_name
+      this.modalInfo.queue = item
+      this.$root.$emit('bv::show::modal', 'modalInfo', button)
     },
-
     reset_modal () {
       this.modalInfo.title = ''
-      this.jobs = []
+      this.modalInfo.queue = {}
     },
-
     run_action (action) {
       if (this.nothing_selected) {
         return
@@ -149,18 +128,15 @@ export default {
       let params = this.all_selected ? { filter: this.filter } : { queues: this.checked_queues }
       this.action_over_queues(action, params)
     },
-
     change_page (page) {
       this.current_page = page
-      this.refresh_queues()
+      this.refresh()
     },
-
     change_filter: debounce(function (filter) {
       this.current_page = 1
       this.filter = filter
-      this.refresh_queues()
+      this.refresh()
     }, 400),
-
     toggle_selected () {
       if (this.all_selected) {
         this.checked_queues = []
@@ -169,9 +145,8 @@ export default {
       }
     }
   },
-
   created () {
-    this.refresh_queues()
+    this.refresh()
   }
 }
 </script>

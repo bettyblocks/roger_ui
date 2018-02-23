@@ -1,19 +1,47 @@
 <template>
-  <b-table small :items="jobs" :fields="fields" show-empty>
-    <template slot="HEAD_actions" slot-scope="head">
-      {{head.label}} &nbsp;
-      <input type="checkbox" @click.stop="toggle_selected" :checked="all_selected">
-    </template>
-    <template slot="actions" slot-scope="item">
-      <input type="checkbox" name="checked" :key="item.index" :value="item.item" @click.stop v-model="checked">
-    </template>
-  </b-table>
+  <div>
+    <b-row class="my-1">
+      <b-col cols="2">
+        <b-pagination @change="change_page"
+                      size="sm" :total-rows="total_jobs"
+                      :per-page="page_size">
+        </b-pagination>
+      </b-col>
+      <b-col cols="9">
+        <b-form-input @input="change_filter" placeholder="Type to Filter" autofocus/>
+      </b-col>
+      <b-col cols="1">
+        <b-button-toolbar class="my-1">
+          <b-button-group size="sm">
+            <b-btn :disabled="nothing_selected" @click="cancel" class="mx-1 mdi mdi-delete-forever"></b-btn>
+          </b-button-group>
+        </b-button-toolbar>
+      </b-col>
+    </b-row>
+    <b-table small :items="jobs" :fields="fields" show-empty>
+      <template slot="HEAD_actions" slot-scope="head">
+        {{head.label}} &nbsp;
+        <input type="checkbox" @click.stop="toggle_selected" :checked="all_selected">
+      </template>
+      <template slot="actions" slot-scope="item">
+        <input type="checkbox" name="checked" :key="item.index" :value="item.item" @click.stop v-model="checked">
+      </template>
+    </b-table>
+  </div>
 </template>
 
 <script>
+import debounce from 'lodash.debounce'
+
 export default {
   name: 'JobsTable',
-  props: ['jobs'],
+  props: {
+    queue: {
+      type: Object,
+      default: function () { return {} }
+    },
+    title: String
+  },
   data () {
     return {
       fields: {
@@ -32,20 +60,20 @@ export default {
           'class': 'text-right'
         }
       },
-      checked: []
+      nothing_selected: true,
+      checked: [],
+      jobs: [],
+      total_jobs: 0,
+      current_page: 1,
+      page_size: 10,
+      filter: ''
     }
   },
-
-  beforeMount () {
-    this.$emit('mounting-jobs-table')
-  },
-
   computed: {
     all_selected () {
       return this.jobs.length !== 0 && this.jobs.length === this.checked.length
     }
   },
-
   methods: {
     toggle_selected () {
       if (this.all_selected) {
@@ -53,18 +81,51 @@ export default {
       } else {
         this.checked = this.jobs.slice()
       }
-    }
-  },
-
-  watch: {
-    checked (oldVal, newVal) {
-      if (oldVal !== newVal) {
-        this.$emit('checked-changed', {
-          checked: this.checked,
-          all_selected: this.all_selected,
-          nothing_selected: this.checked.length === 0
+    },
+    update_jobs (jobs) {
+      this.jobs = jobs
+    },
+    refresh () {
+      this.checked = []
+      this.$http
+        .get(`/api/jobs/${this.page_size}/${this.current_page}`,
+          { params: { ...this.queue, filter: this.filter } })
+        .then(response => {
+          this.jobs = response.data.jobs
+          this.total_jobs = response.data.total
         })
-      }
+    },
+    update_checked (checkedStatus) {
+      this.checked = checkedStatus.checked
+      this.nothing_selected = checkedStatus.nothing_selected
+      this.all_selected = checkedStatus.all_selected
+    },
+    cancel () {
+      if (this.nothing_selected) return
+      let params = this.all_selected ? { filter: this.filter } : { jobs: this.checked }
+      params = {...this.queue, ...params}
+      this.$http
+        .delete(`/api/jobs/`, params)
+        .then(this.refresh)
+    },
+    change_page (page) {
+      this.current_page = page
+      this.refresh()
+    },
+    change_filter: debounce(function (filter) {
+      this.current_page = 1
+      this.filter = filter
+      this.refresh()
+    }, 400)
+  },
+  created () {
+    this.refresh()
+  },
+  watch: {
+    // HACK: use this title to fetch jobs
+    // logic election was `queue` but is not working
+    title: function () {
+      if (this.title !== '') this.refresh()
     }
   }
 }
