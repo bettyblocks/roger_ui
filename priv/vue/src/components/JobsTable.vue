@@ -1,13 +1,13 @@
 <template>
   <div>
     <b-row class="my-1">
-      <b-col cols="2">
+      <b-col cols="4">
         <b-pagination @change="change_page"
                       size="sm" :total-rows="total_jobs"
                       :per-page="page_size">
         </b-pagination>
       </b-col>
-      <b-col cols="9">
+      <b-col cols="7">
         <b-form-input @input="change_filter" placeholder="Type to Filter" autofocus/>
       </b-col>
       <b-col cols="1">
@@ -85,11 +85,15 @@ export default {
     update_jobs (jobs) {
       this.jobs = jobs
     },
-    refresh () {
+    clean () {
       this.checked = []
+      this.jobs = []
+    },
+    refresh () {
+      this.clean()
+      let params = { params: { ...this.queue, filter: this.filter } }
       this.$http
-        .get(`/api/jobs/${this.page_size}/${this.current_page}`,
-          { params: { ...this.queue, filter: this.filter } })
+        .get(`/api/jobs/${this.page_size}/${this.current_page}`, params)
         .then(response => {
           this.jobs = response.data.jobs
           this.total_jobs = response.data.total

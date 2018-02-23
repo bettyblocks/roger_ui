@@ -1,6 +1,7 @@
 <template>
   <div class="container-fluid" id="app">
-    <modal-common></modal-common>
+    <modal-error></modal-error>
+    <loading :show="isLoading"></loading>
     <b-navbar toggleable="md" type="dark" variant="info">
       <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
       <b-navbar-brand>Roger UI</b-navbar-brand>
@@ -23,10 +24,17 @@
 </template>
 
 <script>
-import ModalCommon from '@/components/ModalCommon'
+import ModalError from '@/components/ModalError'
+import loading from 'vue-full-loading'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'App',
-  components: { ModalCommon }
+  components: { ModalError, loading },
+  computed: {
+    ...mapGetters([
+      'isLoading'
+    ])
+  }
 }
 </script>
