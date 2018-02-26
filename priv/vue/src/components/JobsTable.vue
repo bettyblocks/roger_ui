@@ -26,6 +26,48 @@
       <template slot="actions" slot-scope="item">
         <input type="checkbox" name="checked" :key="item.index" :value="item.item" @click.stop v-model="checked">
       </template>
+      <template slot="show_details" slot-scope="row">
+        <b-button variant="link" class="mr-2" @click.stop="row.toggleDetails">
+          Details
+        </b-button>
+      </template>
+      <template slot="row-details" slot-scope="row">
+        <b-card>
+          <b-row class="mb-2">
+            <b-col class="text-sm-right" sm="3">
+              <b>Id:</b>
+            </b-col>
+            <b-col>{{ row.item.id }}</b-col>
+          </b-row>
+          <b-row class="mb-2">
+            <b-col class="text-sm-right" sm="3">
+              <b>Retry Counts:</b>
+            </b-col>
+            <b-col>{{ row.item.retry_count }}</b-col>
+          </b-row>
+          <b-row class="mb-2">
+            <b-col class="text-sm-right" sm="3">
+              <b>Module:</b>
+            </b-col>
+            <b-col>{{ row.item.module }}</b-col>
+          </b-row>
+          <b-row class="mb-2">
+            <b-col class="text-sm-right" sm="3">
+              <b>Arguments:</b>
+            </b-col>
+            <b-col>
+              <b-card>
+                <b-row class="mb-2" v-for="(val, key) in row.item.args" :key="key">
+                  <b-col class="text-sm-right" sm="3">
+                    <b>{{ key }}: </b>
+                  </b-col>
+                  <b-col>{{ val }}</b-col>
+                </b-row>
+              </b-card>
+            </b-col>
+          </b-row>
+        </b-card>
+      </template>
     </b-table>
   </div>
 </template>
@@ -52,15 +94,18 @@ export default {
           label: 'Module'
         },
         retry_count: {
-          label: 'Total retries',
+          label: 'Retries',
           'class': 'text-right'
         },
         actions: {
           label: 'All',
           'class': 'text-right'
+        },
+        show_details: {
+          label: ' ',
+          'class': 'text-right'
         }
       },
-      nothing_selected: true,
       checked: [],
       jobs: [],
       total_jobs: 0,
@@ -72,6 +117,9 @@ export default {
   computed: {
     all_selected () {
       return this.jobs.length !== 0 && this.jobs.length === this.checked.length
+    },
+    nothing_selected () {
+      return this.checked.length === 0
     }
   },
   methods: {
@@ -98,11 +146,6 @@ export default {
           this.jobs = response.data.jobs
           this.total_jobs = response.data.total
         })
-    },
-    update_checked (checkedStatus) {
-      this.checked = checkedStatus.checked
-      this.nothing_selected = checkedStatus.nothing_selected
-      this.all_selected = checkedStatus.all_selected
     },
     cancel () {
       if (this.nothing_selected) return

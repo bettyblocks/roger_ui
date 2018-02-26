@@ -36,7 +36,7 @@
       </template>
     </b-table>
     <b-modal id="modalInfo" size="lg" @hide="reset_modal" :title="modalInfo.title" ok-only>
-      <jobs-table :queue="modalInfo.queue" :title="modalInfo.title">
+      <jobs-table id="modal-job" :queue="modalInfo.queue" :title="modalInfo.title">
       </jobs-table>
     </b-modal>
   </div>
@@ -150,3 +150,8 @@ export default {
   }
 }
 </script>
+<style scoped>
+#modal-job {
+  font-size: 90%;
+}
+</style>
