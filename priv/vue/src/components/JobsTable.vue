@@ -28,7 +28,7 @@
       </template>
       <template slot="show_details" slot-scope="row">
         <b-button variant="link" class="mr-2" @click.stop="row.toggleDetails">
-          Details
+          {{ row.detailsShowing ? "Hide" : "Show" }}
         </b-button>
       </template>
       <template slot="row-details" slot-scope="row">
