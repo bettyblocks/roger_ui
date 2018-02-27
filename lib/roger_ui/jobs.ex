@@ -9,6 +9,8 @@ defmodule RogerUi.Jobs do
     |> Stream.flat_map(&partition_to_jobs/1)
   end
 
+  defp partition_to_jobs(partition), do: Stream.flat_map(partition, &normalize_jobs/1)
+
   defp normalize_jobs({partition_name, jobs}) do
     Stream.map(jobs, fn job ->
       job
@@ -16,6 +18,4 @@ defmodule RogerUi.Jobs do
       |> Map.put("partition_name", partition_name)
     end)
   end
-
-  defp partition_to_jobs(partition), do: Stream.flat_map(partition, &normalize_jobs/1)
 end
