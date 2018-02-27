@@ -1,12 +1,14 @@
 <template>
   <div class="container-fluid" id="app">
+    <modal-error></modal-error>
+    <loading :show="isLoading"></loading>
     <b-navbar toggleable="md" type="dark" variant="info">
       <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
-      <b-navbar-brand href="#">Roger UI</b-navbar-brand>
+      <b-navbar-brand>Roger UI</b-navbar-brand>
       <b-collapse is-nav id="nav_collapse">
         <b-navbar-nav>
-          <b-nav-item href="#">Dashboard</b-nav-item>
-          <b-nav-item href="#/queues">All Queues</b-nav-item>
+          <b-nav-item :to="'Queues'">Queues</b-nav-item>
+          <b-nav-item :to="'Jobs'">Running Jobs</b-nav-item>
         </b-navbar-nav>
         <b-navbar-nav class="ml-auto">
           <!-- <b-button size="sm" class="my-2 my-sm-0" variant="primary" -->
@@ -22,7 +24,17 @@
 </template>
 
 <script>
+import ModalError from '@/components/ModalError'
+import loading from 'vue-full-loading'
+import { mapGetters } from 'vuex'
+
 export default {
-  name: 'App'
+  name: 'App',
+  components: { ModalError, loading },
+  computed: {
+    ...mapGetters([
+      'isLoading'
+    ])
+  }
 }
 </script>

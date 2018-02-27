@@ -53,8 +53,9 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     new webpack.NoEmitOnErrorsPlugin(),
     // https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
+      title: 'Roger Ui - Development',
       filename: 'index.html',
-      template: 'index.html',
+      template: '!!handlebars-loader!index.hbs',
       inject: true
     }),
     // copy custom static assets
