@@ -12,5 +12,5 @@ defmodule RogerUi.RogerApi do
   defdelegate partitions, to: Roger.Info
   defdelegate running_jobs(), to: Roger.Info
   defdelegate running_jobs(partition_name), to: Roger.Info
-  defdelegate queued_jobs(partition_name, queue_name, count \\ 100), to: Roger.Info
+  defdelegate queued_jobs(partition_name, queue_name, count \\ 10000), to: Roger.Info
 end
