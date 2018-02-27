@@ -62,7 +62,9 @@ defmodule RogerUi.Web.JobsPlug do
           @roger_api.running_jobs() |> Jobs.normalize()
         end
 
-      Filter.call(jobs, :module, params.filter)
+      jobs
+      |> Enum.sort_by(&Map.get(&1, :id))
+      |> Filter.call(:module, params.filter)
     end
 
     defp selected_jobs(jobs, _), do: jobs
