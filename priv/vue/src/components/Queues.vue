@@ -8,7 +8,7 @@
         </b-pagination>
       </b-col>
       <b-col cols="8">
-        <b-form-input @input="change_filter" placeholder="Type to Filter" autofocus/>
+        <search-box @input="change_filter"></search-box>
       </b-col>
       <b-col cols="2">
         <b-button-toolbar class="my-1">
@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import debounce from 'lodash.debounce'
+import SearchBox from '@/components/SearchBox'
 import JobsTable from '@/components/JobsTable'
 
 export default {
@@ -84,7 +84,8 @@ export default {
     }
   },
   components: {
-    'jobs-table': JobsTable
+    'jobs-table': JobsTable,
+    'search-box': SearchBox
   },
   computed: {
     all_selected () {
@@ -132,11 +133,11 @@ export default {
       this.current_page = page
       this.refresh()
     },
-    change_filter: debounce(function (filter) {
+    change_filter (filter) {
       this.current_page = 1
       this.filter = filter
       this.refresh()
-    }, 400),
+    },
     toggle_selected () {
       if (this.all_selected) {
         this.checked_queues = []

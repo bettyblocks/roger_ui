@@ -8,7 +8,7 @@
         </b-pagination>
       </b-col>
       <b-col cols="7">
-        <b-form-input @input="change_filter" placeholder="Type to Filter" autofocus/>
+        <search-box @input="change_filter"></search-box>
       </b-col>
       <b-col cols="1">
         <b-button-toolbar class="my-1">
@@ -73,10 +73,13 @@
 </template>
 
 <script>
-import debounce from 'lodash.debounce'
+import SearchBox from '@/components/SearchBox'
 
 export default {
   name: 'JobsTable',
+  components: {
+    'search-box': SearchBox
+  },
   props: {
     queue: {
       type: Object,
@@ -150,7 +153,7 @@ export default {
     cancel () {
       if (this.nothing_selected) return
       let params = this.all_selected ? { filter: this.filter } : { jobs: this.checked }
-      params = {...this.queue, ...params}
+      params = { ...this.queue, ...params }
       this.$http
         .delete(`/api/jobs/`, params)
         .then(this.refresh)
@@ -159,11 +162,11 @@ export default {
       this.current_page = page
       this.refresh()
     },
-    change_filter: debounce(function (filter) {
+    change_filter (filter) {
       this.current_page = 1
       this.filter = filter
       this.refresh()
-    }, 400)
+    }
   },
   created () {
     this.refresh()
