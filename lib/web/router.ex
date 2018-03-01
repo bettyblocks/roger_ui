@@ -50,8 +50,9 @@ defmodule RogerUi.Web.RouterPlug do
     plug(:match)
     plug(:dispatch)
 
-    forward("/api/queues", to: RogerUi.Web.QueuesPlug)
     forward("/api/jobs", to: RogerUi.Web.JobsPlug)
+    forward("/api/partitions", to: RogerUi.Web.PartitionsPlug)
+    forward("/api/queues", to: RogerUi.Web.QueuesPlug)
 
     # {nodes: {:node_name_1 {partition_name_1: {queue_name_1: {...}}}}}}
     get "/api/nodes" do

@@ -21,6 +21,7 @@ defmodule RogerUi.Web.PartitionsPlug do
 
     import Plug.Conn
     alias RogerUi.Helpers.{Page, Response, Request, Filter}
+    alias RogerUi.Partitions
     use Plug.Router
 
     plug(:match)
@@ -32,6 +33,7 @@ defmodule RogerUi.Web.PartitionsPlug do
 
       partitions =
       @roger_api.partitions()
+        |> Partitions.normalize()
         |> Enum.sort_by(&Map.get(&1, "partition_name"))
         |> Filter.call("partition_name", params.filter)
         |> Page.extract("partitions", params.page_size, params.page_number)
@@ -59,6 +61,6 @@ defmodule RogerUi.Web.PartitionsPlug do
       |> Filter.call(:module, params.filter)
     end
 
-    defp selected_partitions(partitiions, _), do: partitions
+    defp selected_partitions(partitions, _), do: partitions
   end
 end
