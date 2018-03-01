@@ -16,6 +16,7 @@ defmodule RogerUi.Helpers.Page do
           page_number :: integer
         ) :: %{}
   def extract(nil, name, _, _), do: %{name => [], "total" => 0}
+
   def extract(enumerable, name, page_size, page_number) do
     page_size = if page_size > 100, do: 100, else: page_size
     page_number = if page_number <= 0, do: 1, else: page_number
