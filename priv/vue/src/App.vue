@@ -7,6 +7,7 @@
       <b-navbar-brand>Roger UI</b-navbar-brand>
       <b-collapse is-nav id="nav_collapse">
         <b-navbar-nav>
+          <b-nav-item :to="'Partitions'">Partitions</b-nav-item>
           <b-nav-item :to="'Queues'">Queues</b-nav-item>
           <b-nav-item :to="'Jobs'">Running Jobs</b-nav-item>
         </b-navbar-nav>
