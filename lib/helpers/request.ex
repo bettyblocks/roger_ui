@@ -21,6 +21,10 @@ defmodule RogerUI.Helpers.Request do
     Parsers.call(conn, Parsers.init(opts))
   end
 
+  @doc """
+  `normalize_params/1` creates a new map structure with several keys associated with the values obtained from his input (conn).
+  """
+
   def normalize_params(conn) do
     %{
       filter: Map.get(conn.params, "filter", ""),

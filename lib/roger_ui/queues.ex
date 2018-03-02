@@ -5,6 +5,25 @@ defmodule RogerUI.Queues do
   """
   alias Roger.Queue
 
+  @doc """
+  `nodes_to_queues/1` is a function that takes nodes as an input, nodes is a Keyword list that contains the nodes,
+  status and partitions with queues, like this:
+
+   [
+    "server@127.0.0.1": %{
+      running: %{
+        "roger_test_partition_1" => %{
+          default: %{consumer_count: 1, max_workers: 10, message_count: 740, paused: false},
+          fast: %{consumer_count: 1, max_workers: 10, message_count: 740, paused: false},
+          other: %{consumer_count: 1, max_workers: 2, message_count: 0, paused: false}
+        }
+      },...
+    ]
+
+  the function takes this input, extract the values of the keyword list, then gets the values of the resulting map
+  , this map values are the queues, this queues are transformed into a new structure putting in the values needed.
+  """
+
   def nodes_to_queues(nodes) do
     nodes
     |> Keyword.values()
@@ -12,6 +31,9 @@ defmodule RogerUI.Queues do
     |> Stream.flat_map(&partition_to_queues/1)
   end
 
+  @doc """
+  `normalize_name/1` is a function that verifies if its input (name) is an atom, if not, it is transformed into one
+  """
   def normalize_name(name) do
     if is_atom(name), do: name, else: String.to_atom(name)
   end
