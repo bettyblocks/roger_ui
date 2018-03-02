@@ -8,6 +8,11 @@ defmodule RogerUi.Helpers.Filter do
           field :: String.t(),
           filter :: String.t()
         ) :: []
+
+  @doc """
+  `call/1`  takes an enumerable , a string called field  and another string called filter,
+  the function takes the field and filter the enumerable by the filter applied.
+  """
   def call(enumerable, _, ""), do: enumerable
 
   def call(enumerable, field, filter) do
