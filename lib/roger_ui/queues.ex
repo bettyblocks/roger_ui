@@ -1,4 +1,3 @@
-defmodule RogerUi.Queues do
 defmodule RogerUI.Queues do
   @moduledoc """
   Normalize queues from nodes
@@ -35,7 +34,7 @@ defmodule RogerUI.Queues do
   `normalize_name/1` is a function that verifies if its input (name) is an atom, if not, it is transformed into one
   """
   def normalize_name(name) do
-    if is_atom(name), do: name, else: String.to_atom(name)
+    if is_atom(name), do: name, else: String.to_existing_atom(name)
   end
 
   defp normalize_queues({partition_name, queues}) do
