@@ -1,4 +1,4 @@
-defmodule RogerUi.Helpers.Response do
+defmodule RogerUI.Helpers.Response do
   @moduledoc """
   CORS and JSON
   """

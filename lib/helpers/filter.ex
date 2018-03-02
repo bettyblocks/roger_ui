@@ -1,4 +1,4 @@
-defmodule RogerUi.Helpers.Filter do
+defmodule RogerUI.Helpers.Filter do
   @moduledoc """
   Take a enumeration and returns only filtered element
   """

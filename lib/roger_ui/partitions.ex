@@ -1,4 +1,5 @@
 defmodule RogerUi.Partitions do
+defmodule RogerUI.Partitions do
   @moduledoc """
   Generate Partition list from Roger.Info.partitions()
   """

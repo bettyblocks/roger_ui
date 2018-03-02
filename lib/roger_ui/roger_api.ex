@@ -1,9 +1,9 @@
-defmodule RogerUi.RogerApi do
+defmodule RogerUI.RogerApi do
   @moduledoc """
   Api to calls Roger lib
   """
 
-  @behaviour RogerUi.Roger
+  @behaviour RogerUI.Roger
 
   defdelegate purge_queue(partition_name, queue_name), to: Roger.Queue, as: :purge
   defdelegate queue_pause(partition_name, queue_name), to: Roger.Partition.Global

@@ -1,4 +1,5 @@
 defmodule RogerUi.Helpers.Request do
+defmodule RogerUI.Helpers.Request do
   @moduledoc """
   Functions to prepare response:
   - read parameters

@@ -1,4 +1,5 @@
 defmodule RogerUi.Queues do
+defmodule RogerUI.Queues do
   @moduledoc """
   Normalize queues from nodes
   """
