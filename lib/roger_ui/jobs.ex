@@ -1,4 +1,3 @@
-defmodule RogerUi.Jobs do
 defmodule RogerUI.Jobs do
   @moduledoc """
   Generate Jobs list from Roger.Info.running_jobs()
