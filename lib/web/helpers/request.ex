@@ -1,4 +1,4 @@
-defmodule RogerUI.Helpers.Request do
+defmodule RogerUI.Web.Helpers.Request do
   @moduledoc """
   Functions to prepare response:
   - read parameters
@@ -21,7 +21,7 @@ defmodule RogerUI.Helpers.Request do
   end
 
   @doc """
-  `normalize_params/1` creates a new map structure with several keys associated with the values obtained from his input (conn).
+  `normalize_params/1` creates a new map structure  with the params obtained from the conecction  (conn).
   """
 
   def normalize_params(conn) do

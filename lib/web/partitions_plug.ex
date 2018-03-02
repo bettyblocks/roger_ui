@@ -20,7 +20,7 @@ defmodule RogerUI.Web.PartitionsPlug do
     @roger_api Application.get_env(:roger_ui, :roger_api, RogerUI.RogerApi)
 
     import Plug.Conn
-    alias RogerUI.Helpers.{Page, Response, Request, Filter}
+    alias RogerUI.Web.Helpers.{Page, Response, Request, Filter}
     alias RogerUI.Partitions
     use Plug.Router
 

@@ -35,7 +35,8 @@ defmodule RogerUI.Web.RouterPlug do
     """
 
     import Plug.Conn
-    alias RogerUI.Helpers.Response
+
+    alias RogerUI.Web.Helpers.Response
     use Plug.Router
 
     @roger_api Application.get_env(:roger_ui, :roger_api, RogerUI.RogerApi)
