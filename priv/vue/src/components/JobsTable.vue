@@ -2,18 +2,18 @@
   <div>
     <b-row class="my-1">
       <b-col cols="4">
-        <b-pagination @change="change_page"
-                      size="sm" :total-rows="total_jobs"
-                      :per-page="page_size">
+        <b-pagination @change="changePage"
+                      size="sm" :total-rows="totalJobs"
+                      :per-page="pageSize">
         </b-pagination>
       </b-col>
       <b-col cols="7">
-        <search-box @input="change_filter"></search-box>
+        <search-box @input="changeFilter"></search-box>
       </b-col>
       <b-col cols="1">
         <b-button-toolbar class="my-1">
           <b-button-group size="sm">
-            <b-btn :disabled="nothing_selected" @click="cancel" class="mx-1 mdi mdi-delete-forever"></b-btn>
+            <b-btn :disabled="nothingSelected" @click="cancel" class="mx-1 mdi mdi-delete-forever"></b-btn>
           </b-button-group>
         </b-button-toolbar>
       </b-col>
@@ -21,12 +21,12 @@
     <b-table small :items="jobs" :fields="fields" show-empty>
       <template slot="HEAD_actions" slot-scope="head">
         {{head.label}} &nbsp;
-        <input type="checkbox" @click.stop="toggle_selected" :checked="all_selected">
+        <input type="checkbox" @click.stop="toggleSelected" :checked="allSelected">
       </template>
       <template slot="actions" slot-scope="item">
         <input type="checkbox" name="checked" :key="item.index" :value="item.item" @click.stop v-model="checked">
       </template>
-      <template slot="show_details" slot-scope="row">
+      <template slot="showDetails" slot-scope="row">
         <b-button variant="link" class="mr-2" @click.stop="row.toggleDetails">
           {{ row.detailsShowing ? "Hide" : "Show" }}
         </b-button>
@@ -104,36 +104,36 @@ export default {
           label: 'All',
           'class': 'text-right'
         },
-        show_details: {
+        showDetails: {
           label: ' ',
           'class': 'text-right'
         }
       },
       checked: [],
       jobs: [],
-      total_jobs: 0,
-      current_page: 1,
-      page_size: 10,
+      totalJobs: 0,
+      currentPage: 1,
+      pageSize: 10,
       filter: ''
     }
   },
   computed: {
-    all_selected () {
+    allSelected () {
       return this.jobs.length !== 0 && this.jobs.length === this.checked.length
     },
-    nothing_selected () {
+    nothingSelected () {
       return this.checked.length === 0
     }
   },
   methods: {
-    toggle_selected () {
-      if (this.all_selected) {
+    toggleSelected () {
+      if (this.allSelected) {
         this.checked = []
       } else {
         this.checked = this.jobs.slice()
       }
     },
-    update_jobs (jobs) {
+    updateJobs (jobs) {
       this.jobs = jobs
     },
     clean () {
@@ -144,26 +144,26 @@ export default {
       this.clean()
       let params = { params: { ...this.queue, filter: this.filter } }
       this.$http
-        .get(`/api/jobs/${this.page_size}/${this.current_page}`, params)
+        .get(`/api/jobs/${this.pageSize}/${this.currentPage}`, params)
         .then(response => {
           this.jobs = response.data.jobs
-          this.total_jobs = response.data.total
+          this.totalJobs = response.data.total
         })
     },
     cancel () {
-      if (this.nothing_selected) return
-      let params = this.all_selected ? { filter: this.filter } : { jobs: this.checked }
+      if (this.nothingSelected) return
+      let params = this.allSelected ? { filter: this.filter } : { jobs: this.checked }
       params = { ...this.queue, ...params }
       this.$http
         .delete(`/api/jobs/`, params)
         .then(this.refresh)
     },
-    change_page (page) {
-      this.current_page = page
+    changePage (page) {
+      this.currentPage = page
       this.refresh()
     },
-    change_filter (filter) {
-      this.current_page = 1
+    changeFilter (filter) {
+      this.currentPage = 1
       this.filter = filter
       this.refresh()
     }
