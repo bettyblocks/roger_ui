@@ -5,8 +5,7 @@ defmodule RogerUI.Queues do
   alias Roger.Queue
 
   @doc """
-  `nodes_to_queues/1` is a function that takes nodes as an input, nodes is a Keyword list that contains the nodes,
-  status and partitions with queues, like this:
+  Takes a Keyword list that contains the nodes, status and partitions with queues, like this:
 
    [
     "server@127.0.0.1": %{
@@ -19,8 +18,7 @@ defmodule RogerUI.Queues do
       },...
     ]
 
-  the function takes this input, extract the values of the keyword list, then gets the values of the resulting map
-  , this map values are the queues, this queues are transformed into a new structure putting in the values needed.
+  and transforms it into a list of queues
   """
 
   def nodes_to_queues(nodes) do
