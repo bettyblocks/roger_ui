@@ -1,8 +1,7 @@
 defmodule RogerUI.Web.Helpers.Filter do
   @moduledoc """
-  Take a enumeration and returns only filtered element
+  Takes an enumeration and returns only those elements defined by a field and a filter. 
   """
-
   @spec call(
           xs :: Enumerable.t(),
           field :: String.t(),

@@ -1,8 +1,8 @@
 defmodule RogerUI.Web.Helpers.Request do
   @moduledoc """
-  Functions to prepare response:
-  - read parameters
-  - parse JSON
+  Prepare request methods of:
+  - parameters reading.
+  - JSON parsing.
   """
 
   alias Plug.Parsers
