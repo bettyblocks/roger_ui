@@ -96,7 +96,7 @@ export default {
         module: {
           label: 'Module'
         },
-        retry_count: {
+        retry_count: { // eslint-disable-line camelcase
           label: 'Retries',
           'class': 'text-right'
         },

@@ -52,7 +52,7 @@ export default {
     return {
       checkedQueues: [],
       fields: {
-        qualified_queue_name: {
+        qualified_queue_name: { // eslint-disable-line camelcase
           label: 'Name'
         },
         paused: {

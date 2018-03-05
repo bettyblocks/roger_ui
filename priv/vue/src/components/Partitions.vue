@@ -42,10 +42,10 @@ export default {
     return {
       checkedPartitions: [],
       fields: {
-        node_name: {
+        node_name: { // eslint-disable-line camelcase
           label: 'Node'
         },
-        partition_name: {
+        partition_name: { // eslint-disable-line camelcase
           label: 'Name'
         },
         status: {
