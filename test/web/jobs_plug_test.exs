@@ -9,7 +9,7 @@ defmodule RogerUI.Web.JobsPlugTest do
 
   test "get jobs" do
     RogerUI.RogerApi.Mock
-    |> expect(:queued_jobs, &RogerApiInMemory.running_jobs/0)
+    |> expect(:queued_jobs, &RogerApiInMemory.queued_jobs/2)
 
     conn =
       :get
@@ -19,8 +19,8 @@ defmodule RogerUI.Web.JobsPlugTest do
     assert conn.status == 200
     json = Poison.decode!(conn.resp_body)
 
-    assert Enum.count(json["jobs"]) == 10
-    assert json["total"] == 2000
+    assert Enum.count(json["jobs"]) == 3
+    assert json["total"] == 3
   end
 
   describe "cancel jobs" do

@@ -92,4 +92,6 @@ defmodule RogerUI.Tests.RogerApiInMemory do
 
   def running_jobs(_partition_name), do: running_jobs()
   def running_jobs, do: generator(@generated_jobs_size, @jobs)
+
+  def queued_jobs(_partition_name, _queue_name), do: @jobs |> Map.values() |> List.flatten()
 end
