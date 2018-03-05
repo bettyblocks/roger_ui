@@ -10,7 +10,7 @@ config :roger_ui,
   generated_partitions_size: 10,
   # Jobs will be multiplied by 12
   generated_jobs_size: 100,
-  roger_api: RogerUi.RogerApi.Mock
+  roger_api: RogerUI.RogerApi.Mock
 
 if node() == :nonode@nohost do
   config :roger_ui, :server, false

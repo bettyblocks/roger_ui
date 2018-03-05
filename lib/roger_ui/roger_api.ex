@@ -1,9 +1,9 @@
-defmodule RogerUi.RogerApi do
+defmodule RogerUI.RogerApi do
   @moduledoc """
   Api to calls Roger lib
   """
 
-  @behaviour RogerUi.Roger
+  @behaviour RogerUI.Roger
   alias Roger.{Info, Job, Partition, Queue, AMQPClient}
   alias AMQP.Basic
 

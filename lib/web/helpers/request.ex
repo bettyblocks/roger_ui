@@ -1,4 +1,4 @@
-defmodule RogerUi.Helpers.Request do
+defmodule RogerUI.Web.Helpers.Request do
   @moduledoc """
   Functions to prepare response:
   - read parameters
@@ -20,6 +20,9 @@ defmodule RogerUi.Helpers.Request do
     Parsers.call(conn, Parsers.init(opts))
   end
 
+  @doc """
+  Creates a Map with transformed conn.params
+  """
   def normalize_params(conn) do
     %{
       filter: Map.get(conn.params, "filter", ""),

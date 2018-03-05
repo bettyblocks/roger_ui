@@ -1,10 +1,10 @@
-defmodule RogerUi.Web.JobsPlug do
+defmodule RogerUI.Web.JobsPlug do
   @moduledoc """
   Endpoints to process jobs api calls
   """
 
   require Logger
-  alias RogerUi.Web.JobsPlug.Router
+  alias RogerUI.Web.JobsPlug.Router
 
   def init(opts), do: opts
 
@@ -17,11 +17,11 @@ defmodule RogerUi.Web.JobsPlug do
     Plug Router extension for JobsPlug
     """
 
-    @roger_api Application.get_env(:roger_ui, :roger_api, RogerUi.RogerApi)
+    @roger_api Application.get_env(:roger_ui, :roger_api, RogerUI.RogerApi)
 
     import Plug.Conn
-    alias RogerUi.Helpers.{Page, Response, Request, Filter}
-    alias RogerUi.Jobs
+    alias RogerUI.Web.Helpers.{Page, Response, Request, Filter}
+    alias RogerUI.Jobs
     use Plug.Router
 
     plug(:match)
