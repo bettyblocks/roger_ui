@@ -3,4 +3,4 @@
 
 Mox.defmock(RogerUi.RogerApi.Mock, for: RogerUi.Roger)
 
-ExUnit.start(exclude: [:slow])
+ExUnit.start()
