@@ -1,6 +1,6 @@
 defmodule RogerUI.Roger do
   @moduledoc """
-  This module provides all Contracts to Roger calls.
+  Provides all Contracts to Roger API calls.
   """
 
   @typep queue :: %{
