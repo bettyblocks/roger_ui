@@ -29,7 +29,7 @@ defmodule RogerUI.Queues do
   end
 
   @doc """
-  `normalize_name/1` is a function that verifies if its input (name) is an atom, if not, it is transformed into one
+  Verifies if queue_name is an atom, if not, transforms it into one
   """
   def normalize_name(name) do
     if is_atom(name), do: name, else: String.to_existing_atom(name)
