@@ -3,8 +3,7 @@ defmodule RogerUI.Partitions do
   Generate Partition list from Roger.Info.partitions()
   """
   @doc """
-  `normalize/1` is a function that takes partitions as an input, partitions is a Keyword list that contains the nodes,
-  status and partitions with queues, like this:
+  Takes a Keyword list that contains the nodes, status and partitions with queues, like this:
 
    [
     "server@127.0.0.1": %{
@@ -17,8 +16,7 @@ defmodule RogerUI.Partitions do
       },...
     ]
 
-  the function takes this input, captures  the values of the keyword list (node),  then transforms it into a new
-  structure with the values needed.
+  and transforms it into a partition list
   """
   def normalize(partitions) do
     partitions
