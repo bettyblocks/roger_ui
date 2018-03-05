@@ -1,7 +1,6 @@
 defmodule RogerUI.Web.Helpers.Filter do
   @moduledoc """
-  This module provides Roger UI helper functions. These functions take an enumeration and returns only those elements defined by a
-  field and a filter. Filter helper functions may be required by any module used by Roger UI. These functions are independents of business logic.
+  Takes an enumeration and returns only those elements defined by a field and a filter. 
   """
   @spec call(
           xs :: Enumerable.t(),
