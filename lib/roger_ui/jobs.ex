@@ -4,8 +4,7 @@ defmodule RogerUI.Jobs do
   """
 
   @doc """
-  `normalize/1` is a function that takes jobs as an input, job is a Keyword list that contains the nodes,
-  partitions and jobs like this:
+  Takes a Keyword list with nodes, partitions and jobs like this:
 
   [
       "watcher@127.0.0.1": %{
@@ -18,8 +17,7 @@ defmodule RogerUI.Jobs do
             },
   ]...
 
-  the function takes this input, extract the values of the keyword list and then transforms the results into
-  a new list of jobs with the partition name in it.
+  and transforms it into a list of jobs with the partition name in it.
   """
 
   def normalize(jobs) do
