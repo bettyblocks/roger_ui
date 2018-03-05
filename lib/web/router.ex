@@ -1,17 +1,17 @@
 defmodule RogerUI.Web.RouterPlug do
   @moduledoc """
-  Plug implementation to expose RogerUI API.
+  Plug implementation to expose RogerUI API
 
   This module contains a Plug Router extensión, Plug ships
   with many plugs that you can add to the router plug pipeline,
-  allowing you to plug something before a route matches or before a route is dispatched to.
+  allowing you to plug something before a route matches or before a route is dispatched to
 
   Note Plug.Router compiles all routes into a single function and relies on the Erlang VM to optimize the underlying routes into
   a tree lookup, instead of a linear lookup that would instead match route-per-route.
   Catch all match is recommended to be defined, otherwise routing fails with a function clause
   error (as it would in any regular Elixir function).
   Each route needs to return the connection as per the Plug specification.
-  See Plug.Router docs for more information.
+  See Plug.Router docs for more information
   """
 
   require Logger
