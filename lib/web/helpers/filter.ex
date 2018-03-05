@@ -10,8 +10,7 @@ defmodule RogerUI.Web.Helpers.Filter do
         ) :: []
 
   @doc """
-  `call/1`  takes an enumerable , a string called field  and another string called filter,
-  the function takes the field and filter the enumerable by the filter applied.
+  Takes an enumerable, a field and a filter and returns it filtered
   """
   def call(enumerable, _, ""), do: enumerable
 
