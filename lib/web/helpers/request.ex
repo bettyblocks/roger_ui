@@ -21,9 +21,8 @@ defmodule RogerUI.Web.Helpers.Request do
   end
 
   @doc """
-  `normalize_params/1` creates a new map structure  with the params obtained from the conecction  (conn).
+  Creates a Map with transformed conn.params
   """
-
   def normalize_params(conn) do
     %{
       filter: Map.get(conn.params, "filter", ""),
