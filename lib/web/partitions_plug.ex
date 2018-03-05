@@ -32,7 +32,7 @@ defmodule RogerUi.Web.PartitionsPlug do
       params = Request.normalize_params(conn)
 
       partitions =
-      @roger_api.partitions()
+        @roger_api.partitions()
         |> Partitions.normalize()
         |> Enum.sort_by(&Map.get(&1, "partition_name"))
         |> Filter.call("partition_name", params.filter)
@@ -42,6 +42,7 @@ defmodule RogerUi.Web.PartitionsPlug do
     end
 
     options("/", do: Response.no_content(conn, 207))
+
     delete "/" do
       conn = Request.fill_params(conn)
       params = Request.normalize_params(conn)

@@ -15,11 +15,11 @@ defmodule RogerUi.Partitions do
 
   defp normalize_partition(node_name, {status, partitions}) do
     Enum.map(partitions, fn {partition_name, _} ->
-        %{
-          "node_name" => node_name,
-          "status" => status,
-          "partition_name" => partition_name
-        }
+      %{
+        "node_name" => node_name,
+        "status" => status,
+        "partition_name" => partition_name
+      }
     end)
   end
 end
