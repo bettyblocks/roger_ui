@@ -1,6 +1,6 @@
 defmodule RogerUI.Jobs do
   @moduledoc """
-  This module contains all transformations functions for generate a Jobs list from Roger.Info.running_jobs() function.
+  Generates a Jobs list from Roger.Info.running_jobs() function.
   Resulting Jobs are linked to a partition name:
 
   Given a nested data structure, where each element contents nested items:
