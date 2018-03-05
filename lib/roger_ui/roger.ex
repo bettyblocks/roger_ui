@@ -1,4 +1,4 @@
-defmodule RogerUi.Roger do
+defmodule RogerUI.Roger do
   @moduledoc """
   Contract to Roger calls
   """

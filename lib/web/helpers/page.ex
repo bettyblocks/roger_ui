@@ -1,4 +1,4 @@
-defmodule RogerUi.Helpers.Page do
+defmodule RogerUI.Web.Helpers.Page do
   @moduledoc """
   Helper to split data into pages of data
   """

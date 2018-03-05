@@ -1,4 +1,4 @@
-defmodule RogerUi.Tests.RogerApiInMemory do
+defmodule RogerUI.Tests.RogerApiInMemory do
   @moduledoc """
   Mocks calls to Roger.Info API
   """

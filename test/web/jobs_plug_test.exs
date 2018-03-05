@@ -1,15 +1,15 @@
-defmodule RogerUi.Web.JobsPlugTest do
+defmodule RogerUI.Web.JobsPlugTest do
   use ExUnit.Case, async: true
   use Plug.Test
-  alias RogerUi.Web.JobsPlug.Router
-  alias RogerUi.Tests.RogerApiInMemory
+  alias RogerUI.Web.JobsPlug.Router
+  alias RogerUI.Tests.RogerApiInMemory
   import Mox
 
   setup :verify_on_exit!
 
   @tag :slow
   test "get jobs" do
-    RogerUi.RogerApi.Mock
+    RogerUI.RogerApi.Mock
     |> expect(:queued_jobs, fn _, _ -> %{} end)
     |> expect(:running_jobs, &RogerApiInMemory.running_jobs/1)
 
@@ -28,7 +28,7 @@ defmodule RogerUi.Web.JobsPlugTest do
   describe "cancel jobs" do
     @tag :slow
     test "all" do
-      RogerUi.RogerApi.Mock
+      RogerUI.RogerApi.Mock
       |> expect(:running_jobs, &RogerApiInMemory.running_jobs/0)
       |> expect(:cancel_job, 100_800, fn _, _ -> :ok end)
 
@@ -42,7 +42,7 @@ defmodule RogerUi.Web.JobsPlugTest do
 
     @tag :slow
     test "filtered" do
-      RogerUi.RogerApi.Mock
+      RogerUI.RogerApi.Mock
       |> expect(:running_jobs, &RogerApiInMemory.running_jobs/0)
       |> expect(:cancel_job, 100_800, fn _, _ -> :ok end)
 
@@ -67,7 +67,7 @@ defmodule RogerUi.Web.JobsPlugTest do
 
   @tag :slow
   test "get all jobs paginated" do
-    RogerUi.RogerApi.Mock
+    RogerUI.RogerApi.Mock
     |> expect(:running_jobs, 2, &RogerApiInMemory.running_jobs/0)
 
     conn =
@@ -91,7 +91,7 @@ defmodule RogerUi.Web.JobsPlugTest do
 
   @tag :slow
   test "get all jobs paginated and filtered" do
-    RogerUi.RogerApi.Mock
+    RogerUI.RogerApi.Mock
     |> expect(:running_jobs, &RogerApiInMemory.running_jobs/0)
 
     conn =

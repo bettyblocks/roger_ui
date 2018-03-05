@@ -1,8 +1,8 @@
-defmodule RogerUi.Web.QueuesPlugTest do
+defmodule RogerUI.Web.QueuesPlugTest do
   use ExUnit.Case, async: true
   use Plug.Test
-  alias RogerUi.Web.QueuesPlug.Router
-  alias RogerUi.Tests.RogerApiInMemory
+  alias RogerUI.Web.QueuesPlug.Router
+  alias RogerUI.Tests.RogerApiInMemory
   import Mox
 
   setup :verify_on_exit!
@@ -29,7 +29,7 @@ defmodule RogerUi.Web.QueuesPlugTest do
   end
 
   defp action_queues_mock(action, times) do
-    RogerUi.RogerApi.Mock
+    RogerUI.RogerApi.Mock
     |> expect(action, times, fn _, _ -> :ok end)
   end
 
@@ -86,7 +86,7 @@ defmodule RogerUi.Web.QueuesPlugTest do
 
   @tag :slow
   test "get all queues paginated" do
-    RogerUi.RogerApi.Mock |> partitions_mock(2)
+    RogerUI.RogerApi.Mock |> partitions_mock(2)
 
     conn =
       :get
@@ -109,7 +109,7 @@ defmodule RogerUi.Web.QueuesPlugTest do
 
   @tag :slow
   test "get all queues paginated and filtered" do
-    RogerUi.RogerApi.Mock |> partitions_mock()
+    RogerUI.RogerApi.Mock |> partitions_mock()
 
     conn =
       :get
