@@ -1,8 +1,4 @@
 defmodule RogerUI.Helpers.PageTest do
-  @moduledoc """
-  This module provides test functions. It test the behaviour
-  of helper functions in /lib/web/helpers required by any module used by Roger UI.
-  """
   use ExUnit.Case
   import RogerUI.Web.Helpers.Page
 
