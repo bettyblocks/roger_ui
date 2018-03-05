@@ -1,6 +1,6 @@
 defmodule RogerUI.Queues do
   @moduledoc """
-  This module contains all transformations functions for normalize nodes data structures from Roger.Info.running_jobs() function in order to obtain queues:
+  Normalizes nodes data structures from Roger.Info.running_jobs() function in order to obtain queues:
 
   Given a nested data structure, where each element contents nested items:
     input = [
