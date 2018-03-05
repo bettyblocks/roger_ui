@@ -7,10 +7,10 @@ defmodule RogerUI.Web.RouterPlug do
   allowing you to plug something before a route matches or before a route is dispatched to
 
   Note Plug.Router compiles all routes into a single function and relies on the Erlang VM to optimize the underlying routes into
-  a tree lookup, instead of a linear lookup that would instead match route-per-route.
+  a tree lookup, instead of a linear lookup that would instead match route-per-route
   Catch all match is recommended to be defined, otherwise routing fails with a function clause
-  error (as it would in any regular Elixir function).
-  Each route needs to return the connection as per the Plug specification.
+  error (as it would in any regular Elixir function)
+  Each route needs to return the connection as per the Plug specification
   See Plug.Router docs for more information
   """
 
