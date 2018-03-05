@@ -1,4 +1,4 @@
-defmodule RogerUI.Helpers.PageTest do
+defmodule RogerUI.Web.Helpers.PageTest do
   use ExUnit.Case
   import RogerUI.Web.Helpers.Page
 
