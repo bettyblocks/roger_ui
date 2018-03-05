@@ -16,7 +16,7 @@ defmodule RogerUI.Web.QueuesPlug do
 
   defmodule Router do
     @moduledoc """
-    Plug Router extension for QueuesPlug.
+    Plug Router extension for QueuesPlug
     """
 
     @roger_api Application.get_env(:roger_ui, :roger_api, RogerUI.RogerApi)
