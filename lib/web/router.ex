@@ -1,6 +1,6 @@
-defmodule RogerUi.Web.RouterPlug do
+defmodule RogerUI.Web.RouterPlug do
   @moduledoc """
-  Plug implementation to expose Roger UI API.
+  Plug implementation to expose RogerUI API.
 
   This module contains a Plug Router extensión, Plug ships
   with many plugs that you can add to the router plug pipeline,
@@ -16,7 +16,7 @@ defmodule RogerUi.Web.RouterPlug do
 
   require Logger
   require EEx
-  alias RogerUi.Web.RouterPlug.Router
+  alias RogerUI.Web.RouterPlug.Router
   alias Plug.Conn
 
   def init(opts), do: opts
@@ -42,14 +42,15 @@ defmodule RogerUi.Web.RouterPlug do
 
   defmodule Router do
     @moduledoc """
-    RogerUi.Web.RouterPlug Router extension.
+    Plug Router extension
     """
 
     import Plug.Conn
-    alias RogerUi.Helpers.Response
+
+    alias RogerUI.Web.Helpers.Response
     use Plug.Router
 
-    @roger_api Application.get_env(:roger_ui, :roger_api, RogerUi.RogerApi)
+    @roger_api Application.get_env(:roger_ui, :roger_api, RogerUI.RogerApi)
 
     plug(
       Plug.Static,
@@ -61,9 +62,9 @@ defmodule RogerUi.Web.RouterPlug do
     plug(:match)
     plug(:dispatch)
 
-    forward("/api/jobs", to: RogerUi.Web.JobsPlug)
-    forward("/api/partitions", to: RogerUi.Web.PartitionsPlug)
-    forward("/api/queues", to: RogerUi.Web.QueuesPlug)
+    forward("/api/jobs", to: RogerUI.Web.JobsPlug)
+    forward("/api/partitions", to: RogerUI.Web.PartitionsPlug)
+    forward("/api/queues", to: RogerUI.Web.QueuesPlug)
 
     # {nodes: {:node_name_1 {partition_name_1: {queue_name_1: {...}}}}}}
     get "/api/nodes" do

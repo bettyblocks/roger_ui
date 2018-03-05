@@ -1,4 +1,4 @@
-defmodule RogerUi.Mixfile do
+defmodule RogerUI.Mixfile do
   use Mix.Project
 
   def project do
@@ -47,7 +47,7 @@ defmodule RogerUi.Mixfile do
   def application do
     [
       extra_applications: [:logger],
-      mod: {RogerUi.Application, []}
+      mod: {RogerUI.Application, []}
     ]
   end
 

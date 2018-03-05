@@ -1,10 +1,10 @@
-defmodule RogerUi.Web.PartitionsPlug do
+defmodule RogerUI.Web.PartitionsPlug do
   @moduledoc """
   Endpoints to process partitions api calls
   """
 
   require Logger
-  alias RogerUi.Web.PartitionsPlug.Router
+  alias RogerUI.Web.PartitionsPlug.Router
 
   def init(opts), do: opts
 
@@ -17,11 +17,11 @@ defmodule RogerUi.Web.PartitionsPlug do
     Plug Router extension for PartitionsPlug
     """
 
-    @roger_api Application.get_env(:roger_ui, :roger_api, RogerUi.RogerApi)
+    @roger_api Application.get_env(:roger_ui, :roger_api, RogerUI.RogerApi)
 
     import Plug.Conn
-    alias RogerUi.Helpers.{Page, Response, Request, Filter}
-    alias RogerUi.Partitions
+    alias RogerUI.Web.Helpers.{Page, Response, Request, Filter}
+    alias RogerUI.Partitions
     use Plug.Router
 
     plug(:match)
@@ -32,7 +32,7 @@ defmodule RogerUi.Web.PartitionsPlug do
       params = Request.normalize_params(conn)
 
       partitions =
-      @roger_api.partitions()
+        @roger_api.partitions()
         |> Partitions.normalize()
         |> Enum.sort_by(&Map.get(&1, "partition_name"))
         |> Filter.call("partition_name", params.filter)
@@ -42,6 +42,7 @@ defmodule RogerUi.Web.PartitionsPlug do
     end
 
     options("/", do: Response.no_content(conn, 207))
+
     delete "/" do
       conn = Request.fill_params(conn)
       params = Request.normalize_params(conn)

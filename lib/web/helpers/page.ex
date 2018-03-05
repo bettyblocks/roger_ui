@@ -1,4 +1,4 @@
-defmodule RogerUi.Helpers.Page do
+defmodule RogerUI.Web.Helpers.Page do
   @moduledoc """
   This module provides Roger UI helper functions. These functions split full data sets according to a page size, it should be noted that
   Max page_size is 100 and min page_number is 1. Page helper functions may be required by any module used by Roger UI and

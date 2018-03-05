@@ -1,4 +1,4 @@
-defmodule RogerUi.Helpers.Response do
+defmodule RogerUI.Web.Helpers.Response do
   @moduledoc """
   This module provides Roger UI helper functions. These functions are used in order to prepare response methods of:
   - CORS.

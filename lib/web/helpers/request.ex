@@ -1,4 +1,4 @@
-defmodule RogerUi.Helpers.Request do
+defmodule RogerUI.Web.Helpers.Request do
   @moduledoc """
   This module provides Roger UI helper functions. These functions are used in order to prepare request methods of:
   - parameters reading.
@@ -21,6 +21,9 @@ defmodule RogerUi.Helpers.Request do
     Parsers.call(conn, Parsers.init(opts))
   end
 
+  @doc """
+  Creates a Map with transformed conn.params
+  """
   def normalize_params(conn) do
     %{
       filter: Map.get(conn.params, "filter", ""),

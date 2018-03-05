@@ -1,10 +1,10 @@
-defmodule RogerUi.Helpers.PageTest do
+defmodule RogerUI.Helpers.PageTest do
   @moduledoc """
   This module provides test functions. It test the behaviour
   of helper functions in /lib/web/helpers required by any module used by Roger UI.
   """
   use ExUnit.Case
-  import RogerUi.Helpers.Page
+  import RogerUI.Web.Helpers.Page
 
   describe "split list into pages" do
     test "first page, size bigger than 100" do

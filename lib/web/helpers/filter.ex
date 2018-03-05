@@ -1,4 +1,4 @@
-defmodule RogerUi.Helpers.Filter do
+defmodule RogerUI.Web.Helpers.Filter do
   @moduledoc """
   This module provides Roger UI helper functions. These functions take an enumeration and returns only those elements defined by a
   field and a filter. Filter helper functions may be required by any module used by Roger UI. These functions are independents of business logic.
@@ -8,6 +8,10 @@ defmodule RogerUi.Helpers.Filter do
           field :: String.t(),
           filter :: String.t()
         ) :: []
+
+  @doc """
+  Takes an enumerable, a field and a filter and returns it filtered
+  """
   def call(enumerable, _, ""), do: enumerable
 
   def call(enumerable, field, filter) do

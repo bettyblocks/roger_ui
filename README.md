@@ -1,4 +1,4 @@
-# RogerUi
+# RogerUI
 
 RogerUI provides a UI dashboard for [Exq](https://github.com/bettyblocks/roger), a job processing library which use [RabbitMQ](https://www.rabbitmq.com) for the [Elixir](http://elixir-lang.org) language.
 

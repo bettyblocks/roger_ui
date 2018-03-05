@@ -2,20 +2,20 @@
   <div class="container">
     <b-row class="my-1">
       <b-col cols="2">
-        <b-pagination @change="change_page"
-                      size="sm" :total-rows="total_partitions"
-                      :per-page="page_size">
+        <b-pagination @change="changePage"
+                      size="sm" :total-rows="totalPartitions"
+                      :per-page="pageSize">
         </b-pagination>
       </b-col>
       <b-col cols="8">
-        <search-box @input="change_filter"></search-box>
+        <search-box @input="changeFilter"></search-box>
       </b-col>
       <b-col cols="2">
         <b-button-toolbar class="my-1">
           <b-button-group size="sm">
-            <b-btn :disabled="nothing_selected" @click="run_action('resume')" class="mx-1 mdi mdi-play"></b-btn>
-            <b-btn :disabled="nothing_selected" @click="run_action('pause')" class="mdi mdi-pause"></b-btn>
-            <b-btn :disabled="nothing_selected" @click="run_action('purge')"
+            <b-btn :disabled="nothingSelected" @click="runAction('resume')" class="mx-1 mdi mdi-play"></b-btn>
+            <b-btn :disabled="nothingSelected" @click="runAction('pause')" class="mdi mdi-pause"></b-btn>
+            <b-btn :disabled="nothingSelected" @click="runAction('purge')"
                    class="mx-1 mdi mdi-delete-forever"></b-btn>
           </b-button-group>
         </b-button-toolbar>
@@ -24,10 +24,10 @@
     <b-table small :items="partitions" :fields="fields" show-empty>
       <template slot="HEAD_actions" slot-scope="head">
         {{head.label}} &nbsp;
-        <input type="checkbox" @click.stop="toggle_selected" :checked="all_selected">
+        <input type="checkbox" @click.stop="toggleSelected" :checked="allSelected">
       </template>
       <template slot="actions" slot-scope="item">
-        <input type="checkbox" name="checked" :key="item.index" :value="item.item" @click.stop v-model="checked_partitions">
+        <input type="checkbox" name="checked" :key="item.index" :value="item.item" @click.stop v-model="checkedPartitions">
       </template>
     </b-table>
   </div>
@@ -40,12 +40,12 @@ export default {
   name: 'Partitions',
   data () {
     return {
-      checked_partitions: [],
+      checkedPartitions: [],
       fields: {
-        node_name: {
+        node_name: { // eslint-disable-line camelcase
           label: 'Node'
         },
-        partition_name: {
+        partition_name: { // eslint-disable-line camelcase
           label: 'Name'
         },
         status: {
@@ -57,9 +57,9 @@ export default {
         }
       },
       partitions: [],
-      total_partitions: 0,
-      current_page: 1,
-      page_size: 10,
+      totalPartitions: 0,
+      currentPage: 1,
+      pageSize: 10,
       filter: '',
       modalInfo: {
         title: '',
@@ -71,56 +71,56 @@ export default {
     'search-box': SearchBox
   },
   computed: {
-    all_selected () {
-      return this.partitions.length === this.checked_partitions.length
+    allSelected () {
+      return this.partitions.length === this.checkedPartitions.length
     },
-    nothing_selected () {
-      return this.checked_partitions.length === 0
+    nothingSelected () {
+      return this.checkedPartitions.length === 0
     }
   },
   methods: {
-    is_paused (value) {
+    isPaused (value) {
       return value ? 'paused' : 'running'
     },
     refresh () {
-      this.checked_partitions = []
+      this.checkedPartitions = []
       this.$http
-        .get(`/api/partitions/${this.page_size}/${this.current_page}`, { params: { filter: this.filter } })
+        .get(`/api/partitions/${this.pageSize}/${this.currentPage}`, { params: { filter: this.filter } })
         .then(response => {
           this.partitions = response.data.partitions
-          this.total_partitions = response.data.total
+          this.totalPartitions = response.data.total
         })
     },
-    action_over_partitions (action, params) {
+    actionOverPartitions (action, params) {
       this.$http
         .put(`/api/partitions/${action}`, params)
         .then(this.refresh)
     },
-    reset_modal () {
+    resetModal () {
       this.modalInfo.title = ''
       this.modalInfo.partition = {}
     },
-    run_action (action) {
-      if (this.nothing_selected) {
+    runAction (action) {
+      if (this.nothingSelected) {
         return
       }
-      let params = this.all_selected ? { filter: this.filter } : { partitions: this.checked_partitions }
-      this.action_over_partitions(action, params)
+      let params = this.allSelected ? { filter: this.filter } : { partitions: this.checkedPartitions }
+      this.actionOverPartitions(action, params)
     },
-    change_page (page) {
-      this.current_page = page
+    changePage (page) {
+      this.currentPage = page
       this.refresh()
     },
-    change_filter (filter) {
-      this.current_page = 1
+    changeFilter (filter) {
+      this.currentPage = 1
       this.filter = filter
       this.refresh()
     },
-    toggle_selected () {
-      if (this.all_selected) {
-        this.checked_partitions = []
+    toggleSelected () {
+      if (this.allSelected) {
+        this.checkedPartitions = []
       } else {
-        this.checked_partitions = this.partitions.slice()
+        this.checkedPartitions = this.partitions.slice()
       }
     }
   },

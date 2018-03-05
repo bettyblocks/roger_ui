@@ -1,13 +1,14 @@
-defmodule RogerUi.Web.RouterPlugTest do
+defmodule RogerUI.Web.RouterPlugTest do
   @moduledoc """
   This module provides Roger UI test functions. It tests the behaviour
   of RogerUi.Web.RouterPlug functions. This module includes
   RogerUi.Tests.RogerApiInMemory functions, necessary to simulate Roger API responses.
   """
+defmodule RogerUI.Web.RouterPlugTest do
   use ExUnit.Case
   use Plug.Test
-  alias RogerUi.Web.RouterPlug.Router
-  alias RogerUi.Tests.RogerApiInMemory
+  alias RogerUI.Web.RouterPlug.Router
+  alias RogerUI.Tests.RogerApiInMemory
   import Mox
 
   test "index page" do
@@ -20,7 +21,7 @@ defmodule RogerUi.Web.RouterPlugTest do
   end
 
   test "get nodes" do
-    RogerUi.RogerApi.Mock
+    RogerUI.RogerApi.Mock
     |> expect(:partitions, &RogerApiInMemory.partitions/0)
 
     conn =

@@ -2,20 +2,20 @@
   <div class="container">
     <b-row class="my-1">
       <b-col cols="2">
-        <b-pagination @change="change_page"
-                      size="sm" :total-rows="total_queues"
-                      :per-page="page_size">
+        <b-pagination @change="changePage"
+                      size="sm" :total-rows="totalQueues"
+                      :per-page="pageSize">
         </b-pagination>
       </b-col>
       <b-col cols="8">
-        <search-box @input="change_filter"></search-box>
+        <search-box @input="changeFilter"></search-box>
       </b-col>
       <b-col cols="2">
         <b-button-toolbar class="my-1">
           <b-button-group size="sm">
-            <b-btn :disabled="nothing_selected" @click="run_action('resume')" class="mx-1 mdi mdi-play"></b-btn>
-            <b-btn :disabled="nothing_selected" @click="run_action('pause')" class="mdi mdi-pause"></b-btn>
-            <b-btn :disabled="nothing_selected" @click="run_action('purge')"
+            <b-btn :disabled="nothingSelected" @click="runAction('resume')" class="mx-1 mdi mdi-play"></b-btn>
+            <b-btn :disabled="nothingSelected" @click="runAction('pause')" class="mdi mdi-pause"></b-btn>
+            <b-btn :disabled="nothingSelected" @click="runAction('purge')"
                    class="mx-1 mdi mdi-delete-forever"></b-btn>
           </b-button-group>
         </b-button-toolbar>
@@ -24,18 +24,18 @@
     <b-table small :items="queues" :fields="fields" show-empty>
       <template slot="HEAD_actions" slot-scope="head">
         {{head.label}} &nbsp;
-        <input type="checkbox" @click.stop="toggle_selected" :checked="all_selected">
+        <input type="checkbox" @click.stop="toggleSelected" :checked="allSelected">
       </template>
       <template slot="actions" slot-scope="item">
-        <input type="checkbox" name="checked" :key="item.index" :value="item.item" @click.stop v-model="checked_queues">
+        <input type="checkbox" name="checked" :key="item.index" :value="item.item" @click.stop v-model="checkedQueues">
       </template>
-      <template slot="show_jobs" slot-scope="row">
-        <b-button size="sm" @click.stop="show_jobs(row.item, $event.target)" class="mr-1">
+      <template slot="showJobs" slot-scope="row">
+        <b-button size="sm" @click.stop="showJobs(row.item, $event.target)" class="mr-1">
           Show Jobs
         </b-button>
       </template>
     </b-table>
-    <b-modal id="modalInfo" size="lg" @hide="reset_modal" :title="modalInfo.title" ok-only>
+    <b-modal id="modalInfo" size="lg" @hide="resetModal" :title="modalInfo.title" ok-only>
       <jobs-table id="modal-job" :queue="modalInfo.queue" :title="modalInfo.title">
       </jobs-table>
     </b-modal>
@@ -50,16 +50,16 @@ export default {
   name: 'Queues',
   data () {
     return {
-      checked_queues: [],
+      checkedQueues: [],
       fields: {
-        qualified_queue_name: {
+        qualified_queue_name: { // eslint-disable-line camelcase
           label: 'Name'
         },
         paused: {
           label: 'Status',
-          formatter: 'is_paused'
+          formatter: 'isPaused'
         },
-        message_count: {
+        messageCount: {
           label: 'Count',
           'class': 'text-right'
         },
@@ -67,15 +67,15 @@ export default {
           label: 'All',
           'class': 'text-right'
         },
-        show_jobs: {
+        showJobs: {
           label: ' ',
           'class': 'text-center'
         }
       },
       queues: [],
-      total_queues: 0,
-      current_page: 1,
-      page_size: 10,
+      totalQueues: 0,
+      currentPage: 1,
+      pageSize: 10,
       filter: '',
       modalInfo: {
         title: '',
@@ -88,61 +88,61 @@ export default {
     'search-box': SearchBox
   },
   computed: {
-    all_selected () {
-      return this.queues.length === this.checked_queues.length
+    allSelected () {
+      return this.queues.length === this.checkedQueues.length
     },
-    nothing_selected () {
-      return this.checked_queues.length === 0
+    nothingSelected () {
+      return this.checkedQueues.length === 0
     }
   },
   methods: {
-    is_paused (value) {
+    isPaused (value) {
       return value ? 'paused' : 'running'
     },
     refresh () {
-      this.checked_queues = []
+      this.checkedQueues = []
       this.$http
-        .get(`/api/queues/${this.page_size}/${this.current_page}`, { params: { filter: this.filter } })
+        .get(`/api/queues/${this.pageSize}/${this.currentPage}`, { params: { filter: this.filter } })
         .then(response => {
           this.queues = response.data.queues
-          this.total_queues = response.data.total
+          this.totalQueues = response.data.total
         })
     },
-    action_over_queues (action, params) {
+    actionOverQueues (action, params) {
       this.$http
         .put(`/api/queues/${action}`, params)
         .then(this.refresh)
     },
-    show_jobs (item, button) {
+    showJobs (item, button) {
       this.modalInfo.title = item.qualified_queue_name
       this.modalInfo.queue = item
       this.$root.$emit('bv::show::modal', 'modalInfo', button)
     },
-    reset_modal () {
+    resetModal () {
       this.modalInfo.title = ''
       this.modalInfo.queue = {}
     },
-    run_action (action) {
-      if (this.nothing_selected) {
+    runAction (action) {
+      if (this.nothingSelected) {
         return
       }
-      let params = this.all_selected ? { filter: this.filter } : { queues: this.checked_queues }
-      this.action_over_queues(action, params)
+      let params = this.allSelected ? { filter: this.filter } : { queues: this.checkedQueues }
+      this.actionOverQueues(action, params)
     },
-    change_page (page) {
-      this.current_page = page
+    changePage (page) {
+      this.currentPage = page
       this.refresh()
     },
-    change_filter (filter) {
-      this.current_page = 1
+    changeFilter (filter) {
+      this.currentPage = 1
       this.filter = filter
       this.refresh()
     },
-    toggle_selected () {
-      if (this.all_selected) {
-        this.checked_queues = []
+    toggleSelected () {
+      if (this.allSelected) {
+        this.checkedQueues = []
       } else {
-        this.checked_queues = this.queues.slice()
+        this.checkedQueues = this.queues.slice()
       }
     }
   },
