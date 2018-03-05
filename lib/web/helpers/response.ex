@@ -1,9 +1,8 @@
 defmodule RogerUI.Web.Helpers.Response do
   @moduledoc """
-  This module provides Roger UI helper functions. These functions are used in order to prepare response methods of:
-  - CORS.
-  - JSON.
-  Request Helper functions may be required by any module used by Roger UI and these are independents of business logic.
+  Prepares response methods for:
+  - CORS
+  - JSON
   """
   import Plug.Conn
 
