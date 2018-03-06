@@ -1,11 +1,14 @@
 ### Main Screen
-![Main-Screen](https://cdn.rawgit.com/spadaveccia/roger_ui/screenshots/main.jpg)
+![Main-Screen](https://raw.githubusercontent.com/fabianherrera/roger_ui/develop/docs/screenshots/main.png)
 
 ### Partitions
-![Partitions](https://cdn.rawgit.com/spadaveccia/roger_ui/screenshots/main.jpg)
+![Partitions](https://raw.githubusercontent.com/fabianherrera/roger_ui/develop/docs/screenshots/partitions.png)
 
 ### Nodes
-![Nodes](https://cdn.rawgit.com/spadaveccia/roger_ui/screenshots/main.jpg)
+![Nodes](https://raw.githubusercontent.com/fabianherrera/roger_ui/develop/docs/screenshots/nodes.png)
 
 ### Queues
-![Queues](https://cdn.rawgit.com/spadaveccia/roger_ui/screenshots/main.jpg)
+![Queues](https://raw.githubusercontent.com/fabianherrera/roger_ui/develop/docs/screenshots/queues.png)
+
+### Jobs
+![Queues](https://raw.githubusercontent.com/fabianherrera/roger_ui/develop/docs/screenshots/jobs.png)
