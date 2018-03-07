@@ -5,7 +5,7 @@ This library provides an UI dashboard for [Roger](https://github.com/bettyblocks
 
 RogerUI allow you to see nodes, partitions and queues with various details levels.
 
-### [screenshots](https://github.com/spadaveccia/roger_ui/tree/master/screenshots)
+### [Screenshots](https://github.com/spadaveccia/roger_ui/tree/master/screenshots)
 
 ## Features
 
@@ -27,7 +27,7 @@ You will need the following to compile and run the application:
 * [Roger 1.3.0](https://github.com/bettyblocks/roger/blob/master/README.md#getting-started) or greater
 * [RabbitMQ 3.6.0](https://www.rabbitmq.com/#getstarted) or greater
 
-## Installing RogerUI
+## Installing RogerUI (User mode)
 
 #### Installing RogerUI
 
@@ -61,7 +61,7 @@ On your application when Roger’s instance its configured:
 ```
 You can change the namespace and scope to wathever works for you, then you can run `Phoenix` and navigate to `roger` namespace like: `http://localhost/roger`
 
-## Installing RogerUI in developer mode
+## Installing RogerUI (Developer mode)
 
 #### Installing RogerUI
 
