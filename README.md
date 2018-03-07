@@ -40,7 +40,7 @@ defp deps do
 end
 ```
 
-Inside the project folder run mix `deps.get`, and then run `mix compile`
+Inside the project folder run `mix deps.get`, and then run `mix compile`
 
 #### Configuring with Phoenix to run like Plug
 
@@ -59,7 +59,7 @@ On your application when Roger’s instance its configured:
     forward "/", Router, namespace: "roger"
   end
 ```
-You can change the namespace and scope to wathever works for you, then you can run `Phoenix` and navigate to `roger` namespace like: `http://localhost/roger`
+You can change the namespace and scope to wathever works for you, then you can start `Phoenix` server and navigate to `roger` namespace like: `http://localhost/roger`
 
 ## Installing RogerUI (Developer mode)
 
