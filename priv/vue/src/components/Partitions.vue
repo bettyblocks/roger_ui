@@ -136,7 +136,7 @@ export default {
         .get(`/api/partitions/${this.pagination.size}/${this.pagination.page}`, { params: { filter: this.filter } })
         .then(response => {
           this.partitions = response.data.partitions
-          this.pagination.length = response.data.total
+          this.pagination.length = Math.ceil(response.data.total / this.pagination.size)
         })
     },
     actionOverPartitions (action, params) {

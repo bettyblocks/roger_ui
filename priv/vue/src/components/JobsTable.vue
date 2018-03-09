@@ -138,13 +138,13 @@ export default {
       ],
       pagination: {
         page: 1,
-        length: 10
+        size: 10,
+        length: 0
       },
       checked: [],
       jobs: [],
       totalJobs: 0,
       currentPage: 1,
-      pageSize: 10,
       filter: ''
     }
   },
@@ -175,10 +175,10 @@ export default {
       this.clean()
       let params = { params: { ...this.queue, filter: this.filter } }
       this.$http
-        .get(`/api/jobs/${this.pageSize}/${this.currentPage}`, params)
+        .get(`/api/jobs/${this.pagination.size}/${this.currentPage}`, params)
         .then(response => {
           this.jobs = response.data.jobs
-          this.totalJobs = response.data.total
+          this.pagination.length = Math.ceil(response.data.total / this.pagination.size)
         })
     },
     cancel () {

@@ -125,12 +125,12 @@ export default {
       },
       pagination: {
         page: 1,
-        length: 10
+        size: 10,
+        length: 0
       },
       items: [],
       totalQueues: 0,
       currentPage: 1,
-      pageSize: 10,
       filter: '',
       modalInfo: {
         title: '',
@@ -160,10 +160,10 @@ export default {
     refresh () {
       this.checked = []
       this.$http
-        .get(`/api/queues/${this.pageSize}/${this.currentPage}`, { params: { filter: this.filter } })
+        .get(`/api/queues/${this.pagination.size}/${this.currentPage}`, { params: { filter: this.filter } })
         .then(response => {
           this.items = response.data.queues
-          this.pagination.length = Math.ceil(response.data.total / this.pageSize)
+          this.pagination.length = Math.ceil(response.data.total / this.pagination.size)
         })
     },
     actionOverQueues (action, params) {
