@@ -1,5 +1,49 @@
 <template>
-  <div class="container">
+  <v-container fluid>
+    <v-layout justify-center>
+      <v-flex xs12 sm10 md8>
+        <v-card>
+          <v-toolbar dense card color="white">
+            <v-toolbar-title>Partitions</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-toolbar-items>
+              <v-btn flat icon>
+                <v-icon>play_arrow</v-icon>
+              </v-btn>
+              <v-btn flat icon>
+                <v-icon>pause</v-icon>
+              </v-btn>
+              <v-btn flat icon>
+                <v-icon>stop</v-icon>
+              </v-btn>
+            </v-toolbar-items>
+          </v-toolbar>
+          <search-box class="ml-5" @input="changeFilter"></search-box>
+          <v-data-table v-model="checked" hide-actions select-all :pagination.sync="pagination" :headers="headers" :items="partitions">
+            <template slot="items" slot-scope="props">
+              <td>
+                <v-checkbox
+                  primary
+                  hide-details
+                  v-model="props.checked"
+                ></v-checkbox>
+              </td>
+              <td>{{ props.item.node_name }}</td>
+              <td>{{ props.item.partition_name }}</td>
+              <td>{{ props.item.status }}</td>
+            </template>
+          </v-data-table>
+          <div class="text-xs-center pt-2">
+            <v-pagination
+              v-model="pagination.page"
+              :length="pagination.length"
+            ></v-pagination>
+          </div>
+        </v-card>
+      </v-flex>
+    </v-layout>
+  </v-container>
+  <!-- <div class="container">
     <b-row class="my-1">
       <b-col cols="2">
         <b-pagination @change="changePage"
@@ -30,7 +74,7 @@
         <input type="checkbox" name="checked" :key="item.index" :value="item.item" @click.stop v-model="checkedPartitions">
       </template>
     </b-table>
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -40,26 +84,30 @@ export default {
   name: 'Partitions',
   data () {
     return {
-      checkedPartitions: [],
-      fields: {
-        node_name: { // eslint-disable-line camelcase
-          label: 'Node'
+      checked: [],
+      headers: [
+        {
+          sortable: false,
+          text: 'Node',
+          value: 'node_name'
         },
-        partition_name: { // eslint-disable-line camelcase
-          label: 'Name'
+        {
+          sortable: false,
+          text: 'Name',
+          value: 'partition_name'
         },
-        status: {
-          label: 'Status'
-        },
-        actions: {
-          label: 'All',
-          'class': 'text-right'
+        {
+          sortable: false,
+          text: 'Status',
+          value: 'status'
         }
-      },
+      ],
       partitions: [],
-      totalPartitions: 0,
-      currentPage: 1,
-      pageSize: 10,
+      pagination: {
+        page: 1,
+        size: 10,
+        length: 0
+      },
       filter: '',
       modalInfo: {
         title: '',
@@ -72,10 +120,10 @@ export default {
   },
   computed: {
     allSelected () {
-      return this.partitions.length === this.checkedPartitions.length
+      return this.partitions.length === this.checked.length
     },
     nothingSelected () {
-      return this.checkedPartitions.length === 0
+      return this.checked.length === 0
     }
   },
   methods: {
@@ -83,12 +131,12 @@ export default {
       return value ? 'paused' : 'running'
     },
     refresh () {
-      this.checkedPartitions = []
+      this.checked = []
       this.$http
-        .get(`/api/partitions/${this.pageSize}/${this.currentPage}`, { params: { filter: this.filter } })
+        .get(`/api/partitions/${this.pagination.size}/${this.pagination.page}`, { params: { filter: this.filter } })
         .then(response => {
           this.partitions = response.data.partitions
-          this.totalPartitions = response.data.total
+          this.pagination.length = response.data.total
         })
     },
     actionOverPartitions (action, params) {
@@ -104,21 +152,21 @@ export default {
       if (this.nothingSelected) {
         return
       }
-      let params = this.allSelected ? { filter: this.filter } : { partitions: this.checkedPartitions }
+      let params = this.allSelected ? { filter: this.filter } : { partitions: this.checked }
       this.actionOverPartitions(action, params)
     },
     changePage (page) {
-      this.currentPage = page
+      this.pagination.page = page
       this.refresh()
     },
     changeFilter (filter) {
-      this.currentPage = 1
+      this.pagination.page = 1
       this.filter = filter
       this.refresh()
     },
     toggleSelected () {
       if (this.allSelected) {
-        this.checkedPartitions = []
+        this.checked = []
       } else {
         this.checkedPartitions = this.partitions.slice()
       }
