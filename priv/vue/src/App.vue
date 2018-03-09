@@ -19,29 +19,42 @@
         <v-btn :to="{path: '/jobs'}" flat>
           <span>Jobs</span>
         </v-btn>
+        <v-menu :nudge-width="100">
+          <v-btn icon slot="activator">
+            <v-icon>more_vert</v-icon>
+          </v-btn>
+          <v-list>
+            <v-list-tile @click="setError('The Autorefresh feature is not active in this version')">
+              <v-list-tile-title>Autorefresh</v-list-tile-title>
+            </v-list-tile>
+          </v-list>
+        </v-menu>
       </v-toolbar-items>
     </v-toolbar>
     <v-content>
+      <error-message></error-message>
       <router-view />
     </v-content>
   </v-app>
 </template>
 
 <script>
-import ModalError from '@/components/ModalError'
-import loading from 'vue-full-loading'
-import { mapGetters } from 'vuex'
+import ErrorMessage from '@/components/ErrorMessage'
+// import loading from 'vue-full-loading'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'App',
-  components: { ModalError, loading },
+  components: { ErrorMessage },
   computed: {
     ...mapGetters([
       'isLoading'
     ])
   },
-  data: () => ({
-    drawer: true
-  })
+  methods: {
+    ...mapMutations([
+      'setError'
+    ])
+  }
 }
 </script>

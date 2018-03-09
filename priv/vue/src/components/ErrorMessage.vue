@@ -1,16 +1,21 @@
 <template>
-  <b-modal centered hide-footer @hide="unsetError" :visible="showError" id="error-modal">
-    <p>
-      {{ JSON.stringify(error) }}
-    </p>
-  </b-modal>
+  <v-alert
+    dismissible
+    app
+    type="error"
+    :value="showError"
+    transition="scale-transition"
+    @input="unsetError"
+  >
+    {{ error }}
+  </v-alert>
 </template>
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
 
 export default {
-  name: 'ModalError',
+  name: 'ErrorMessage',
   methods: {
     ...mapMutations([
       'unsetError'

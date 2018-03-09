@@ -19,7 +19,7 @@ const ax = axios.create({
 
 const manageError = error => {
   store.commit('unsetLoading')
-  store.commit('setError', error)
+  store.commit('setError', 'Network Error. We cannot retrieve the requested information. Try later')
   return Promise.reject(error)
 }
 
