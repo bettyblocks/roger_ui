@@ -36,7 +36,7 @@ Once you have installed and configured [RabbitMQ](https://www.rabbitmq.com/#gets
 Add Roger UI dep in your /mix.exs:
 ```
 defp deps do
-{:roger_ui, "~> 0.1}
+{:roger_ui, "~> 0.1"}
 end
 ```
 
@@ -51,10 +51,10 @@ On your application when Roger’s instance its configured:
   pipeline :roger do
     plug :accepts, ["html"]
     plug :put_secure_browser_headers
-    plug RogerUi.Web.RouterPlug, namespace: "roger"
+    plug RogerUI.Web.RouterPlug, namespace: "roger"
   end
 
-  scope "/roger", RogerUi.Web.RouterPlug do
+  scope "/roger", RogerUI.Web.RouterPlug do
     pipe_through :roger
     forward "/", Router, namespace: "roger"
   end
@@ -75,7 +75,7 @@ Once you have installed and configured [RabbitMQ](https://www.rabbitmq.com/#gets
 
 #### Configuring RogerUI
 
-On your application when Roger’s instance its configured:
+On your application where Roger’s instance its configured:
 - Add Roger UI local dep in your /mix.exs:
 ```
 {:roger_ui, "~> 0.1", path: "../roger_ui"}
@@ -110,6 +110,7 @@ IMPORTANT: the address must be enclosed inside double quote AND single quote
 
 Inside roger_ui/priv/vue folder run:
 - `npm install`
+- `npm run build`
 - `npm run dev`
 
 #### Running RogerUI
