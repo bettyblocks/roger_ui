@@ -1,5 +1,35 @@
 <template>
-  <div>
+  <v-card>
+    <v-toolbar dense card color="white">
+      <v-toolbar-title>Jobs</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-toolbar-items>
+        <v-btn flat icon>
+          <v-icon>delete</v-icon>
+        </v-btn>
+      </v-toolbar-items>
+    </v-toolbar>
+    <search-box class="ml-5" @input="changeFilter"></search-box>
+    <v-data-table v-model="checked" hide-actions select-all :pagination.sync="pagination" :headers="headers" :items="jobs">
+      <template slot="items" slot-scope="props">
+        <td>
+          <v-checkbox
+            primary
+            hide-details
+            v-model="props.checked"
+          ></v-checkbox>
+        </td>
+        <td>{{ props.item.module }}</td>
+        <td>{{ props.item.id }}</td>
+        <td>{{ props.item.retry_count }}</td>
+      </template>
+    </v-data-table>
+    <div class="text-xs-center pt-2">
+      <v-pagination v-model="pagination.page" :length="pagination.length"></v-pagination>
+    </div>
+  </v-card>
+
+  <!-- <div>
     <b-row class="my-1">
       <b-col cols="4">
         <b-pagination @change="changePage"
@@ -69,7 +99,7 @@
         </b-card>
       </template>
     </b-table>
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -89,25 +119,26 @@ export default {
   },
   data () {
     return {
-      fields: {
-        id: {
-          label: 'ID'
+      headers: [
+        {
+          sortable: false,
+          text: 'Type',
+          value: 'module'
         },
-        module: {
-          label: 'Module'
+        {
+          sortable: false,
+          text: 'ID',
+          value: 'id'
         },
-        retry_count: { // eslint-disable-line camelcase
-          label: 'Retries',
-          'class': 'text-right'
-        },
-        actions: {
-          label: 'All',
-          'class': 'text-right'
-        },
-        showDetails: {
-          label: ' ',
-          'class': 'text-right'
+        {
+          sortable: false,
+          text: 'Retries',
+          value: 'retry_count'
         }
+      ],
+      pagination: {
+        page: 1,
+        length: 10
       },
       checked: [],
       jobs: [],
