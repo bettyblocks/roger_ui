@@ -20,16 +20,6 @@ export default {
     return {
       nodes: {}
     }
-  },
-  created () {
-    this.$http
-      .get('/api/nodes')
-      .then(response => {
-        this.nodes = response.data.nodes
-      })
-      .catch(error => {
-        console.log(error)
-      })
   }
 }
 </script>
