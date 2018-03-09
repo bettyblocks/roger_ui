@@ -1,5 +1,56 @@
 <template>
-  <div class="container">
+  <v-container grid-list-md fluid>
+    <v-layout row wrap>
+      <v-flex xs3>
+        <v-card>
+          <v-toolbar dense card color="white">
+            <v-toolbar-title>Queues</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-toolbar-items>
+              <v-btn small flat icon>
+                <v-icon>play_arrow</v-icon>
+              </v-btn>
+              <v-btn small flat icon>
+                <v-icon>pause</v-icon>
+              </v-btn>
+              <v-btn small flat icon>
+                <v-icon>delete</v-icon>
+              </v-btn>
+            </v-toolbar-items>
+          </v-toolbar>
+          <search-box class="mx-3" @input="changeFilter"></search-box>
+          <v-list>
+            <template v-for="item in items">
+              <v-list-tile
+                avatar
+                :color="statusColor(item)"
+                ripple
+                :key="item.queue_name">
+                <v-list-tile-action>
+                  <v-checkbox v-model="checked"></v-checkbox>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                  <v-list-tile-title>{{ item.qualified_queue_name }}</v-list-tile-title>
+                  <v-list-tile-sub-title>{{ item.message_count }} jobs running</v-list-tile-sub-title>
+                </v-list-tile-content>
+              </v-list-tile>
+              <v-divider :key="item.qualified_queue_name"></v-divider>
+            </template>
+          </v-list>
+          <div class="text-xs-center pt-2">
+            <v-pagination
+              v-model="pagination.page"
+              :length="pagination.length"
+            ></v-pagination>
+          </div>
+        </v-card>
+      </v-flex>
+      <v-flex xs9>
+        <jobs-table></jobs-table>
+      </v-flex>
+    </v-layout>
+  </v-container>
+  <!-- <div class="container">
     <b-row class="my-1">
       <b-col cols="2">
         <b-pagination @change="changePage"
@@ -39,7 +90,7 @@
       <jobs-table id="modal-job" :queue="modalInfo.queue" :title="modalInfo.title">
       </jobs-table>
     </b-modal>
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -50,7 +101,7 @@ export default {
   name: 'Queues',
   data () {
     return {
-      checkedQueues: [],
+      checked: [],
       fields: {
         qualified_queue_name: { // eslint-disable-line camelcase
           label: 'Name'
@@ -72,7 +123,11 @@ export default {
           'class': 'text-center'
         }
       },
-      queues: [],
+      pagination: {
+        page: 1,
+        length: 10
+      },
+      items: [],
       totalQueues: 0,
       currentPage: 1,
       pageSize: 10,
@@ -89,23 +144,26 @@ export default {
   },
   computed: {
     allSelected () {
-      return this.queues.length === this.checkedQueues.length
+      return this.items.length === this.checked.length
     },
     nothingSelected () {
-      return this.checkedQueues.length === 0
+      return this.checked.length === 0
     }
   },
   methods: {
+    statusColor ({ paused }) {
+      return paused ? 'red' : 'green'
+    },
     isPaused (value) {
       return value ? 'paused' : 'running'
     },
     refresh () {
-      this.checkedQueues = []
+      this.checked = []
       this.$http
         .get(`/api/queues/${this.pageSize}/${this.currentPage}`, { params: { filter: this.filter } })
         .then(response => {
-          this.queues = response.data.queues
-          this.totalQueues = response.data.total
+          this.items = response.data.queues
+          this.pagination.length = Math.ceil(response.data.total / this.pageSize)
         })
     },
     actionOverQueues (action, params) {
@@ -126,7 +184,7 @@ export default {
       if (this.nothingSelected) {
         return
       }
-      let params = this.allSelected ? { filter: this.filter } : { queues: this.checkedQueues }
+      let params = this.allSelected ? { filter: this.filter } : { queues: this.checked }
       this.actionOverQueues(action, params)
     },
     changePage (page) {
@@ -140,9 +198,9 @@ export default {
     },
     toggleSelected () {
       if (this.allSelected) {
-        this.checkedQueues = []
+        this.checked = []
       } else {
-        this.checkedQueues = this.queues.slice()
+        this.checked = this.items.slice()
       }
     }
   },
