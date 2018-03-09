@@ -1,12 +1,14 @@
 <template>
-<b-row>
-  <b-col cols="10">
-    <b-form-input v-model="text" placeholder="Type to Filter" autofocus/>
-  </b-col>
-  <b-col cols="2">
-    <b-btn @click="search(text)" class="mdi mdi-magnify"></b-btn>
-  </b-col>
-</b-row>
+  <v-layout row wrap>
+    <v-flex xs10>
+      <v-text-field autofocus single-line hide-details label="Search" v-model="text"/>
+    </v-flex>
+    <v-flex xs2>
+      <v-btn @click="search(text)" icon>
+        <v-icon>search</v-icon>
+      </v-btn>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
