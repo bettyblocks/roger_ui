@@ -4,8 +4,7 @@ defmodule RogerUI.RogerApi do
   """
 
   @behaviour RogerUI.Roger
-  alias Roger.{Info, Job, Partition, Queue, AMQPClient}
-  alias AMQP.Basic
+  alias Roger.{Info, Partition, Queue}
 
   defdelegate purge_queue(partition_name, queue_name), to: Queue, as: :purge
   defdelegate queue_pause(partition_name, queue_name), to: Partition.Global
@@ -14,5 +13,5 @@ defmodule RogerUI.RogerApi do
   defdelegate partitions, to: Info
   defdelegate running_jobs(), to: Info
   defdelegate running_jobs(partition_name), to: Info
-  defdelegate queued_jobs(partition_name, queue_name, count \\ 1_000_000), to: Info
+  defdelegate queued_jobs(partition_name, queue_name, count \\ 1000), to: Info
 end
