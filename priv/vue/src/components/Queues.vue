@@ -2,7 +2,17 @@
   <v-container grid-list-md fluid>
     <v-layout row wrap>
       <v-flex xs3>
-        <v-card>
+        <v-card v-if="loadingJobs">
+          <v-layout
+            justify-center
+            align-center
+          >
+            <v-flex text-xs-center>
+              <v-progress-circular indeterminate :size="100" color="primary"></v-progress-circular>
+            </v-flex>
+          </v-layout>
+        </v-card>
+        <v-card v-else>
           <v-toolbar dense card color="white">
             <v-toolbar-title>Queues</v-toolbar-title>
             <v-spacer></v-spacer>
@@ -47,7 +57,8 @@
         </v-card>
       </v-flex>
       <v-flex xs9>
-        <jobs-table :title="jobsTitle" :queue="selectedQueue"></jobs-table>
+        <jobs-table :title="jobsTitle" :queue="selectedQueue"
+          @startingLoad="loadingJobs = true" @endingLoad="loadingJobs = false"></jobs-table>
       </v-flex>
     </v-layout>
   </v-container>
@@ -88,6 +99,7 @@ export default {
         size: 10,
         length: 0
       },
+      loadingJobs: false,
       items: [],
       totalQueues: 0,
       currentPage: 1,

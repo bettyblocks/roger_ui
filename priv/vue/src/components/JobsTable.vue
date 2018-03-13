@@ -129,10 +129,12 @@ export default {
       this.clean()
       let params = { params: { ...this.queue, filter: this.filter } }
       this.loading = true
+      this.$emit('startingLoad')
       this.$http
         .get(`/api/jobs/${this.pagination.size}/${this.pagination.page}`, params)
         .then(response => {
           this.loading = false
+          this.$emit('endingLoad')
           this.jobs = response.data.jobs
           this.pagination.length = Math.ceil(response.data.total / this.pagination.size)
         })
