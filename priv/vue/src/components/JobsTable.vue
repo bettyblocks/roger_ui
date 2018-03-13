@@ -1,107 +1,58 @@
 <template>
   <v-card>
     <v-toolbar dense card color="white">
-      <v-toolbar-title>Jobs</v-toolbar-title>
+      <v-toolbar-title>{{ fullTitle }}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
-        <v-btn flat icon>
+        <v-btn flat icon :disabled="nothingSelected" @click="cancel">
           <v-icon>delete</v-icon>
         </v-btn>
       </v-toolbar-items>
     </v-toolbar>
     <search-box class="ml-5" @input="changeFilter"></search-box>
-    <v-data-table v-model="checked" hide-actions select-all :pagination.sync="pagination" :headers="headers" :items="jobs">
+    <v-data-table v-model="selected" hide-actions select-all
+      :headers="headers" :items="jobs" :loading="loading">
+      <template slot="headers" slot-scope="props">
+        <tr>
+          <th>
+            <v-checkbox primary hide-details :input-value="props.all"
+              :indeterminate="props.indeterminate" @click.native="toggleSelected"></v-checkbox>
+          </th>
+          <th v-for="header in props.headers" :key="header.text">{{ header.text }}</th>
+        </tr>
+      </template>
       <template slot="items" slot-scope="props">
-        <td>
-          <v-checkbox
-            primary
-            hide-details
-            v-model="props.checked"
-          ></v-checkbox>
-        </td>
-        <td>{{ props.item.module }}</td>
-        <td>{{ props.item.id }}</td>
-        <td>{{ props.item.retry_count }}</td>
+        <tr @click.stop="props.expanded = !props.expanded">
+          <td>
+            <v-checkbox primary hide-details @click.stop="props.selected = !props.selected" :input-value="props.selected"></v-checkbox>
+          </td>
+          <td>{{ props.item.module }}</td>
+          <td>{{ props.item.id }}</td>
+          <td class="text-xs-right">{{ props.item.retry_count }}</td>
+        </tr>
+      </template>
+      <template slot="expand" slot-scope="props">
+        <v-layout row>
+          <v-flex xs12 sm8 md6 offset-sm3>
+            <v-card xs3>
+              <v-card-title class="body-2">Arguments:</v-card-title>
+              <v-divider></v-divider>
+              <v-list dense>
+                <v-list-tile v-for="(value, key) in props.item.args" :key="key">
+                  <v-list-tile-content>{{ key }}:</v-list-tile-content>
+                  <v-list-tile-content class="align-end">{{ value }}</v-list-tile-content>
+                </v-list-tile>
+              </v-list>
+            </v-card>
+          </v-flex>
+        </v-layout>
       </template>
     </v-data-table>
     <div class="text-xs-center pt-2">
-      <v-pagination v-model="pagination.page" :length="pagination.length"></v-pagination>
+      <v-pagination @input="changePage" v-model="pagination.page" :length="pagination.length"></v-pagination>
     </div>
   </v-card>
-
-  <!-- <div>
-    <b-row class="my-1">
-      <b-col cols="4">
-        <b-pagination @change="changePage"
-                      size="sm" :total-rows="totalJobs"
-                      :per-page="pageSize">
-        </b-pagination>
-      </b-col>
-      <b-col cols="7">
-        <search-box @input="changeFilter"></search-box>
-      </b-col>
-      <b-col cols="1">
-        <b-button-toolbar class="my-1">
-          <b-button-group size="sm">
-            <b-btn :disabled="nothingSelected" @click="cancel" class="mx-1 mdi mdi-delete-forever"></b-btn>
-          </b-button-group>
-        </b-button-toolbar>
-      </b-col>
-    </b-row>
-    <b-table small :items="jobs" :fields="fields" show-empty>
-      <template slot="HEAD_actions" slot-scope="head">
-        {{head.label}} &nbsp;
-        <input type="checkbox" @click.stop="toggleSelected" :checked="allSelected">
-      </template>
-      <template slot="actions" slot-scope="item">
-        <input type="checkbox" name="checked" :key="item.index" :value="item.item" @click.stop v-model="checked">
-      </template>
-      <template slot="showDetails" slot-scope="row">
-        <b-button variant="link" class="mr-2" @click.stop="row.toggleDetails">
-          {{ row.detailsShowing ? "Hide" : "Show" }}
-        </b-button>
-      </template>
-      <template slot="row-details" slot-scope="row">
-        <b-card>
-          <b-row class="mb-2">
-            <b-col class="text-sm-right" sm="3">
-              <b>Id:</b>
-            </b-col>
-            <b-col>{{ row.item.id }}</b-col>
-          </b-row>
-          <b-row class="mb-2">
-            <b-col class="text-sm-right" sm="3">
-              <b>Retry Counts:</b>
-            </b-col>
-            <b-col>{{ row.item.retry_count }}</b-col>
-          </b-row>
-          <b-row class="mb-2">
-            <b-col class="text-sm-right" sm="3">
-              <b>Module:</b>
-            </b-col>
-            <b-col>{{ row.item.module }}</b-col>
-          </b-row>
-          <b-row class="mb-2">
-            <b-col class="text-sm-right" sm="3">
-              <b>Arguments:</b>
-            </b-col>
-            <b-col>
-              <b-card>
-                <b-row class="mb-2" v-for="(val, key) in row.item.args" :key="key">
-                  <b-col class="text-sm-right" sm="3">
-                    <b>{{ key }}: </b>
-                  </b-col>
-                  <b-col>{{ val }}</b-col>
-                </b-row>
-              </b-card>
-            </b-col>
-          </b-row>
-        </b-card>
-      </template>
-    </b-table>
-  </div> -->
 </template>
-
 <script>
 import SearchBox from '@/components/SearchBox'
 
@@ -141,60 +92,65 @@ export default {
         size: 10,
         length: 0
       },
-      checked: [],
+      selected: [],
+      loading: false,
       jobs: [],
       totalJobs: 0,
-      currentPage: 1,
       filter: ''
     }
   },
   computed: {
     allSelected () {
-      return this.jobs.length !== 0 && this.jobs.length === this.checked.length
+      return this.jobs.length !== 0 && this.jobs.length === this.selected.length
     },
     nothingSelected () {
-      return this.checked.length === 0
+      return this.selected.length === 0
+    },
+    fullTitle () {
+      return this.title !== '' ? `Jobs for: ${this.queue.qualified_queue_name}` : 'Jobs'
     }
   },
   methods: {
     toggleSelected () {
       if (this.allSelected) {
-        this.checked = []
+        this.selected = []
       } else {
-        this.checked = this.jobs.slice()
+        this.selected = this.jobs.slice()
       }
     },
     updateJobs (jobs) {
       this.jobs = jobs
     },
     clean () {
-      this.checked = []
+      this.selected = []
       this.jobs = []
     },
     refresh () {
       this.clean()
       let params = { params: { ...this.queue, filter: this.filter } }
+      this.loading = true
       this.$http
-        .get(`/api/jobs/${this.pagination.size}/${this.currentPage}`, params)
+        .get(`/api/jobs/${this.pagination.size}/${this.pagination.page}`, params)
         .then(response => {
+          this.loading = false
           this.jobs = response.data.jobs
           this.pagination.length = Math.ceil(response.data.total / this.pagination.size)
         })
     },
     cancel () {
       if (this.nothingSelected) return
-      let params = this.allSelected ? { filter: this.filter } : { jobs: this.checked }
+      let params = this.allSelected ? { filter: this.filter } : { jobs: this.selected }
       params = { ...this.queue, ...params }
       this.$http
         .delete(`/api/jobs/`, params)
         .then(this.refresh)
     },
     changePage (page) {
-      this.currentPage = page
+      this.pagination.page = page
       this.refresh()
     },
     changeFilter (filter) {
-      this.currentPage = 1
+      this.pagination.page = 1
       this.filter = filter
       this.refresh()
     }
@@ -206,7 +162,10 @@ export default {
     // HACK: use this title to fetch jobs
     // logic election was `queue` but is not working
     title: function () {
-      if (this.title !== '') this.refresh()
+      if (this.title !== '') {
+        this.pagination.page = 1
+        this.refresh()
+      }
     }
   }
 }
