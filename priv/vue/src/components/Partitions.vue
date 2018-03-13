@@ -7,26 +7,16 @@
             <v-toolbar-title>Partitions</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-items>
-              <v-btn flat icon>
-                <v-icon>play_arrow</v-icon>
-              </v-btn>
-              <v-btn flat icon>
-                <v-icon>pause</v-icon>
-              </v-btn>
-              <v-btn flat icon>
-                <v-icon>stop</v-icon>
-              </v-btn>
+              <v-btn :disabled="nothingSelected" @click="runAction('resume')" flat icon><v-icon>play_arrow</v-icon></v-btn>
+              <v-btn :disabled="nothingSelected" @click="runAction('pause')" flat icon><v-icon>pause</v-icon></v-btn>
+              <v-btn :disabled="nothingSelected" @click="runAction('purge')" flat icon><v-icon>stop</v-icon></v-btn>
             </v-toolbar-items>
           </v-toolbar>
           <search-box class="ml-5" @input="changeFilter"></search-box>
-          <v-data-table v-model="checked" hide-actions select-all :pagination.sync="pagination" :headers="headers" :items="partitions">
+          <v-data-table v-model="selected" hide-actions select-all :pagination.sync="pagination" :headers="headers" :items="partitions" item-key="partition_name">
             <template slot="items" slot-scope="props">
               <td>
-                <v-checkbox
-                  primary
-                  hide-details
-                  v-model="props.checked"
-                ></v-checkbox>
+                <v-checkbox primary hide-details @click.stop="props.selected = !props.selected" :input-value="props.selected"></v-checkbox>
               </td>
               <td>{{ props.item.node_name }}</td>
               <td>{{ props.item.partition_name }}</td>
@@ -34,10 +24,7 @@
             </template>
           </v-data-table>
           <div class="text-xs-center pt-2">
-            <v-pagination
-              v-model="pagination.page"
-              :length="pagination.length"
-            ></v-pagination>
+            <v-pagination v-model="pagination.page" :length="pagination.length"></v-pagination>
           </div>
         </v-card>
       </v-flex>
@@ -50,9 +37,6 @@
                       size="sm" :total-rows="totalPartitions"
                       :per-page="pageSize">
         </b-pagination>
-      </b-col>
-      <b-col cols="8">
-        <search-box @input="changeFilter"></search-box>
       </b-col>
       <b-col cols="2">
         <b-button-toolbar class="my-1">
@@ -84,7 +68,7 @@ export default {
   name: 'Partitions',
   data () {
     return {
-      checked: [],
+      selected: [],
       headers: [
         {
           sortable: false,
@@ -120,10 +104,10 @@ export default {
   },
   computed: {
     allSelected () {
-      return this.partitions.length === this.checked.length
+      return this.partitions.length === this.selected.length
     },
     nothingSelected () {
-      return this.checked.length === 0
+      return this.selected.length === 0
     }
   },
   methods: {
@@ -131,7 +115,7 @@ export default {
       return value ? 'paused' : 'running'
     },
     refresh () {
-      this.checked = []
+      this.selected = []
       this.$http
         .get(`/api/partitions/${this.pagination.size}/${this.pagination.page}`, { params: { filter: this.filter } })
         .then(response => {
@@ -149,10 +133,8 @@ export default {
       this.modalInfo.partition = {}
     },
     runAction (action) {
-      if (this.nothingSelected) {
-        return
-      }
-      let params = this.allSelected ? { filter: this.filter } : { partitions: this.checked }
+      if (this.nothingSelected) return
+      let params = this.allSelected ? { filter: this.filter } : { partitions: this.selected }
       this.actionOverPartitions(action, params)
     },
     changePage (page) {
@@ -165,11 +147,7 @@ export default {
       this.refresh()
     },
     toggleSelected () {
-      if (this.allSelected) {
-        this.checked = []
-      } else {
-        this.checkedPartitions = this.partitions.slice()
-      }
+      this.selected = this.allSelected ? [] : this.partitions.slice()
     }
   },
   created () {
