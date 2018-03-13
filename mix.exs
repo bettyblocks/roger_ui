@@ -29,7 +29,7 @@ defmodule RogerUI.Mixfile do
       files: ~w(lib test priv/static) ++ ~w(LICENSE mix.exs README.md),
       maintainers: ["Antonio Abella", "Paul Engel"],
       licenses: ["MIT"],
-      links: %{"Github" => "https://github.com/Spadavecchia/roger_ui"}
+      links: %{"Github" => "https://github.com/bettyblocks/roger_ui"}
     ]
   end
 
@@ -58,7 +58,7 @@ defmodule RogerUI.Mixfile do
       {:plug, "~> 1.4"},
       {:cowboy, "~> 1.0"},
       {:ex_doc, ">= 0.0.0", only: :dev},
-      {:credo, ">= 0.0.0", only: :dev},
+      {:credo, ">= 0.9.0-rc1", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.8", only: :test},
       {:mox, "~> 0.3", only: :test}
     ]
