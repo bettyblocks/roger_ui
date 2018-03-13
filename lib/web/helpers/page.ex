@@ -4,7 +4,6 @@ defmodule RogerUI.Web.Helpers.Page do
   min page_number is 1
   """
 
-
   @doc """
   Slice enumerable into pages of a given page_size and returns a map with
   a list, which represents the page of enumerable in the given page_number

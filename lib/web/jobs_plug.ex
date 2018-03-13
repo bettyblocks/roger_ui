@@ -67,7 +67,7 @@ defmodule RogerUI.Web.JobsPlug do
 
       jobs
       |> Enum.sort_by(&Map.get(&1, :id))
-      |> Filter.call(:module, params.filter)
+      |> Filter.call([:module, :id, :retry_count], params.filter)
     end
 
     defp selected_jobs(jobs, _), do: jobs
