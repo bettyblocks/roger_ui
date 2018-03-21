@@ -12,8 +12,8 @@ RogerUI allow you to see nodes, partitions and queues with various details level
 - Graphical User Interface
 - Multi-tentant architecture, based on partitions or nodes
 - Based on Roger and RabbitMQ
-- On-line monitoring - Per-queue concurrency control
-- Jobs cancellation (both queued and while running)
+- Online monitoring - Per-queue concurrency control
+- Job cancellation (both queued and while running)
 - Pausing / unpausing working queues
 - Cluster-aware
 - Detailed queue / partition information
