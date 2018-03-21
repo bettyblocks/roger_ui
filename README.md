@@ -5,7 +5,7 @@ This library provides an UI dashboard for [Roger](https://github.com/bettyblocks
 
 RogerUI allow you to see nodes, partitions and queues with various details levels.
 
-### [Screenshots](https://github.com/spadaveccia/roger_ui/tree/master/screenshots)
+### [Screenshots](https://github.com/bettyblocks/roger_ui/tree/feature/revamp/docs/screenshots)
 
 ## Features
 
@@ -33,7 +33,7 @@ You will need the following to compile and run the application:
 
 Once you have installed and configured [RabbitMQ](https://www.rabbitmq.com/#getstarted) and [Roger](https://github.com/bettyblocks/roger/blob/master/README.md#getting-started)
 
-Add Roger UI dep in your /mix.exs:
+Add RogerUI dep in your /mix.exs:
 ```
 defp deps do
 {:roger_ui, "~> 0.1"}
@@ -59,13 +59,13 @@ On your application when Roger’s instance its configured:
     forward "/", Router, namespace: "roger"
   end
 ```
-You can change the namespace and scope to wathever works for you, then you can start `Phoenix` server and navigate to `roger` namespace like: `http://localhost/roger`
+You can change the namespace and scope to whatever works for you, then you can start `Phoenix` server and navigate to `roger` namespace like: `http://localhost/roger`
 
 ## Installing RogerUI (Developer mode)
 
 #### Installing RogerUI
 
-Once you have installed and configured [RabbitMQ](https://www.rabbitmq.com/#getstarted), [Node.js & npm](https://docs.npmjs.com/getting-started/installing-node) and [Roger](https://github.com/bettyblocks/roger/blob/master/README.md#getting-started), in your develop enviroment
+Once you have installed and configured [RabbitMQ](https://www.rabbitmq.com/#getstarted), [Node.js & npm](https://docs.npmjs.com/getting-started/installing-node) and [Roger](https://github.com/bettyblocks/roger/blob/master/README.md#getting-started), in your develop environment
 
 - Create a Phoenix project with mix:  `mix phoenix.new`
 - Clone [RogerUI](https://github.com/bettyblocks/roger_ui) project,
@@ -99,7 +99,7 @@ else
   Node.ping(:"server@127.0.0.1")
 end
 ```
-Note: The `:"server@127.0.0.1"` option should match with your local node’s name, so you must set it with `iex –sname` command before application runs. This will be described shortly.
+Note: The `:"server@127.0.0.1"` option should match with your local node’s name, so you must set it with `iex --sname` command before application runs. This will be described shortly.
 
 - Optionally, if you wish to run the client in a different machine, you must create a file `server.base.url.js` on `roger_ui/priv/vue/config` directory. This file must contains:
 
@@ -118,7 +118,7 @@ Inside roger_ui/priv/vue folder run:
 Inside your phoenix application you must run:
 - `mix deps.get`
 - `mix compile` 
-- `iex –-name server@127.0.0.1 -S mix phx.server` 
+- `iex --name server@127.0.0.1 -S mix phx.server` 
 
 to get the application up, remember match server name according `/config/config.exs` file before described.
 - RogerUI will be available at `http://localhost:8080` once it starts, or, if you created and configurated `roger_ui/priv/vue/config/server.base.url.js` in that address
