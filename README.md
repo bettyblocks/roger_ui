@@ -1,7 +1,7 @@
 # RogerUI
 
 
-This library provides an UI dashboard for [Roger](https://github.com/bettyblocks/roger), a job processing library based on message broadcasting [RabbitMQ](https://www.rabbitmq.com)
+This library provides an UI dashboard for [Roger](https://github.com/bettyblocks/roger), a job processing library based on message broadcasting [RabbitMQ](https://www.rabbitmq.com).
 
 RogerUI allow you to see nodes, partitions and queues with various details levels.
 
@@ -36,7 +36,7 @@ Once you have installed and configured [RabbitMQ](https://www.rabbitmq.com/#gets
 Add Roger UI dep in your /mix.exs:
 ```
 defp deps do
-{:roger_ui, "~> 0.1}
+{:roger_ui, "~> 0.1"}
 end
 ```
 
@@ -44,17 +44,17 @@ Inside the project folder run mix `deps.get`, and then run `mix compile`
 
 #### Configuring with Phoenix to run like Plug
 
-On your application when Roger’s instance its configured:
+On your application where Roger’s instance its configured:
 - Change /web/router.exs file and add the following lines:
 
 ```
   pipeline :roger do
     plug :accepts, ["html"]
     plug :put_secure_browser_headers
-    plug RogerUi.Web.RouterPlug, namespace: "roger"
+    plug RogerUI.Web.RouterPlug, namespace: "roger"
   end
 
-  scope "/roger", RogerUi.Web.RouterPlug do
+  scope "/roger", RogerUI.Web.RouterPlug do
     pipe_through :roger
     forward "/", Router, namespace: "roger"
   end
@@ -75,7 +75,7 @@ Once you have installed and configured [RabbitMQ](https://www.rabbitmq.com/#gets
 
 #### Configuring RogerUI
 
-On your application when Roger’s instance its configured:
+On your application where Roger’s instance its configured:
 - Add Roger UI local dep in your /mix.exs:
 ```
 {:roger_ui, "~> 0.1", path: "../roger_ui"}
@@ -88,7 +88,7 @@ config :roger, Roger.AMQPClient,
   port: 5672
 
 config :roger, Roger.Partition.Worker,
-  callbacks: RogerUiDemo.Worker.Callback
+  callbacks: RogerUIDemo.Worker.Callback
 
 if node() == :"server@127.0.0.1" do
   config :roger_ui, :server, true
