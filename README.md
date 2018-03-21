@@ -1,7 +1,7 @@
 # RogerUI
 
 
-This library provides an UI dashboard for [Roger](https://github.com/bettyblocks/roger), a job processing library based on message broadcasting [RabbitMQ](https://www.rabbitmq.com)
+This library provides an UI dashboard for [Roger](https://github.com/bettyblocks/roger), a job processing library based on message broadcasting [RabbitMQ](https://www.rabbitmq.com).
 
 RogerUI allow you to see nodes, partitions and queues with various details levels.
 
@@ -44,7 +44,7 @@ Inside the project folder run `mix deps.get`, and then run `mix compile`
 
 #### Configuring with Phoenix to run like Plug
 
-On your application when Roger’s instance its configured:
+On your application where Roger’s instance its configured:
 - Change /web/router.exs file and add the following lines:
 
 ```
@@ -88,7 +88,7 @@ config :roger, Roger.AMQPClient,
   port: 5672
 
 config :roger, Roger.Partition.Worker,
-  callbacks: RogerUiDemo.Worker.Callback
+  callbacks: RogerUIDemo.Worker.Callback
 
 if node() == :"server@127.0.0.1" do
   config :roger_ui, :server, true
