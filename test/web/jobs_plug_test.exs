@@ -1,36 +1,33 @@
-defmodule RogerUi.Web.JobsPlugTest do
+defmodule RogerUI.Web.JobsPlugTest do
   use ExUnit.Case, async: true
   use Plug.Test
-  alias RogerUi.Web.JobsPlug.Router
-  alias RogerUi.Tests.RogerApiInMemory
+  alias RogerUI.Web.JobsPlug.Router
+  alias RogerUI.Tests.RogerApiInMemory
   import Mox
 
   setup :verify_on_exit!
 
-  @tag :slow
   test "get jobs" do
-    RogerUi.RogerApi.Mock
-    |> expect(:queued_jobs, fn _, _ -> %{} end)
-    |> expect(:running_jobs, &RogerApiInMemory.running_jobs/1)
+    RogerUI.RogerApi.Mock
+    |> expect(:queued_jobs, &RogerApiInMemory.queued_jobs/2)
 
     conn =
       :get
-      |> conn("/roger_ui_test_partition/default")
+      |> conn("/10/1/?partition_name=roger_ui_test_partition&queue_name=default")
       |> Router.call([])
 
     assert conn.status == 200
     json = Poison.decode!(conn.resp_body)
 
-    ~w(queued_jobs running_jobs roger_now)
-    |> Enum.each(&assert Map.has_key?(json, &1))
+    assert Enum.count(json["jobs"]) == 3
+    assert json["total"] == 3
   end
 
   describe "cancel jobs" do
-    @tag :slow
     test "all" do
-      RogerUi.RogerApi.Mock
+      RogerUI.RogerApi.Mock
       |> expect(:running_jobs, &RogerApiInMemory.running_jobs/0)
-      |> expect(:cancel_job, 100_800, fn _, _ -> :ok end)
+      |> expect(:cancel_job, 1200, fn _, _ -> :ok end)
 
       conn =
         :delete
@@ -40,11 +37,10 @@ defmodule RogerUi.Web.JobsPlugTest do
       assert conn.status == 204
     end
 
-    @tag :slow
     test "filtered" do
-      RogerUi.RogerApi.Mock
+      RogerUI.RogerApi.Mock
       |> expect(:running_jobs, &RogerApiInMemory.running_jobs/0)
-      |> expect(:cancel_job, 100_800, fn _, _ -> :ok end)
+      |> expect(:cancel_job, 1200, fn _, _ -> :ok end)
 
       conn =
         :delete
@@ -54,7 +50,6 @@ defmodule RogerUi.Web.JobsPlugTest do
       assert conn.status == 204
     end
 
-    @tag :slow
     test "options for cors" do
       conn =
         :options
@@ -65,38 +60,36 @@ defmodule RogerUi.Web.JobsPlugTest do
     end
   end
 
-  @tag :slow
   test "get all jobs paginated" do
-    RogerUi.RogerApi.Mock
+    RogerUI.RogerApi.Mock
     |> expect(:running_jobs, 2, &RogerApiInMemory.running_jobs/0)
 
     conn =
       :get
-      |> conn("all/5/1")
+      |> conn("/5/1")
       |> Router.call([])
 
     assert conn.status == 200
     json = Poison.decode!(conn.resp_body)
     assert Enum.count(json["jobs"]) == 5
-    assert json["total"] == 100_800
+    assert json["total"] == 1200
 
     conn =
       :get
-      |> conn("all/5/2")
+      |> conn("/5/2")
       |> Router.call([])
 
     json = Poison.decode!(conn.resp_body)
     assert Enum.count(json["jobs"]) == 5
   end
 
-  @tag :slow
   test "get all jobs paginated and filtered" do
-    RogerUi.RogerApi.Mock
+    RogerUI.RogerApi.Mock
     |> expect(:running_jobs, &RogerApiInMemory.running_jobs/0)
 
     conn =
       :get
-      |> conn("all/10/1?filter=create")
+      |> conn("/10/1?filter=create")
       |> Router.call([])
 
     assert conn.status == 200

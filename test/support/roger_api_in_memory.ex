@@ -1,9 +1,14 @@
-defmodule RogerUi.Tests.RogerApiInMemory do
+defmodule RogerUI.Tests.RogerApiInMemory do
   @moduledoc """
   Mocks calls to Roger.Info API
   """
 
-  @queues %{
+  # Partitions will be multiplied by 8 and queues by 24
+  @generated_partitions_size Application.get_env(:roger_ui, :generated_partitions_size, 10)
+  # Jobs will be multiplied by 12
+  @generated_jobs_size Application.get_env(:roger_ui, :generated_jobs_size, 100)
+
+  @partitions %{
     running: %{
       "roger_test_partition_1" => %{
         default: %{consumer_count: 1, max_workers: 10, message_count: 740, paused: false},
@@ -72,29 +77,21 @@ defmodule RogerUi.Tests.RogerApiInMemory do
     ]
   }
 
-  defp generator(name, times, map) do
-    vals = Process.get(name)
-
-    if vals do
-      vals
-    else
-      new_vals =
-        1..times
-        |> Enum.reduce([], fn i, accum ->
-          accum
-          |> Keyword.put(:"server_#{i}@127.0.0.1", Map.new(map))
-          |> Keyword.put(:"watcher_#{i}@127.0.0.1", Map.new(map))
-          |> Keyword.put(:"other_#{i}@127.0.0.1", Map.new(map))
-          |> Keyword.put(:"demo_#{i}@127.0.0.1", Map.new(map))
-        end)
-
-      Process.put(name, new_vals)
-      new_vals
-    end
+  defp generator(times, map) do
+    1..times
+    |> Enum.reduce([], fn i, accum ->
+      accum
+      |> Keyword.put(:"server_#{i}@127.0.0.1", Map.new(map))
+      |> Keyword.put(:"watcher_#{i}@127.0.0.1", Map.new(map))
+      |> Keyword.put(:"other_#{i}@127.0.0.1", Map.new(map))
+      |> Keyword.put(:"demo_#{i}@127.0.0.1", Map.new(map))
+    end)
   end
 
-  def partitions, do: generator(:partitions, 125, @queues)
+  def partitions, do: generator(@generated_partitions_size, @partitions)
 
   def running_jobs(_partition_name), do: running_jobs()
-  def running_jobs, do: generator(:running_jobs, 8400, @jobs)
+  def running_jobs, do: generator(@generated_jobs_size, @jobs)
+
+  def queued_jobs(_partition_name, _queue_name), do: @jobs |> Map.values() |> List.flatten()
 end

@@ -1,10 +1,12 @@
-defmodule RogerUi.Web.QueuesPlug do
+defmodule RogerUI.Web.QueuesPlug do
   @moduledoc """
-  Process endpoints queues API calls
-  """
+  Handles endpoints for processing queues API calls
 
+  Queues are managed in the UI trough API calls. These queues are presented, filtred, paused, resume, purged, among others operations
+  by handlers herein described with Plug
+  """
   require Logger
-  alias RogerUi.Web.QueuesPlug.Router
+  alias RogerUI.Web.QueuesPlug.Router
 
   def init(opts), do: opts
 
@@ -17,11 +19,11 @@ defmodule RogerUi.Web.QueuesPlug do
     Plug Router extension for QueuesPlug
     """
 
-    @roger_api Application.get_env(:roger_ui, :roger_api, RogerUi.RogerApi)
+    @roger_api Application.get_env(:roger_ui, :roger_api, RogerUI.RogerApi)
 
     import Plug.Conn
-    alias RogerUi.Helpers.{Page, Response, Request, Filter}
-    alias RogerUi.Queues
+    alias RogerUI.Web.Helpers.{Page, Response, Request, Filter}
+    alias RogerUI.Queues
     use Plug.Router
 
     plug(:match)

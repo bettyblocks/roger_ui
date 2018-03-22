@@ -1,6 +1,8 @@
-defmodule RogerUi.Helpers.Response do
+defmodule RogerUI.Web.Helpers.Response do
   @moduledoc """
-  CORS and JSON
+  Prepares response methods for:
+  - CORS
+  - JSON
   """
   import Plug.Conn
 

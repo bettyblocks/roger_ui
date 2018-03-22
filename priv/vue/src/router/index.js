@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/Home'
+import Partitions from '@/components/Partitions'
 import Queues from '@/components/Queues'
 import Jobs from '@/components/Jobs'
 
@@ -12,6 +13,11 @@ export default new Router({
       path: '/',
       name: 'Home',
       component: Home
+    },
+    {
+      path: '/partitions',
+      name: 'Partitions',
+      component: Partitions
     },
     {
       path: '/queues',

@@ -3,15 +3,14 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import BootstrapVue from 'bootstrap-vue'
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
+import 'vuetify/dist/vuetify.min.css'
+import Vuetify from 'vuetify'
 
 import axios from 'axios'
 
 import { store } from './store'
 
-Vue.use(BootstrapVue)
+Vue.use(Vuetify)
 
 // Add BASE_URL to dev.env.js
 const ax = axios.create({
@@ -20,7 +19,7 @@ const ax = axios.create({
 
 const manageError = error => {
   store.commit('unsetLoading')
-  store.commit('setError', error)
+  store.commit('setError', 'Network Error. We cannot retrieve the requested information. Try later')
   return Promise.reject(error)
 }
 

@@ -1,7 +1,11 @@
 <template>
-  <div class="container">
-    <jobs-table></jobs-table>
-  </div>
+  <v-container fluid>
+    <v-layout justify-center>
+      <v-flex xs12 sm10 md8>
+        <jobs-table></jobs-table>
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>

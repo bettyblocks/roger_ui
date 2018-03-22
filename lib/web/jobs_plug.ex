@@ -1,10 +1,13 @@
-defmodule RogerUi.Web.JobsPlug do
+defmodule RogerUI.Web.JobsPlug do
   @moduledoc """
-  Endpoints to process jobs api calls
+  Handles endpoints for processing jobs API calls
+
+  Jobs are managed in the UI trough API calls. These jobs are presented, filtred, canceled, among others operations
+  by handlers herein described with Plug
   """
 
   require Logger
-  alias RogerUi.Web.JobsPlug.Router
+  alias RogerUI.Web.JobsPlug.Router
 
   def init(opts), do: opts
 
@@ -17,11 +20,11 @@ defmodule RogerUi.Web.JobsPlug do
     Plug Router extension for JobsPlug
     """
 
-    @roger_api Application.get_env(:roger_ui, :roger_api, RogerUi.RogerApi)
+    @roger_api Application.get_env(:roger_ui, :roger_api, RogerUI.RogerApi)
 
     import Plug.Conn
-    alias RogerUi.Helpers.{Page, Response, Request, Filter}
-    alias RogerUi.Jobs
+    alias RogerUI.Web.Helpers.{Page, Response, Request, Filter}
+    alias RogerUI.Jobs
     use Plug.Router
 
     plug(:match)
@@ -29,7 +32,7 @@ defmodule RogerUi.Web.JobsPlug do
 
     get "/:page_size/:page_number" do
       conn = Request.fill_params(conn)
-      params = normalize_params(conn)
+      params = Request.normalize_params(conn)
 
       jobs =
         []
@@ -43,7 +46,7 @@ defmodule RogerUi.Web.JobsPlug do
 
     delete "/" do
       conn = Request.fill_params(conn)
-      params = normalize_params(conn)
+      params = Request.normalize_params(conn)
 
       params.jobs
       |> selected_jobs(params)
@@ -64,20 +67,9 @@ defmodule RogerUi.Web.JobsPlug do
 
       jobs
       |> Enum.sort_by(&Map.get(&1, :id))
-      |> Filter.call(:module, params.filter)
+      |> Filter.call([:module, :id, :retry_count], params.filter)
     end
 
     defp selected_jobs(jobs, _), do: jobs
-
-    defp normalize_params(conn) do
-      %{
-        filter: Map.get(conn.params, "filter", ""),
-        jobs: Map.get(conn.params, "jobs", []),
-        page_number: conn.params |> Map.get("page_number", "0") |> String.to_integer(),
-        page_size: conn.params |> Map.get("page_size", "0") |> String.to_integer(),
-        partition_name: Map.get(conn.params, "partition_name", ""),
-        queue_name: Map.get(conn.params, "queue_name", "")
-      }
-    end
   end
 end

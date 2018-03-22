@@ -1,10 +1,11 @@
-defmodule RogerUi.Application do
-  # See https://hexdocs.pm/elixir/Application.html
-  # for more information on OTP Applications
-  @moduledoc false
+defmodule RogerUI.Application do
+  @moduledoc """
+  Roger UI's main OTP Application module. For more information on OTP Applications
+  See https://hexdocs.pm/elixir/Application.html
+  """
 
   alias Plug.Adapters.Cowboy
-  alias RogerUi.Web.RouterPlug
+  alias RogerUI.Web.RouterPlug
   use Application
 
   def start(_type, _args) do
@@ -14,7 +15,7 @@ defmodule RogerUi.Application do
     if run_server? do
       case Cowboy.http(RouterPlug, [], port: web_port) do
         {:ok, _} ->
-          IO.puts("Starting RogerUi server on port #{web_port}")
+          IO.puts("Starting RogerUI server on port #{web_port}")
 
         {:error, :eaddrinuse} ->
           IO.puts("Port #{web_port} already in use")
