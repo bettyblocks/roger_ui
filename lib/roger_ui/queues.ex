@@ -3,6 +3,7 @@ defmodule RogerUI.Queues do
   Normalizes nodes data structures from Roger.Info.running_jobs() function in order to obtain queues:
 
   Given a nested data structure, where each element contents nested items:
+  ```
     input = [
       "server@127.0.0.1": %{
         running: %{
@@ -11,18 +12,20 @@ defmodule RogerUI.Queues do
             fast: %{consumer_count: 1, max_workers: 10, message_count: 740, paused: false},
             other: %{consumer_count: 1, max_workers: 2, message_count: 0, paused: false}
           }]
-
+  ```
   return a sorted Map with the following keys:
+  ```
   [
   %{"partition_name" => "roger_partition_demo", "queue_name" => "roger_test_partition_1", "qualified_queue_name" => "roger_test_partition_1-default"}
   }]
+  ```
   """
 
   alias Roger.Queue
 
   @doc """
   Takes a Keyword list that contains the nodes, status and partitions with queues, like this:
-
+  ```
    [
     "server@127.0.0.1": %{
       running: %{
@@ -31,9 +34,9 @@ defmodule RogerUI.Queues do
           fast: %{consumer_count: 1, max_workers: 10, message_count: 740, paused: false},
           other: %{consumer_count: 1, max_workers: 2, message_count: 0, paused: false}
         }
-      },...
+      }
     ]
-
+  ```
   and transforms it into a list of queues
   """
 

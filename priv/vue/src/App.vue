@@ -40,7 +40,6 @@
 
 <script>
 import ErrorMessage from '@/components/ErrorMessage'
-// import loading from 'vue-full-loading'
 import { mapGetters, mapMutations } from 'vuex'
 
 export default {

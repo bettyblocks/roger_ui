@@ -4,7 +4,7 @@ defmodule RogerUI.Partitions do
   """
   @doc """
   Takes a Keyword list that contains the nodes, status and partitions with queues, like this:
-
+  ```
    [
     "server@127.0.0.1": %{
       running: %{
@@ -13,14 +13,14 @@ defmodule RogerUI.Partitions do
           fast: %{consumer_count: 1, max_workers: 10, message_count: 740, paused: false},
           other: %{consumer_count: 1, max_workers: 2, message_count: 0, paused: false}
         }
-      },...
+      }
     ]
-
+  ```
   and transforms it into a partition list
   """
   def normalize(partitions) do
     partitions
-    |> Enum.flat_map(&capture_node_name(&1))
+    |> Enum.flat_map(&capture_node_name/1)
   end
 
   defp capture_node_name({node_name, partitions}) do

@@ -2,7 +2,7 @@ defmodule RogerUI.Web.PartitionsPlug do
   @moduledoc """
   Handles endpoints for processing partition API calls
 
-  Queues are managed in the UI trough API calls. These queues are presented, filtred, paused, resume, purged, among others operations
+  Partitions are managed in the UI trough API calls. These queues are presented, filtred, paused, resume, purged, among others operations
   by handlers herein described with Plug
   """
 

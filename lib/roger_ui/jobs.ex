@@ -4,6 +4,7 @@ defmodule RogerUI.Jobs do
   Resulting Jobs are linked to a partition name:
 
   Given a nested data structure, where each element contents nested items:
+  ```
   [
       "watcher@127.0.0.1": %{
         "roger_demo_partition" => [
@@ -13,8 +14,9 @@ defmodule RogerUI.Jobs do
             queue_key: nil, queued_at: 1517697586453, retry_count: 0, started_at: 1517697682999
           }
   ]]
-
+  ```
   return a sorted Map with the following structure:
+  ```
   [
   %Roger.Job{
     args: %{
@@ -31,11 +33,12 @@ defmodule RogerUI.Jobs do
     retry_count: 0,
     started_at: 1517697682999
   }]
+  ```
   """
 
   @doc """
   Takes a Keyword list with nodes, partitions and jobs like this:
-
+  ```
   [
       "watcher@127.0.0.1": %{
          "roger_demo_partition" => [
@@ -45,7 +48,8 @@ defmodule RogerUI.Jobs do
               module: RogerDemo.Job.CreateUpdateUser,queue_key: nil, queued_at: 1517697586453,
               retry_count: 0,started_at: 1517697682999
             },
-  ]...
+  ]
+  ```
 
   and transforms it into a list of jobs with the partition name in it.
   """
